@@ -76,7 +76,7 @@ public class AdminServices {
 
         if (admins != null && !admins.isEmpty()) {
             for (AdminEntity admin : admins) {
-                admin.setIsActive(false);
+                admin.setIsActive(false);  
             }
             adminRepo.saveAll(admins);
             return "Logout successful for Admin username: " + username;

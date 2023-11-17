@@ -60,11 +60,6 @@ public class AdminController {
         return adminService.login(admin.getUsername(), admin.getPassword());
     }
 
-    // LOGOUT
-    @PostMapping("/logout")
-    public String logout(@RequestParam String username) {
-        return adminService.logout(username);
-    }
 
     // SEARCH ADMIN
     @GetMapping("/username")

@@ -18,11 +18,17 @@ public class AdminEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
-    @Column(name = "name", unique = true)
-    private String name;
+    @Column(name = "firstname")
+    private String firstName;
+
+    @Column(name = "lastname")
+    private String lastName;
+
+    @Column(name = "middleinitial")
+    private String middleInitial;
 
     @Column(name = "email")
     private String email;
@@ -60,12 +66,28 @@ public class AdminEntity {
         this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName){
+        this.lastName = lastName;
+    }
+
+    public String getMiddleInitial() {
+        return middleInitial;
+    }
+
+    public void setMiddleInitial(String middleInitial){
+        this.middleInitial = middleInitial;
     }
 
     public String getEmail() {
@@ -84,7 +106,7 @@ public class AdminEntity {
         this.contactNumber = contactNumber;
     }
 
-    public String    getPassword() {
+    public String getPassword() {
         return password;
     }
 

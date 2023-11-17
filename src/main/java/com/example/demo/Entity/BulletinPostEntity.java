@@ -2,6 +2,7 @@ package com.example.demo.Entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,6 @@ import javax.persistence.Table;
 public class BulletinPostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
     private int postId;
 
     @Column(name = "post_description")
@@ -25,9 +25,20 @@ public class BulletinPostEntity {
     @Column(name = "post_date", nullable = false)
     private Date postDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "admin_id", nullable = false)
     private AdminEntity admin;
+    
+    
+    @Column(name = "post_title")
+    private String postTitle;
+
+    @Column(name = "upvote_count")
+    private int upvoteCount;
+
+    @Column(name = "downvote_count")
+    private int downvoteCount;
+
 
     public int getPostId() {
         return postId;
@@ -53,6 +64,14 @@ public class BulletinPostEntity {
         this.postDate = postDate;
     }
 
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
+    }
+
+    public String getPostTitle() {
+        return postTitle;
+    }
+
     public AdminEntity getAdmin() {
         return admin;
     }
@@ -63,5 +82,21 @@ public class BulletinPostEntity {
 
     public boolean isActive() {
         return false;
+    }
+
+    public void setUpvoteCount(int upvoteCount) {
+        this.upvoteCount = upvoteCount;
+    }
+
+    public int getUpvoteCount() {
+        return upvoteCount;
+    }
+
+    public void setDownvoteCount(int downvoteCount) {
+        this.downvoteCount = downvoteCount;
+    }
+
+    public int getDownvoteCount() {
+        return downvoteCount;
     }
 }
