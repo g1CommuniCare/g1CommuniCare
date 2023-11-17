@@ -15,7 +15,7 @@ public class BulletinPostServices {
 
     @Autowired
     BulletinPostRepository bulletinPostRepository;
-    
+
     @Autowired
     AdminRepository adminRepository;
 
@@ -47,7 +47,7 @@ public class BulletinPostServices {
                 return bulletinPostRepository.save(bulletinPost);
             } else {
                 // Handle the case where the admin with the provided id is not found
-                throw new NoSuchElementException("No active admins found.");
+                throw new NoSuchElementException("Admin with that id not found.");
 
             }
         }

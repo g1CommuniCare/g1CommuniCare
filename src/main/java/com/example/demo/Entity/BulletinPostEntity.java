@@ -1,6 +1,6 @@
 package com.example.demo.Entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.example.demo.DTO.BulletinPostDTO;
 
 @Entity
 @Table(name = "bulletin_post")
@@ -23,7 +25,7 @@ public class BulletinPostEntity {
     private String postDescription;
 
     @Column(name = "post_date", nullable = false)
-    private Date postDate;
+    private LocalDateTime postDate;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "admin_id", nullable = false)
@@ -56,11 +58,11 @@ public class BulletinPostEntity {
         this.postDescription = postDescription;
     }
 
-    public Date getPostDate() {
+    public LocalDateTime getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(Date postDate) {
+    public void setPostDate(LocalDateTime postDate) {
         this.postDate = postDate;
     }
 
@@ -98,5 +100,17 @@ public class BulletinPostEntity {
 
     public int getDownvoteCount() {
         return downvoteCount;
+    }
+
+    public BulletinPostDTO toDTO() {
+        BulletinPostDTO dto = new BulletinPostDTO();
+        dto.setPostId(this.postId);
+        dto.setPostDescription(this.postDescription);
+        dto.setPostDate(this.postDate);
+        dto.setPostTitle(this.postTitle);
+        dto.setUpvoteCount(this.upvoteCount);
+        dto.setDownvoteCount(this.downvoteCount);
+        dto.setActive(this.isActive());
+        return dto;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.BulletinPostDTO;
 import com.example.demo.Entity.BulletinPostEntity;
 import com.example.demo.Services.AdminServices;
 import com.example.demo.Services.BulletinPostServices;
@@ -34,27 +35,18 @@ public class BulletinPostController {
         return bulletinPost.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // @PostMapping("/createPost/")
-    // public ResponseEntity<BulletinPostEntity> createBulletinPost(@RequestParam int adminId, @RequestBody BulletinPostEntity bulletinPost) {
-    //     BulletinPostEntity createdPost = bulletinPostServices.createBulletinPost(adminId, bulletinPost);
-    //     return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
-    // }    
-
-    // @PostMapping("/createPost/{adminId}")
-    //         public ResponseEntity<BulletinPostEntity> createBulletinPost(
-    //         @PathVariable int adminId,
-    //         @RequestBody BulletinPostEntity bulletinPost) {
-    //     // Pass the adminId to your service method
-    //     BulletinPostEntity createdPost = bulletinPostServices.createBulletinPost(adminId, bulletinPost);
-    //     return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
-    // }
-
-    @PostMapping("/createPost/{adminId}")
-    public ResponseEntity<BulletinPostEntity> createBulletinPost(@PathVariable int adminId, @RequestBody BulletinPostEntity bulletinPost) {
+    @PostMapping("/createPost")
+    public ResponseEntity<BulletinPostDTO> createBulletinPost(@RequestParam int adminId, @RequestBody BulletinPostEntity bulletinPost) {
         // Pass the adminId to your service method
         BulletinPostEntity createdPost = bulletinPostServices.createBulletinPost(adminId, bulletinPost);
-        return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+
+        // Convert the entity to DTO
+        BulletinPostDTO createdPostDTO = createdPost.toDTO();
+
+        return new ResponseEntity<>(createdPostDTO, HttpStatus.CREATED);
     }
+
+    
 
     @PutMapping("/{postId}")
     public ResponseEntity<BulletinPostEntity> updateBulletinPost(
