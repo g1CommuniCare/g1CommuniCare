@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 
-export default function Input({ username, handleUsername, password, showPassword, handlePassword, handleShowPassword }) {
+export default function Input({
+    username,
+    handleUsername,
+    password,
+    showPassword,
+    handlePassword,
+    handleShowPassword,
+}) {
     return (
         <>
             {/* USERNAME */}
@@ -9,13 +16,10 @@ export default function Input({ username, handleUsername, password, showPassword
                 <input
                     type="text"
                     value={username}
-                    placeholder="your name"
-                    className="peer bg-[#F2F4F8] relative h-12 w-full border-b border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 focus-visible:outline-none"
+                    placeholder="Username"
+                    className="bg-[#F2F4F8] h-12 w-full border-b border-slate-200 px-4 text-sm text-slate-500 outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500"
                     onChange={handleUsername}
                 />
-                <label className="absolute left-2 -top-2 z-[1] px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-autofill:-top-2 peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-50">
-                    Your Username
-                </label>
             </div>
 
             {/* PASSWORD */}
@@ -24,14 +28,10 @@ export default function Input({ username, handleUsername, password, showPassword
                 <input
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    name="password"
-                    placeholder="your name"
-                    className="peer bg-[#F2F4F8] relative h-12 w-full border-b border-slate-200 px-4 pr-12 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 focus-visible:outline-none"
+                    placeholder="Password"
+                    className="bg-[#F2F4F8] h-12 w-full border-b border-slate-200 px-4 text-sm text-slate-500 outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500"
                     onChange={handlePassword}
                 />
-                <label className="absolute left-2 -top-2 z-[1] cursor-text px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-autofill:-top-2 peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:cursor-default peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-500">
-                    Your Password
-                </label>
                 {showPassword ? (
                     <svg
                         onClick={handleShowPassword}
@@ -78,11 +78,10 @@ export default function Input({ username, handleUsername, password, showPassword
                         />
                     </svg>
                 )}
-                <small className="absolute flex w-full justify-between px-4 py-1 text-xs text-slate-400 transition peer-invalid:text-pink-500">
+                <small className="absolute flex w-full justify-between text-xs pt-1 text-slate-400 transition peer-invalid:text-pink-500">
                     <span>
                         It must be a combination of minimum 8 letters, numbers, and symbols.
                     </span>
-                    <span className="text-slate-500">1/10</span>
                 </small>
             </div>
         </>
