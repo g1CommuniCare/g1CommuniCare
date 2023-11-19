@@ -60,7 +60,6 @@ public class AdminController {
         return adminService.login(admin.getUsername(), admin.getPassword());
     }
 
-
     // SEARCH ADMIN
     @GetMapping("/username")
     public List<AdminEntity> findByUsername(@RequestParam String username) {

@@ -16,7 +16,7 @@ public class AdminEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int adminId;
 
     @Column(name = "username", unique = true)
     private String username;
@@ -51,11 +51,11 @@ public class AdminEntity {
     }
 
     public int getId() {
-        return id;
+        return adminId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.adminId = id;
     }
 
     public String getUsername() {
@@ -115,7 +115,7 @@ public class AdminEntity {
     }
 
     public AdminEntity(int adminId) {
-        this.id = adminId;
+        this.adminId = adminId;
     }
 
     public AdminEntity() {
