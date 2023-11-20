@@ -2,8 +2,8 @@ import React from "react";
 
 const SecondRow = ({
     firstTitle = "",
-    contactInformation = "",
-    handleContactInformation = () => {},
+    contactNumber = "",
+    handleContactNumber = () => {},
     secondTitle = "",
     birthDate = "",
     handleBirthDate = () => {},
@@ -11,7 +11,7 @@ const SecondRow = ({
     return (
         <div className="flex gap-8 w-full">
             <div className="flex flex-col">
-                <label htmlFor="contactInformation">{firstTitle}</label>
+                <label htmlFor="contactNumber">{firstTitle}</label>
                 <div className="flex gap-2 w-[395px]">
                     <input
                         placeholder="+63"
@@ -20,9 +20,9 @@ const SecondRow = ({
                     />
                     <input
                         type="number"
-                        name="contactInformation"
-                        value={contactInformation}
-                        onChange={handleContactInformation}
+                        name="contactNumber"
+                        value={contactNumber}
+                        onChange={handleContactNumber}
                         className="peer relative w-full h-[58px] py-1 px-4 mt-2 shadow-lg rounded-lg border border-slate-200 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
                         style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
                     />
