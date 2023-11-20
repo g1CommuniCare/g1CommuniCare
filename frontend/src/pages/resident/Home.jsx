@@ -1,5 +1,4 @@
 import React from "react";
-import { Menu, MenuItem, Sidebar, useProSidebar } from "react-pro-sidebar";
 import { Img } from "../../components/Img";
 import { Line } from "../../components/Line";
 import { Text } from "../../components/Text";
@@ -435,3 +434,4 @@ const Home = () => {
   };
   
   export default Home;
+
