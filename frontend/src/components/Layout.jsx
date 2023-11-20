@@ -1,20 +1,16 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import Navbar from "./NavBar";
 
 const Layout = () => {
-    return (
-        <>
-            <nav>
-                <NavLink>Home</NavLink>
-                <NavLink>Document Request</NavLink>
-                <NavLink>Report Filling</NavLink>
-                <NavLink>Community Bulletin</NavLink>
-                <NavLink>Appointments</NavLink>
-                <NavLink>Resource Directory</NavLink>
-            </nav>
-            <Outlet />
-        </>
-    );
+  return (
+    <>
+      <div className="flex h-full">
+        <Navbar />
+        <Outlet />
+      </div>
+    </>
+  );
 };
 
 export default Layout;
