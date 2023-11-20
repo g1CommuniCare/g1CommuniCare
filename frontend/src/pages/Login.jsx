@@ -3,9 +3,14 @@ import { useNavigate } from "react-router-dom";
 import LoginInput from "../utils/LoginInput";
 import Registration from "./Registration";
 
-const robotoUser = {
-  username: "",
-  password: "",
+const adminUser = {
+  username: "admin",
+  password: "pass",
+};
+
+const residentUser = {
+  username: "resident",
+  password: "pass",
 };
 
 const Login = ({ handleLogin }) => {
@@ -26,14 +31,26 @@ const Login = ({ handleLogin }) => {
   }
 
   const navigate = useNavigate();
+
   function submitLogin(e) {
     e.preventDefault();
-    if (username === robotoUser.username && password === robotoUser.password) {
-      handleLogin(true);
+
+    let isAdmin = false;
+
+    if (username === adminUser.username && password === adminUser.password) {
+      isAdmin = true;
+      navigate("/admin-dashboard");
+    } else if (
+      username === residentUser.username &&
+      password === residentUser.password
+    ) {
+      isAdmin = false;
       navigate("/dashboard");
     } else {
       alert("Wrong credentials");
     }
+
+    handleLogin(true, isAdmin);
   }
 
   return (
