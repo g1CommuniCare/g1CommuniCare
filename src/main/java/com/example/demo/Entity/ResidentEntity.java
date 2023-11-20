@@ -22,19 +22,19 @@ public class ResidentEntity {
     private String password;
 
     @Column(name = "firstname")
-    private String firstname;
+    private String firstName;
 
     @Column(name = "lastname")
-    private String lastname;
+    private String lastName;
 
     @Column(name="middleinitial")
-    private String middleinitial;
+    private String middleInitial;
 
     @Column(name="email")
     private String email;
 
     @Column(name="contact_num")
-    private String contact_num;
+    private String contactNumber;
 
     @Column(name="address")
     private String address;
@@ -45,16 +45,16 @@ public class ResidentEntity {
     @Column(name="is_verified")
     private Boolean isVerified;
 
-    public ResidentEntity(int residentId, String username, String password, String firstname, String lastname,
-            String middleinitial, String email, String contact_num, String address, String date, Boolean is_verified) {
+    public ResidentEntity(int residentId, String username, String password, String firstName, String lastName,
+            String middleInitial, String email, String contactNumber, String address, String date, Boolean is_verified) {
         this.residentId = residentId;
         this.username = username;
         this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.middleinitial = middleinitial;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleInitial = middleInitial;
         this.email = email;
-        this.contact_num = contact_num;
+        this.contactNumber = contactNumber;
         this.address = address;
         this.date = date;
         this.isVerified = is_verified;
@@ -84,28 +84,28 @@ public class ResidentEntity {
         this.password = password;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getfirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setfirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getlastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setlastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getMiddleinitial() {
-        return middleinitial;
+    public String getmiddleInitial() {
+        return middleInitial;
     }
 
-    public void setMiddleinitial(String middleinitial) {
-        this.middleinitial = middleinitial;
+    public void setmiddleInitial(String middleInitial) {
+        this.middleInitial = middleInitial;
     }
 
     public String getEmail() {
@@ -116,12 +116,12 @@ public class ResidentEntity {
         this.email = email;
     }
 
-    public String getContact_num() {
-        return contact_num;
+    public String getcontactNumber() {
+        return contactNumber;
     }
 
-    public void setContact_num(String contact_num) {
-        this.contact_num = contact_num;
+    public void setcontactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 
     public String getAddress() {
