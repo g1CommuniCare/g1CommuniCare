@@ -41,7 +41,7 @@ const Login = ({ handleLogin }) => {
       <div className="ml-[4%] w-[794px]">
         <img src="/images/login.png" alt="CommuniCare Login Image" />
       </div>
-      <div className="absolute  top-0 right-0 bottom-0 mr-[100px] min-w-[704px] h-[755px] my-auto shadow-md shadow-black">
+      <div className="absolute top-0 right-0 bottom-0 mr-[100px] min-w-[704px] h-[755px] my-auto shadow-md shadow-black">
         <div className="flex flex-col px-20 py-28">
           <div className="flex justify-center">
             <img
