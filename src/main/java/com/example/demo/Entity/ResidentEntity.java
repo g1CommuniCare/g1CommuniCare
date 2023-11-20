@@ -28,7 +28,7 @@ public class ResidentEntity {
     private String lastname;
 
     @Column(name="middleinitial")
-    private char middleinitial;
+    private String middleinitial;
 
     @Column(name="email")
     private String email;
@@ -46,7 +46,7 @@ public class ResidentEntity {
     private Boolean isVerified;
 
     public ResidentEntity(int residentId, String username, String password, String firstname, String lastname,
-            char middleinitial, String email, String contact_num, String address, String date, Boolean is_verified) {
+            String middleinitial, String email, String contact_num, String address, String date, Boolean is_verified) {
         this.residentId = residentId;
         this.username = username;
         this.password = password;
@@ -100,11 +100,11 @@ public class ResidentEntity {
         this.lastname = lastname;
     }
 
-    public char getMiddleinitial() {
+    public String getMiddleinitial() {
         return middleinitial;
     }
 
-    public void setMiddleinitial(char middleinitial) {
+    public void setMiddleinitial(String middleinitial) {
         this.middleinitial = middleinitial;
     }
 
