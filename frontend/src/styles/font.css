@@ -1,0 +1,10 @@
+
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/RobotoRomanRegular.ttf"); font-family : "Roboto"; font-weight : 400;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/RobotoMedium.ttf"); font-family : "Roboto"; font-weight : 500;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/LibreFranklinRomanExtraBold.ttf"); font-family : "Libre Franklin"; font-weight : 800;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/RobotoSerifRegular.ttf"); font-family : "Roboto Serif"; font-weight : 400;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/LibreFranklinRomanBold.ttf"); font-family : "Libre Franklin"; font-weight : 700;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/RobotoSerifNormalRomanMedium.ttf"); font-family : "Roboto Serif"; font-weight : 500;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/ArchivoRomanBold.ttf"); font-family : "Archivo"; font-weight : 700;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/LibreFranklinRomanBlack.ttf"); font-family : "Libre Franklin"; font-weight : 900;  }
+ @font-face { font-display: swap; font-style : normal; src: url("assets/fonts/RobotoSerifNormalRomanBold.ttf"); font-family : "Roboto Serif"; font-weight : 700;  }
