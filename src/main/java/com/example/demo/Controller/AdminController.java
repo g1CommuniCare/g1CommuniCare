@@ -1,10 +1,12 @@
 package com.example.demo.Controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.Entity.AdminEntity;
 import com.example.demo.Services.AdminServices;
@@ -75,5 +78,46 @@ public class AdminController {
     @GetMapping("/username")
     public List<AdminEntity> findByUsername(@RequestParam String username) {
         return adminService.findByUsername(username);
+    }
+
+    // UPLOAD ADMIN PROFILE IMAGE
+    @PostMapping("/{username}/uploadImage")
+    public ResponseEntity<String> uploadAdminImage(@PathVariable String username,
+            @RequestParam("image") MultipartFile file) {
+        try {
+            String mimeType = file.getContentType();
+            String imageFormat = mimeType != null && mimeType.split("/")[1].equalsIgnoreCase("png") ? "png" : "jpeg";
+
+            List<AdminEntity> admins = adminService.findByUsername(username);
+            if (admins.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            AdminEntity admin = admins.get(0); // Assuming the first match is the desired one
+
+            adminService.updateAdminImage(admin, file.getBytes(), imageFormat);
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Error occurred while uploading the image");
+        }
+    }
+
+    // GET RESIDENT PROFILE IMAGE
+    @GetMapping(value = "/{username}/image")
+    public ResponseEntity<byte[]> getAdminImage(@PathVariable String username) {
+        List<AdminEntity> admins = adminService.findByUsername(username);
+        if (admins.isEmpty() || admins.get(0).getProfileImage() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        AdminEntity admin = admins.get(0); // Assuming the first match is the desired one
+
+        String imageFormat = admin.getImageFormat();
+        MediaType mediaType = MediaType.IMAGE_JPEG; // default to JPEG
+        if ("png".equalsIgnoreCase(imageFormat)) {
+            mediaType = MediaType.IMAGE_PNG;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .body(admin.getProfileImage());
     }
 }

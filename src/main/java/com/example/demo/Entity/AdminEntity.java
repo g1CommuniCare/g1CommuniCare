@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -48,12 +49,20 @@ public class AdminEntity {
     @Column(name = "role")
     private String role;
 
+    @Lob
+    @Column(name = "profile_image", columnDefinition = "LONGBLOB")
+    private byte[] profileImage;
+
+    @Column(name = "image_format")
+    private String imageFormat;
+
     @OneToMany(mappedBy = "admin")
     private Set<BulletinPostEntity> bulletinPosts;
 
     public AdminEntity(String username, Boolean isActive) {
         this.username = username;
         this.isActive = isActive;
+        this.isDeleted = false;
         this.role = "admin";
     }
 
@@ -153,6 +162,22 @@ public class AdminEntity {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public byte[] getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(byte[] profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public String getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(String imageFormat) {
+        this.imageFormat = imageFormat;
     }
 
     public String toString() {

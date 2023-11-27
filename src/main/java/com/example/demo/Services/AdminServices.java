@@ -103,6 +103,22 @@ public class AdminServices {
         return adminRepo.findByUsername(username);
     }
 
+    // UPDATE RESIDENT PROFILE IMAGE
+    public void updateAdminImage(AdminEntity admin, byte[] imageBytes, String imageFormat) {
+        admin.setProfileImage(imageBytes);
+        admin.setImageFormat(imageFormat);
+        adminRepo.save(admin);
+    }
+
+    // GET RESIDENT PROFILE IMAGE
+    public byte[] getAdminImageByUsername(String username) {
+        List<AdminEntity> admin = adminRepo.findByUsername(username);
+        if (!admin.isEmpty()) {
+            return admin.get(0).getProfileImage(); // Assuming the first match is the desired one
+        }
+        return null;
+    }
+
     // DISPLAY ALL THE ACTIVE ADMINS
     // public List<String> getActiveAdmin() {
     // List<AdminEntity> activeAdminList = adminRepo.findByIsActive(true);

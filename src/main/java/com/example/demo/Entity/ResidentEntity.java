@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -53,9 +54,16 @@ public class ResidentEntity {
     @Column(name = "role")
     private String role;
 
+    @Lob
+    @Column(name = "profile_image", columnDefinition = "LONGBLOB")
+    private byte[] profileImage;
+
+    @Column(name = "image_format")
+    private String imageFormat;
+
     public ResidentEntity(int residentId, String username, String password, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, LocalDate date,
-            Boolean is_verified, Boolean isDeleted) {
+            Boolean isVerified, Boolean isDeleted, String role, byte[] profileImage, String imageFormat) {
         this.residentId = residentId;
         this.username = username;
         this.password = password;
@@ -66,8 +74,11 @@ public class ResidentEntity {
         this.contactNumber = contactNumber;
         this.address = address;
         this.date = date;
-        this.isVerified = is_verified;
+        this.isVerified = isVerified;
         this.isDeleted = isDeleted;
+        this.role = role;
+        this.profileImage = profileImage;
+        this.imageFormat = imageFormat;
     }
 
     public int getResidentId() {
@@ -178,5 +189,21 @@ public class ResidentEntity {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public byte[] getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(byte[] profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public String getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(String imageFormat) {
+        this.imageFormat = imageFormat;
     }
 }
