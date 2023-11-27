@@ -42,6 +42,9 @@ public class AdminEntity {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @Column(name = "role")
     private String role;
 
@@ -74,7 +77,7 @@ public class AdminEntity {
         return firstName;
     }
 
-    public void setFirstName(String firstName){
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
@@ -82,7 +85,7 @@ public class AdminEntity {
         return lastName;
     }
 
-    public void setLastName(String lastName){
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
@@ -90,7 +93,7 @@ public class AdminEntity {
         return middleInitial;
     }
 
-    public void setMiddleInitial(String middleInitial){
+    public void setMiddleInitial(String middleInitial) {
         this.middleInitial = middleInitial;
     }
 
@@ -124,6 +127,7 @@ public class AdminEntity {
 
     public AdminEntity() {
         this.isActive = false;
+        this.isDeleted = false;
         this.role = "admin";
     }
 
@@ -133,6 +137,14 @@ public class AdminEntity {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public String getRole() {

@@ -56,11 +56,24 @@ public class AdminServices {
         }
     }
 
+    // UPDATE ADMIN ISDELETED FLAG
+    public String updateAdminIsDeleted(int id) {
+        AdminEntity admin = adminRepo.findById(id).orElse(null);
+
+        if (admin != null) {
+            admin.setIsDeleted(true); // Assuming 1 represents deleted.
+            adminRepo.save(admin);
+            return "Admin " + id + " has been marked as deleted.";
+        } else {
+            return "Admin " + id + " does not exist.";
+        }
+    }
+
     // LOGIN
     public AdminEntity login(String username, String password) {
         AdminEntity admin = adminRepo.findByUsernameAndPassword(username, password);
 
-        if (admin != null) {
+        if (admin != null && admin.isDeleted() == false) {
             if (admin.getPassword().equals(password)) {
                 admin.setIsActive(true);
                 return adminRepo.save(admin);
@@ -76,7 +89,7 @@ public class AdminServices {
 
         if (admins != null && !admins.isEmpty()) {
             for (AdminEntity admin : admins) {
-                admin.setIsActive(false);  
+                admin.setIsActive(false);
             }
             adminRepo.saveAll(admins);
             return "Logout successful for Admin username: " + username;
