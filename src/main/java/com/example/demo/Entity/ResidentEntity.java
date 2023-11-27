@@ -45,6 +45,9 @@ public class ResidentEntity {
     @Column(name="is_verified")
     private Boolean isVerified;
 
+    @Column(name = "role")
+    private String role;
+
     public ResidentEntity(int residentId, String username, String password, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, String date, Boolean is_verified) {
         this.residentId = residentId;
@@ -142,6 +145,7 @@ public class ResidentEntity {
 
     public ResidentEntity(){
         this.isVerified = false;
+        this.role = "resident";
     }
 
     public Boolean isVerified() {
@@ -150,5 +154,13 @@ public class ResidentEntity {
     
     public void setIsVerified(Boolean isVerified) {
         this.isVerified = isVerified;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

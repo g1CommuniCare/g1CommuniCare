@@ -42,12 +42,16 @@ public class AdminEntity {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name = "role")
+    private String role;
+
     @OneToMany(mappedBy = "admin")
     private Set<BulletinPostEntity> bulletinPosts;
 
     public AdminEntity(String username, Boolean isActive) {
         this.username = username;
         this.isActive = isActive;
+        this.role = "admin";
     }
 
     public int getId() {
@@ -120,6 +124,7 @@ public class AdminEntity {
 
     public AdminEntity() {
         this.isActive = false;
+        this.role = "admin";
     }
 
     public Boolean isActive() {
@@ -128,6 +133,14 @@ public class AdminEntity {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String toString() {
