@@ -3,7 +3,7 @@ import { useAuth } from '@/useContext/UseContext';
 import React, { useEffect, useState } from 'react';
 
 // This is a component for an individual bulletin post
-const BulletinPost = ({ post }) => {
+const BulletinPost = ({ post, user, posts, setPosts }) => {
     // Convert postDate array to a Date object and format it
     const postDate = new Date(...post.postDate);
     const formattedDate = postDate.toLocaleString('en-US', {
@@ -17,6 +17,66 @@ const BulletinPost = ({ post }) => {
 
   // Decode the base64 profile image
   const profileImageSrc = `data:image/${post.admin.imageFormat};base64,${post.admin.profileImage}`;
+
+  // Click handler for upvote button
+  const handleUpvote = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/bulletin/upvote/${post.postId}/${user.residentId}`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Update the upvote count in the UI
+      const updatedPosts = posts.map((p) => {
+        if (p.postId === post.postId) {
+          return {
+            ...p,
+            upvoteCount: p.upvoteCount + 1,
+            downvoteCount: p.userVoteType === 'DOWNVOTE' ? p.downvoteCount - 1 : p.downvoteCount,
+            userVoteType: 'UPVOTE', // You can update the user's vote type here
+          };
+        }
+        return p;
+      });
+
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error('Failed to upvote post:', error);
+    }
+  };
+
+  // Click handler for downvote button
+  const handleDownvote = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/bulletin/downvote/${post.postId}/${user.residentId}`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Update the downvote count in the UI
+      const updatedPosts = posts.map((p) => {
+        if (p.postId === post.postId) {
+          return {
+            ...p,
+            upvoteCount: p.userVoteType === 'UPVOTE' ? p.upvoteCount - 1 : p.upvoteCount,
+            downvoteCount: p.downvoteCount + 1,
+            userVoteType: 'DOWNVOTE', // You can update the user's vote type here
+          };
+        }
+        return p;
+      });
+
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error('Failed to downvote post:', error);
+    }
+  };
 
   return (
     <div className="bg-white shadow-lg rounded-lg p-6 my-4 w-3/4">
@@ -33,13 +93,13 @@ const BulletinPost = ({ post }) => {
       </div>
       <div className="flex justify-between items-center mt-4">
         <div className="ml-auto flex items-center">
-            <button className="text-gray-500 focus:outline-none focus:text-gray-600">
-                <img src="/images/arr-up.png" alt="Upvote" className="w-6 h-6" />
-            </button>
-                <span className="text-gray-700 mx-2">{post.upvoteCount}</span>
-            <button className="text-gray-500 focus:outline-none focus:text-gray-600">
-                <img src="/images/arr-down.png" alt="Downvote" className="w-6 h-6" />
-            </button>
+          <button className="text-gray-500 focus:outline-none focus:text-gray-600" onClick={handleUpvote}>
+            <img src="/images/arr-up.png" alt="Upvote" className="w-6 h-6" />
+          </button>
+          <span className="text-gray-700 mx-2">{post.upvoteCount}</span>
+          <button className="text-gray-500 focus:outline-none focus:text-gray-600" onClick={handleDownvote}>
+            <img src="/images/arr-down.png" alt="Downvote" className="w-6 h-6" />
+          </button>
           <span className="text-gray-700 mx-2">{post.downvoteCount}</span>
         </div>
       </div>
@@ -55,7 +115,9 @@ export default function page() {
     
     const { user } = useAuth();
     const username = user.username
+    const id = user.residentId
     console.log(username)
+    console.log(id)
 
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
@@ -124,7 +186,7 @@ export default function page() {
                   style={{ backgroundImage: 'url("images/logo1 2.png")' }}
             >
                 {currentPosts.map((post) => (
-                    <BulletinPost key={post.postId} post={post} />
+                    <BulletinPost key={post.postId} post={post} user={user} posts={posts} setPosts={setPosts} />
                 ))}
                 <div className="flex mt-4">
                     <button onClick={prevPage} className="mx-2 px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">

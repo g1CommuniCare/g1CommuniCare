@@ -19,7 +19,7 @@ public class BulletinPostController {
     @Autowired
     BulletinPostServices bulletinPostServices;
     AdminServices adminServices;
-    
+
     public BulletinPostController(BulletinPostServices bulletinPostServices) {
         this.bulletinPostServices = bulletinPostServices;
     }
@@ -36,7 +36,8 @@ public class BulletinPostController {
     }
 
     @PostMapping("/createPost")
-    public ResponseEntity<BulletinPostDTO> createBulletinPost(@RequestParam int adminId, @RequestBody BulletinPostEntity bulletinPost) {
+    public ResponseEntity<BulletinPostDTO> createBulletinPost(@RequestParam int adminId,
+            @RequestBody BulletinPostEntity bulletinPost) {
         // Pass the adminId to your service method
         BulletinPostEntity createdPost = bulletinPostServices.createBulletinPost(adminId, bulletinPost);
 
@@ -46,13 +47,10 @@ public class BulletinPostController {
         return new ResponseEntity<>(createdPostDTO, HttpStatus.CREATED);
     }
 
-    
-
     @PutMapping("/{postId}")
     public ResponseEntity<BulletinPostEntity> updateBulletinPost(
             @PathVariable int postId,
-            @RequestBody BulletinPostEntity updatedPost
-    ) {
+            @RequestBody BulletinPostEntity updatedPost) {
         Optional<BulletinPostEntity> existingPost = bulletinPostServices.getBulletinPostById(postId);
         if (existingPost.isPresent()) {
             updatedPost.setPostId(postId);
@@ -68,13 +66,23 @@ public class BulletinPostController {
         return bulletinPostServices.deleteBulletinPost(postId);
     }
 
-    @PostMapping("/upvote/{postId}")
-    public String upvoteBulletinPost(@PathVariable int postId) {
-        return bulletinPostServices.upvoteBulletinPost(postId);
+    @PostMapping("/upvote/{postId}/{userId}")
+    public ResponseEntity<?> upvotePost(@PathVariable int postId, @PathVariable int userId) {
+        try {
+            bulletinPostServices.handleVote(postId, userId, true); // true for upvote
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
-    @PostMapping("/downvote/{postId}")
-    public String downvoteBulletinPost(@PathVariable int postId) {
-        return bulletinPostServices.downvoteBulletinPost(postId);
+    @PostMapping("/downvote/{postId}/{userId}")
+    public ResponseEntity<?> downvotePost(@PathVariable int postId, @PathVariable int userId) {
+        try {
+            bulletinPostServices.handleVote(postId, userId, false); // false for downvote
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }
