@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/useContext/UseContext";
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 
 const BulletinPost = ({ post, onDelete }) => {
   const postDate = new Date(...post.postDate);
@@ -128,11 +129,22 @@ const BulletinBoard = () => {
     }
   };
 
-  // Function to handle posting a new bulletin
   const handlePost = async () => {
     const shouldPost = window.confirm("Are you sure you want to post this?");
     if (shouldPost) {
       try {
+        // Get the current date and time in the desired format
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth()).padStart(2, '0'); // Add 1 to month since it's zero-based
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+        
+        // Format the date and time string
+        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        
         const response = await fetch(
           `http://localhost:8080/bulletin/createPost?adminId=${adminId}`,
           {
@@ -143,21 +155,21 @@ const BulletinBoard = () => {
             body: JSON.stringify({
               postTitle: newPostTitle || "Default Title",
               postDescription: newPostDescription || "Default Description",
-              postDate: new Date().toISOString(),
+              postDate: formattedDate, // Use the formatted date and time
             }),
           }
         );
-
+  
         if (!response.ok) {
           console.error(`HTTP error! status: ${response.status}`);
           const errorResponse = await response.json();
           console.error("Server response:", errorResponse);
           throw new Error("Failed to post.");
         }
-
+  
         // Fetch updated posts after posting
         fetchPosts();
-
+  
         // Clear input fields after posting
         setNewPostTitle("");
         setNewPostDescription("");
@@ -166,6 +178,9 @@ const BulletinBoard = () => {
       }
     }
   };
+  
+  
+  
 
   // Function to handle deleting a post
   const handleDeletePost = async (postId) => {
