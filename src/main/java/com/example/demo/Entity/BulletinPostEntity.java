@@ -21,7 +21,7 @@ public class BulletinPostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int postId;
 
-    @Column(name = "post_description")
+    @Column(name = "post_description", length = 1250)
     private String postDescription;
 
     @Column(name = "post_date", nullable = false)
@@ -30,8 +30,7 @@ public class BulletinPostEntity {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "admin_id", nullable = false)
     private AdminEntity admin;
-    
-    
+
     @Column(name = "post_title")
     private String postTitle;
 
@@ -40,7 +39,6 @@ public class BulletinPostEntity {
 
     @Column(name = "downvote_count")
     private int downvoteCount;
-
 
     public int getPostId() {
         return postId;
