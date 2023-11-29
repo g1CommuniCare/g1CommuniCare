@@ -45,31 +45,44 @@ public class DocumentRequestController {
         return new ResponseEntity<>(nonDeletedDocumentRequests, HttpStatus.OK);
     }
 
+    // // Endpoint to update the documentStatus of a Document Request
+    // @PutMapping("/{id}/update-status")
+    // public ResponseEntity<DocumentRequestDTO> updateDocumentStatus(@PathVariable
+    // int id,
+    // @RequestParam String newDocumentStatus) {
+    // DocumentRequestEntity updatedDocumentRequest =
+    // documentRequestService.updateDocumentStatus(id,
+    // newDocumentStatus);
+    // DocumentRequestDTO updatedDocumentRequestDTO =
+    // updatedDocumentRequest.toDTO();
+    // return new ResponseEntity<>(updatedDocumentRequestDTO, HttpStatus.OK);
+    // }
+
     // Endpoint to update the documentStatus of a Document Request
     @PutMapping("/{id}/update-status")
-    public ResponseEntity<DocumentRequestDTO> updateDocumentStatus(@PathVariable int id,
-            @RequestParam String newDocumentStatus) {
-        DocumentRequestEntity updatedDocumentRequest = documentRequestService.updateDocumentStatus(id,
-                newDocumentStatus);
-        DocumentRequestDTO updatedDocumentRequestDTO = updatedDocumentRequest.toDTO();
-        return new ResponseEntity<>(updatedDocumentRequestDTO, HttpStatus.OK);
+    public String updateDocumentStatus(@PathVariable int id, @RequestParam String newDocumentStatus) {
+        return documentRequestService.updateDocumentStatus(id, newDocumentStatus);
     }
 
     // Endpoint to set the claimDate of a Document Request
     @PutMapping("/{id}/set-claim-date")
-    public ResponseEntity<DocumentRequestDTO> setClaimDate(@PathVariable int id, @RequestParam String newClaimDate) {
+    public String setClaimDate(@PathVariable int id, @RequestParam String newClaimDate) {
         LocalDate claimDate = LocalDate.parse(newClaimDate); // Convert string to LocalDate
-        DocumentRequestEntity updatedDocumentRequest = documentRequestService.setClaimDate(id, claimDate);
-        DocumentRequestDTO updatedDocumentRequestDTO = updatedDocumentRequest.toDTO();
-        return new ResponseEntity<>(updatedDocumentRequestDTO, HttpStatus.OK);
+        return documentRequestService.setClaimDate(id, claimDate);
     }
 
     // Endpoint to set the denial reason of a Document Request
     @PutMapping("/{id}/set-denial-reason")
-    public ResponseEntity<DocumentRequestDTO> setDenialReason(@PathVariable int id,
-            @RequestParam String newDenialReason) {
-        DocumentRequestEntity updatedDocumentRequest = documentRequestService.setDenialReason(id, newDenialReason);
-        DocumentRequestDTO updatedDocumentRequestDTO = updatedDocumentRequest.toDTO();
-        return new ResponseEntity<>(updatedDocumentRequestDTO, HttpStatus.OK);
+    public String setDenialReason(@PathVariable int id, @RequestParam String newDenialReason) {
+        return documentRequestService.updateDenialReason(id, newDenialReason);
+    }
+
+    // Endpoint to retrieve all Document Requests per Resident
+    @GetMapping("/document-requests-per-resident/{residentId}")
+    public ResponseEntity<List<DocumentRequestEntity>> getAllDocumentRequestsByResidentId(
+            @PathVariable int residentId) {
+        List<DocumentRequestEntity> documentRequestsPerResident = documentRequestService
+                .getAllDocumentRequestsByResidentId(residentId);
+        return new ResponseEntity<>(documentRequestsPerResident, HttpStatus.OK);
     }
 }

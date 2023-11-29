@@ -81,34 +81,47 @@ public class DocumentRequestServices {
     }
 
     // Method to update the documentStatus of a Document Request
-    public DocumentRequestEntity updateDocumentStatus(int id, String newDocumentStatus) {
-        return documentRequestRepository.findById(id)
-                .map(documentRequest -> {
-                    documentRequest.setDocumentStatus(newDocumentStatus);
-                    return documentRequestRepository.save(documentRequest);
-                })
-                .orElseThrow(() -> new RuntimeException("Document Request not found with id: " + id));
+    public String updateDocumentStatus(int id, String newDocumentStatus) {
+        DocumentRequestEntity documentRequest = documentRequestRepository.findBydocreqId(id);
+        if (documentRequest != null) {
+            documentRequest.setDocumentStatus(newDocumentStatus);
+            documentRequestRepository.save(documentRequest);
+            return "Document status updated successfully.";
+        } else {
+            return "Document Request not found with id: " + id;
+        }
     }
 
     // Method to set the claimDate of a Document Request
-    public DocumentRequestEntity setClaimDate(int id, LocalDate newClaimDate) {
+    public String setClaimDate(int id, LocalDate newClaimDate) {
         DocumentRequestEntity documentRequest = documentRequestRepository.findBydocreqId(id);
-        if (documentRequest == null) {
-            throw new RuntimeException("Document Request not found with id: " + id);
+        if (documentRequest != null) {
+            documentRequest.setClaimDate(newClaimDate);
+            documentRequestRepository.save(documentRequest);
+            return "Claim date updated successfully.";
+        } else {
+            return "Document Request not found with id: " + id;
         }
-        documentRequest.setClaimDate(newClaimDate);
-        return documentRequestRepository.save(documentRequest);
     }
 
     // Method to set the denial reason of a Document Request
-    public DocumentRequestEntity setDenialReason(int id, String newDenialReason) {
+    public String updateDenialReason(int id, String newDenialReason) {
         DocumentRequestEntity documentRequest = documentRequestRepository.findBydocreqId(id);
         if (documentRequest != null) {
             documentRequest.setDenialReason(newDenialReason);
-            return documentRequestRepository.save(documentRequest);
+            documentRequestRepository.save(documentRequest);
+            return "Denial reason updated successfully.";
         } else {
-            throw new RuntimeException("Document Request not found with id: " + id);
+            return "Document Request not found with id: " + id;
         }
+    }
+
+    // Method to retrieve all Document Requests of a specific Resident
+    public List<DocumentRequestEntity> getAllDocumentRequestsByResidentId(int residentId) {
+        return documentRequestRepository.findAll()
+                .stream()
+                .filter(documentRequest -> documentRequest.getResident().getResidentId() == residentId)
+                .collect(Collectors.toList());
     }
 
 }
