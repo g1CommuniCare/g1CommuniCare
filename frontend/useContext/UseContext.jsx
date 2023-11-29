@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const data = await response.json();
                 setUser(data);
-                // console.log(data.role);
+                console.log(data);
 
                 if (data.role === "admin") {
                     router.push("/admin-dashboard");
