@@ -28,7 +28,7 @@ const BulletinPost = ({ post, onDelete }) => {
 
   return (
     <div
-      className="bg-white shadow-lg rounded-lg p-6 my-4 w-11/12"
+      className="bg-white shadow-lg rounded-lg p-6 my-4 w-full"
       style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
     >
       <div className="flex items-center space-x-4">
@@ -75,7 +75,7 @@ const BulletinPost = ({ post, onDelete }) => {
 const BulletinBoard = () => {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 5;
+  const postsPerPage = 3;
 
   const { user } = useAuth();
   const adminId = user.id;
@@ -105,13 +105,13 @@ const BulletinBoard = () => {
         const dateB = new Date(...b.postDate);
         return dateB - dateA;
       });
-
+  
       setPosts(data);
     } catch (error) {
       console.error("Failed to fetch posts:", error);
     }
   };
-
+  
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -182,27 +182,33 @@ const BulletinBoard = () => {
   
   
 
-  // Function to handle deleting a post
-  const handleDeletePost = async (postId) => {
+// Function to handle soft deleting a post
+const handleDeletePost = async (postId) => {
+  const shouldDelete = window.confirm(
+    "Are you sure you want to delete this post?"
+  );
+  if (shouldDelete) {
     try {
       const response = await fetch(
-        `http://localhost:8080/bulletin/deletePost/${postId}`,
+        `http://localhost:8080/bulletin/${postId}/delete`,
         {
-          method: "DELETE",
+          method: "PUT",
         }
       );
 
       if (!response.ok) {
         console.error(`HTTP error! status: ${response.status}`);
-        throw new Error("Failed to delete post.");
+        throw new Error("Failed to soft delete post.");
       }
 
-      // Fetch updated posts after deletion
+      // Fetch updated posts after soft deletion
       fetchPosts();
     } catch (error) {
-      console.error("Failed to delete post:", error);
+      console.error("Failed to soft delete post:", error);
     }
-  };
+  }
+};
+
 
   // Filter posts based on search term
   const filteredPosts = posts.filter((post) => {
@@ -221,7 +227,7 @@ const BulletinBoard = () => {
   return (
     <div className="w-full h-full">
       <header
-        className="h-72 w-full mb-12 bg-cover text-black"
+        className="h-72 w-full bg-cover text-black"
         style={{ backgroundImage: 'url("images/community-header.png")' }}
       >
         <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
@@ -235,12 +241,12 @@ const BulletinBoard = () => {
         </div>
       </header>
       <div
-        className="h-full w-full bg-cover"
+        className="h-full w-full bg-cover flex justify-center items-center flex-col"
         style={{ backgroundImage: 'url("images/logo1 2.png")' }}
       >
+        <div className="w-11/12 mt-12 mb-8 flex flex-col justify-center items-center">
         <div
-          className="w-90% mx-12 bg-white p-2 mb-2 rounded-md shadow-md"
-          style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+          className="w-full mx-12 bg-[#FFFFFFCC] p-2 mb-2 rounded-md shadow-md"
         >
           <label
             htmlFor="search"
@@ -255,20 +261,13 @@ const BulletinBoard = () => {
               name="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border-gray-300"
+              className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-md border-gray-300"
             />
-            <button
-              type="button"
-              onClick={() => paginate(1)}
-              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium"
-            >
-              Search
-            </button>
           </div>
         </div>
         {/* New Post Form */}
         <div
-          className="w-90% mx-12 bg-white p-2 mb-12 rounded-md shadow-md"
+          className="w-full mx-12 bg-white p-2 mb-12 rounded-md shadow-md"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
         >
           <textarea
@@ -327,6 +326,7 @@ const BulletinBoard = () => {
               Next
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>

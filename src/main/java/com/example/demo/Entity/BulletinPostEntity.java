@@ -51,6 +51,17 @@ public class BulletinPostEntity {
     @Column(name = "vote_type")
     private Map<Integer, VoteType> userVotes = new HashMap<>();
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public int getPostId() {
         return postId;
     }

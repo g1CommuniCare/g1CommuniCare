@@ -85,4 +85,12 @@ public class BulletinPostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    // Soft delete
+    @PutMapping("/{postId}/delete")
+    public ResponseEntity<String> updateBulletinPostIsDeleted(@PathVariable int postId) {
+        String result = bulletinPostServices.updateBulletinPostIsDeleted(postId);
+        HttpStatus status = result.contains("does not exist") ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+        return new ResponseEntity<>(result, status);
+    }
 }

@@ -24,8 +24,12 @@ public class BulletinPostServices {
         this.bulletinPostRepository = bulletinPostRepository;
     }
 
+    // public List<BulletinPostEntity> getAllBulletinPosts() {
+    // return bulletinPostRepository.findAll();
+    // }
+
     public List<BulletinPostEntity> getAllBulletinPosts() {
-        return bulletinPostRepository.findAll();
+        return bulletinPostRepository.findByIsDeletedFalse();
     }
 
     public Optional<BulletinPostEntity> getBulletinPostById(int postId) {
@@ -100,5 +104,18 @@ public class BulletinPostServices {
         post.updateUserVote(userId, isUpvote ? VoteType.UPVOTE : VoteType.DOWNVOTE);
 
         bulletinPostRepository.save(post);
+    }
+
+    // Update the isDeleted flag
+    public String updateBulletinPostIsDeleted(int postId) {
+        BulletinPostEntity bulletinPost = bulletinPostRepository.findById(postId).orElse(null);
+
+        if (bulletinPost != null) {
+            bulletinPost.setDeleted(true); // Assuming 1 represents deleted.
+            bulletinPostRepository.save(bulletinPost);
+            return "Bulletin Post " + postId + " has been marked as deleted.";
+        } else {
+            return "Bulletin Post " + postId + " does not exist.";
+        }
     }
 }
