@@ -183,14 +183,14 @@ export default function Page() {
   const currentFilteredPosts = filteredPosts.slice(indexOfFirstFilteredPost, indexOfLastFilteredPost);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full min-h-full">
       <header
         className="h-72 w-full bg-cover text-black"
         style={{ backgroundImage: 'url("images/community-header.png")' }}
       >
-        <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
+        <div className="flex justify-center flex-col my-auto mx-12 h-full">
           <h1 className="font-bold text-6xl">Community Bulletin</h1>
-          <span className=" flex justify-center font-small text-lg mt-2 mr-96">
+          <span className="flex justify-center font-small text-lg mt-2">
             Stay informed and engaged here. Discover the latest announcements,
             upcoming events, and important news within our barangay. A central
             hub for community updates, ensuring you're always connected to what
@@ -199,7 +199,7 @@ export default function Page() {
         </div>
       </header>
       <div
-        className="h-full w-full bg-cover flex justify-center items-center flex-col"
+        className="w-full bg-cover flex justify-center items-center flex-col"
         style={{ backgroundImage: 'url("images/logo1 2.png")' }}
       >
         <div className="w-11/12 mt-24 flex mb-8 flex-col justify-center items-center">
@@ -242,30 +242,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-      {/* <div
-        className="h-full w-full bg-cover flex justify-center items-center flex-col"
-        style={{ backgroundImage: 'url("images/logo1 2.png")' }}
-      >
-        <div className="w-11/12 mt-12 mb-8 flex flex-col justify-center items-center">
-          <div className="w-full mx-12 bg-[#FFFFFFCC] p-2 mb-2 rounded-md shadow-md">
-                      <label
-            htmlFor="search"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Search:
-          </label>
-          <div className="flex rounded-md shadow-sm">
-            <input
-              type="text"
-              placeholder="Search posts..."
-              className="w-full p-2 border rounded"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
