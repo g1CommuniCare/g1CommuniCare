@@ -94,4 +94,17 @@ public class ResidentServices {
         }
         return null;
     }
+
+    // TURN ISVERIFIED FLAG TO TRUE
+    public String verifyResident(int id) {
+        ResidentEntity resident = residentRepo.findById(id).orElse(null);
+
+        if (resident != null) {
+            resident.setIsVerified(true); // Assuming 1 represents verified.
+            residentRepo.save(resident);
+            return "Resident " + id + " has been verified.";
+        } else {
+            return "Resident " + id + " does not exist.";
+        }
+    }
 }

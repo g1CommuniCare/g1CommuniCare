@@ -107,4 +107,13 @@ public class ResidentController {
                 .contentType(mediaType)
                 .body(resident.getProfileImage());
     }
+
+    // VERIFY RESIDENT
+    @PostMapping("/verify/{id}")
+    public ResponseEntity<String> verifyResident(@PathVariable int id) {
+        String result = residentService.verifyResident(id);
+        HttpStatus status = result.startsWith("Resident") ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(result, status);
+    }
+
 }
