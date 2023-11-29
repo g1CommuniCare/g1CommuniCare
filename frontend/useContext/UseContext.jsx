@@ -55,17 +55,20 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ username, password }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
-
-        if (data.verified === true) {
+  
+        // Directly proceed if the user is an admin
+        if (data.role === "admin") {
           setUser(data);
-          //   console.log(data);
-
-          if (data.role === "admin") {
-            router.push("/admin-dashboard");
-          } else if (data.role === "resident") {
+          router.push("/admin-dashboard");
+        }
+        // For other roles, check if the user is verified
+        else if (data.verified === true) {
+          setUser(data);
+          // Navigate based on role
+          if (data.role === "resident") {
             router.push("/dashboard");
           }
         } else {
@@ -81,6 +84,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   }
+  
 
   function logout() {
     setUser(null);
