@@ -3,7 +3,7 @@ import { useAuth } from "@/useContext/UseContext";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 
-const BulletinPost = ({ post, onDelete }) => {
+const BulletinPost = ({ post, onDelete, user }) => {
   const postDate = new Date(...post.postDate);
   const formattedDate = postDate.toLocaleString("en-US", {
     year: "numeric",
@@ -78,7 +78,6 @@ const BulletinBoard = () => {
   const postsPerPage = 3;
 
   const { user } = useAuth();
-  const adminId = user.id;
 
   // State for search term
   const [searchTerm, setSearchTerm] = useState("");
@@ -146,7 +145,7 @@ const BulletinBoard = () => {
         const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
         
         const response = await fetch(
-          `http://localhost:8080/bulletin/createPost?adminId=${adminId}`,
+          `http://localhost:8080/bulletin/createPost?adminId=${user.adminId}`,
           {
             method: "POST",
             headers: {

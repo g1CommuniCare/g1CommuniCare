@@ -66,11 +66,11 @@ public class AdminEntity {
         this.role = "admin";
     }
 
-    public int getId() {
+    public int getadminId() {
         return adminId;
     }
 
-    public void setId(int id) {
+    public void setadminId(int id) {
         this.adminId = id;
     }
 

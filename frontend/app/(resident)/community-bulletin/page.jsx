@@ -115,6 +115,8 @@ export default function Page() {
   const postsPerPage = 3;
 
   const { user } = useAuth();
+  const id = user.residentId;
+  console.log("resident id: ", id);
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;

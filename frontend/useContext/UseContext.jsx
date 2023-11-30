@@ -18,31 +18,44 @@ export const AuthProvider = ({ children }) => {
                 username,
                 password,
             });
-
+    
             if (response.status === 200) {
-                const { firstName, lastName, role } = response.data;
-
-                setUser({ firstName, lastName, role });
-                localStorage.setItem("user", JSON.stringify({ firstName, lastName, role }));
-
-                console.log({ firstName, lastName, role });
-
-                if (role === "admin") {
-                    router.push("/admin-dashboard");
-                } else if (role === "resident") {
-                    router.push("/dashboard");
+                const { firstName, lastName, role, adminId, residentId, isVerified } = response.data;
+    
+                // Create a user object based on the role
+                let user;
+                if (role === 'admin') {
+                    user = { firstName, lastName, role, adminId };
+                    setUser(user);
+                    localStorage.setItem('user', JSON.stringify(user));
+                    router.push('/admin-dashboard');
+                } else if (role === 'resident') {
+                    user = { firstName, lastName, role, residentId, isVerified };
+    
+                    if (isVerified) {
+                        setUser(user);
+                        localStorage.setItem('user', JSON.stringify(user));
+                        router.push('/dashboard');
+                    } else {
+                        console.log('Resident is not verified');
+                        // Handle the unverified resident case, perhaps show a message or redirect to a different page
+                    }
+                } else {
+                    throw new Error(`Unknown role: ${role}`);
                 }
-
-                return { firstName, lastName, role };
+    
+                console.log(user);
+                return user;
             } else {
                 console.log(`Failed to login for role ${role}`);
                 throw new Error(`Failed to login for role ${role}`);
             }
         } catch (error) {
-            console.error("An error occurred during login:", error.message);
+            console.error('An error occurred during login:', error.message);
             throw error;
         }
     }
+    
 
     function logout() {
         window.localStorage.removeItem("user");

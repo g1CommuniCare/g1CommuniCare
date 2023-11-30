@@ -167,7 +167,7 @@ public class ResidentEntity {
         this.role = "resident";
     }
 
-    public Boolean isVerified() {
+    public Boolean getIsVerified() {
         return isVerified;
     }
 
