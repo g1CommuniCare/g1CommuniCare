@@ -16,4 +16,6 @@ public interface AdminRepository extends JpaRepository<AdminEntity, Integer> {
     // PARA NI SA SEARCH ADMIN IF NEEDED
     List<AdminEntity> findByUsername(String username);
 
+    List<AdminEntity> findByAdminId(int adminId);
+
 }

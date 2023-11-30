@@ -79,6 +79,11 @@ public class ResidentServices {
         return residentRepo.findByUsername(username);
     }
 
+    // FIND RESIDENT BY ID
+    public List<ResidentEntity> findResidentsById(int id) {
+        return residentRepo.findByResidentId(id);
+    }
+
     // UPDATE RESIDENT PROFILE IMAGE
     public void updateResidentImage(ResidentEntity resident, byte[] imageBytes, String imageFormat) {
         resident.setProfileImage(imageBytes);
@@ -86,9 +91,9 @@ public class ResidentServices {
         residentRepo.save(resident);
     }
 
-    // GET RESIDENT PROFILE IMAGE
-    public byte[] getResidentImageByUsername(String username) {
-        List<ResidentEntity> residents = residentRepo.findByUsername(username);
+    // GET RESIDENT PROFILE IMAGE BY ID
+    public byte[] getResidentImageById(int id) {
+        List<ResidentEntity> residents = residentRepo.findByResidentId(id);
         if (!residents.isEmpty()) {
             return residents.get(0).getProfileImage(); // Assuming the first match is the desired one
         }

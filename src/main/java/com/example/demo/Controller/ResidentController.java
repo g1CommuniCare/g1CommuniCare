@@ -67,15 +67,15 @@ public class ResidentController {
         return residentService.findResidents(username);
     }
 
-    // UPLOAD RESIDENT PROFILE IMAGE
-    @PostMapping("/{username}/uploadImage")
-    public ResponseEntity<String> uploadResidentImage(@PathVariable String username,
+    // UPLOAD RESIDENT PROFILE IMAGE BY ID
+    @PostMapping("/{residentId}/uploadImage")
+    public ResponseEntity<String> uploadResidentImageById(@PathVariable int residentId,
             @RequestParam("image") MultipartFile file) {
         try {
             String mimeType = file.getContentType();
             String imageFormat = mimeType != null && mimeType.split("/")[1].equalsIgnoreCase("png") ? "png" : "jpeg";
 
-            List<ResidentEntity> residents = residentService.findResidents(username);
+            List<ResidentEntity> residents = residentService.findResidentsById(residentId);
             if (residents.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
@@ -88,10 +88,10 @@ public class ResidentController {
         }
     }
 
-    // GET RESIDENT PROFILE IMAGE
-    @GetMapping(value = "/{username}/image")
-    public ResponseEntity<byte[]> getResidentImage(@PathVariable String username) {
-        List<ResidentEntity> residents = residentService.findResidents(username);
+    // GET RESIDENT PROFILE IMAGE BY ID
+    @GetMapping(value = "/{residentId}/image")
+    public ResponseEntity<byte[]> getResidentImageById(@PathVariable int residentId) {
+        List<ResidentEntity> residents = residentService.findResidentsById(residentId);
         if (residents.isEmpty() || residents.get(0).getProfileImage() == null) {
             return ResponseEntity.notFound().build();
         }

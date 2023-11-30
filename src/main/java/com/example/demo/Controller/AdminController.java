@@ -81,14 +81,14 @@ public class AdminController {
     }
 
     // UPLOAD ADMIN PROFILE IMAGE
-    @PostMapping("/{username}/uploadImage")
-    public ResponseEntity<String> uploadAdminImage(@PathVariable String username,
+    @PostMapping("/{adminId}/uploadImage")
+    public ResponseEntity<String> uploadAdminImage(@PathVariable int adminId,
             @RequestParam("image") MultipartFile file) {
         try {
             String mimeType = file.getContentType();
             String imageFormat = mimeType != null && mimeType.split("/")[1].equalsIgnoreCase("png") ? "png" : "jpeg";
 
-            List<AdminEntity> admins = adminService.findByUsername(username);
+            List<AdminEntity> admins = adminService.findByAdminId(adminId);
             if (admins.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
@@ -99,12 +99,13 @@ public class AdminController {
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the image");
         }
+
     }
 
-    // GET RESIDENT PROFILE IMAGE
-    @GetMapping(value = "/{username}/image")
-    public ResponseEntity<byte[]> getAdminImage(@PathVariable String username) {
-        List<AdminEntity> admins = adminService.findByUsername(username);
+    // GET RESIDENT PROFILE IMAGE BY ID
+    @GetMapping(value = "/{adminId}/image")
+    public ResponseEntity<byte[]> getAdminImage(@PathVariable int adminId) {
+        List<AdminEntity> admins = adminService.findByAdminId(adminId);
         if (admins.isEmpty() || admins.get(0).getProfileImage() == null) {
             return ResponseEntity.notFound().build();
         }

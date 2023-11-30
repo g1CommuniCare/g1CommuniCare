@@ -103,16 +103,21 @@ public class AdminServices {
         return adminRepo.findByUsername(username);
     }
 
-    // UPDATE RESIDENT PROFILE IMAGE
+    // FIND ADMIN BY ID
+    public List<AdminEntity> findByAdminId(int adminId) {
+        return adminRepo.findByAdminId(adminId);
+    }
+
+    // UPDATE ADMIN PROFILE IMAGE
     public void updateAdminImage(AdminEntity admin, byte[] imageBytes, String imageFormat) {
         admin.setProfileImage(imageBytes);
         admin.setImageFormat(imageFormat);
         adminRepo.save(admin);
     }
 
-    // GET RESIDENT PROFILE IMAGE
-    public byte[] getAdminImageByUsername(String username) {
-        List<AdminEntity> admin = adminRepo.findByUsername(username);
+    // GET RESIDENT PROFILE IMAGE BY ID
+    public byte[] getAdminImageById(int adminId) {
+        List<AdminEntity> admin = adminRepo.findByAdminId(adminId);
         if (!admin.isEmpty()) {
             return admin.get(0).getProfileImage(); // Assuming the first match is the desired one
         }

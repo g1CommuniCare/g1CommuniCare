@@ -1,10 +1,13 @@
 "use client";
 import React, { useState } from 'react';
+import { useAuth } from "@/useContext/UseContext";
 
 export default function Account() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageURL, setImageURL] = useState(null);
-    const username = 'bianj'; // Replace with actual username or dynamic username
+    const {user} = useAuth();
+    const id = user.adminId;
+    console.log(id);
 
     const handleFileSelect = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -16,7 +19,7 @@ export default function Account() {
             formData.append('image', selectedFile);
 
             try {
-                const uploadResponse = await fetch(`http://localhost:8080/admin/${username}/uploadImage`, {
+                const uploadResponse = await fetch(`http://localhost:8080/admin/${user.adminId}/uploadImage`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -38,7 +41,7 @@ export default function Account() {
 
     const fetchImage = async () => {
         try {
-            const imageResponse = await fetch(`http://localhost:8080/admin/${username}/image`);
+            const imageResponse = await fetch(`http://localhost:8080/admin/${user.adminId}/image`);
             if (!imageResponse.ok) {
                 throw new Error(`HTTP error! status: ${imageResponse.status}`);
             }

@@ -1,9 +1,8 @@
 "use client";
 import { useAuth } from "@/useContext/UseContext";
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
 
-const BulletinPost = ({ post, onDelete, user }) => {
+const BulletinPost = ({ post, onDelete }) => {
   const postDate = new Date(...post.postDate);
   const formattedDate = postDate.toLocaleString("en-US", {
     year: "numeric",
