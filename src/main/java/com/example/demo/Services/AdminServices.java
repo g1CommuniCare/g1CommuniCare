@@ -74,7 +74,7 @@ public class AdminServices {
         AdminEntity admin = adminRepo.findByUsernameAndPassword(username, password);
 
         if (admin != null && admin.isDeleted() == false) {
-            if (admin.getPassword().equals(password)) {
+            if (admin.getPassword().equals(password) && admin.getUsername().equals(username)) {
                 admin.setIsActive(true);
                 return adminRepo.save(admin);
             }

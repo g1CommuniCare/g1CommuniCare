@@ -80,39 +80,87 @@ public class DocumentRequestServices {
                 .collect(Collectors.toList());
     }
 
+    // // Method to update the documentStatus of a Document Request
+    // public String updateDocumentStatus(int id, String newDocumentStatus) {
+    // DocumentRequestEntity documentRequest =
+    // documentRequestRepository.findBydocreqId(id);
+    // if (documentRequest != null) {
+    // documentRequest.setDocumentStatus(newDocumentStatus);
+    // documentRequestRepository.save(documentRequest);
+    // return "Document status updated successfully.";
+    // } else {
+    // return "Document Request not found with id: " + id;
+    // }
+    // }
+
     // Method to update the documentStatus of a Document Request
     public String updateDocumentStatus(int id, String newDocumentStatus) {
-        DocumentRequestEntity documentRequest = documentRequestRepository.findBydocreqId(id);
-        if (documentRequest != null) {
-            documentRequest.setDocumentStatus(newDocumentStatus);
-            documentRequestRepository.save(documentRequest);
-            return "Document status updated successfully.";
+        List<DocumentRequestEntity> documentRequests = documentRequestRepository.findBydocreqId(id);
+
+        if (!documentRequests.isEmpty()) {
+            for (DocumentRequestEntity documentRequest : documentRequests) {
+                documentRequest.setDocumentStatus(newDocumentStatus);
+                documentRequestRepository.save(documentRequest);
+            }
+            return "Document status updated successfully for " + documentRequests.size() + " document requests.";
         } else {
-            return "Document Request not found with id: " + id;
+            return "Document Requests not found with id: " + id;
         }
     }
+
+    // // Method to set the claimDate of a Document Request
+    // public String setClaimDate(int id, LocalDate newClaimDate) {
+    // DocumentRequestEntity documentRequest =
+    // documentRequestRepository.findBydocreqId(id);
+    // if (documentRequest != null) {
+    // documentRequest.setClaimDate(newClaimDate);
+    // documentRequestRepository.save(documentRequest);
+    // return "Claim date updated successfully.";
+    // } else {
+    // return "Document Request not found with id: " + id;
+    // }
+    // }
 
     // Method to set the claimDate of a Document Request
     public String setClaimDate(int id, LocalDate newClaimDate) {
-        DocumentRequestEntity documentRequest = documentRequestRepository.findBydocreqId(id);
-        if (documentRequest != null) {
-            documentRequest.setClaimDate(newClaimDate);
-            documentRequestRepository.save(documentRequest);
-            return "Claim date updated successfully.";
+        List<DocumentRequestEntity> documentRequests = documentRequestRepository.findBydocreqId(id);
+
+        if (!documentRequests.isEmpty()) {
+            for (DocumentRequestEntity documentRequest : documentRequests) {
+                documentRequest.setClaimDate(newClaimDate);
+                documentRequestRepository.save(documentRequest);
+            }
+            return "Claim date updated successfully for " + documentRequests.size() + " document requests.";
         } else {
-            return "Document Request not found with id: " + id;
+            return "Document Requests not found with id: " + id;
         }
     }
 
+    // // Method to set the denial reason of a Document Request
+    // public String updateDenialReason(int id, String newDenialReason) {
+    // DocumentRequestEntity documentRequest =
+    // documentRequestRepository.findBydocreqId(id);
+    // if (documentRequest != null) {
+    // documentRequest.setDenialReason(newDenialReason);
+    // documentRequestRepository.save(documentRequest);
+    // return "Denial reason updated successfully.";
+    // } else {
+    // return "Document Request not found with id: " + id;
+    // }
+    // }
+
     // Method to set the denial reason of a Document Request
     public String updateDenialReason(int id, String newDenialReason) {
-        DocumentRequestEntity documentRequest = documentRequestRepository.findBydocreqId(id);
-        if (documentRequest != null) {
-            documentRequest.setDenialReason(newDenialReason);
-            documentRequestRepository.save(documentRequest);
-            return "Denial reason updated successfully.";
+        List<DocumentRequestEntity> documentRequests = documentRequestRepository.findBydocreqId(id);
+
+        if (!documentRequests.isEmpty()) {
+            for (DocumentRequestEntity documentRequest : documentRequests) {
+                documentRequest.setDenialReason(newDenialReason);
+                documentRequestRepository.save(documentRequest);
+            }
+            return "Denial reason updated successfully for " + documentRequests.size() + " document requests.";
         } else {
-            return "Document Request not found with id: " + id;
+            return "Document Requests not found with id: " + id;
         }
     }
 
@@ -124,4 +172,15 @@ public class DocumentRequestServices {
                 .collect(Collectors.toList());
     }
 
+    // Upload Valid ID Image
+    public void uploadValidIdImage(DocumentRequestEntity documentRequest, byte[] imageBytes, String imageFormat) {
+        documentRequest.setValidId(imageBytes);
+        documentRequest.setImageFormat(imageFormat);
+        documentRequestRepository.save(documentRequest);
+    }
+
+    // Find Document Request by ID
+    public List<DocumentRequestEntity> findByDocreqId(int docreqId) {
+        return documentRequestRepository.findBydocreqId(docreqId);
+    }
 }

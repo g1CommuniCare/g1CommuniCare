@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.DTO.DocumentRequestDTO;
 import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Services.DocumentRequestServices;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -85,4 +87,34 @@ public class DocumentRequestController {
                 .getAllDocumentRequestsByResidentId(residentId);
         return new ResponseEntity<>(documentRequestsPerResident, HttpStatus.OK);
     }
+
+    // Endpoint to retrieve all Document Requests
+    @GetMapping("/all-document-requests")
+    public ResponseEntity<List<DocumentRequestEntity>> getAllDocumentRequests() {
+        List<DocumentRequestEntity> documentRequests = documentRequestService.getAllDocumentRequests();
+        return new ResponseEntity<>(documentRequests, HttpStatus.OK);
+    }
+
+    // Upload Valid ID Image
+    @PostMapping("/{docreqId}/uploadValidId")
+    public ResponseEntity<String> uploadValidId(@PathVariable int docreqId, @RequestParam("image") MultipartFile file) {
+        try {
+            String mimeType = file.getContentType();
+            String imageFormat = mimeType != null && mimeType.split("/")[1].equalsIgnoreCase("png") ? "png" : "jpeg";
+
+            List<DocumentRequestEntity> documentRequests = documentRequestService.findByDocreqId(docreqId);
+            if (documentRequests.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            DocumentRequestEntity documentRequest = documentRequests.get(0); // Assuming the first match is the desired
+                                                                             // one
+
+            documentRequestService.uploadValidIdImage(documentRequest, file.getBytes(), imageFormat);
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Error occurred while uploading the image");
+        }
+
+    }
+
 }

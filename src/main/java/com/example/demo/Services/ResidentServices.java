@@ -56,7 +56,7 @@ public class ResidentServices {
 
         if (resident != null && resident.isDeleted() == false) {
             // Check if the resident exists and is not deleted
-            if (resident.getPassword().equals(password)) {
+            if (resident.getPassword().equals(password) && resident.getUsername().equals(username)) {
                 return resident;
             }
         }
