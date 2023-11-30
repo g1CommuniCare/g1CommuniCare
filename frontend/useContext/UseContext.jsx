@@ -1,104 +1,61 @@
 "use client";
 
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import useLocalStorage from "./useLocalStorage";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+    const [user, setUser] = useLocalStorage("user", null);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
-  async function getAllUsers(endpoint) {
-    const response = await fetch(`http://localhost:8080/${endpoint}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    async function login(username, password, role) {
+        try {
+            const response = await axios.post(`http://localhost:8080/${role}/login`, {
+                username,
+                password,
+            });
 
-    if (response.ok) {
-      const data = await response.json();
-      setUser(data);
+            if (response.status === 200) {
+                const { firstName, lastName, role } = response.data;
 
-      const userDetails = data.map((user) => ({
-        username: user.username,
-        role: user.role,
-      }));
+                setUser({ firstName, lastName, role });
+                localStorage.setItem("user", JSON.stringify({ firstName, lastName, role }));
 
-      // console.log(userDetails);
-    } else {
-      console.log(`Failed to fetch data for ${endpoint}`);
-    }
-  }
+                console.log({ firstName, lastName, role });
 
-  useEffect(() => {
-    getAllUsers("admin/getAllAdmins");
-    getAllUsers("resident/getAllResident");
-  }, []);
+                if (role === "admin") {
+                    router.push("/admin-dashboard");
+                } else if (role === "resident") {
+                    router.push("/dashboard");
+                }
 
-  async function loginAdmin(username, password) {
-    await login("admin", username, password);
-  }
-
-  async function loginResident(username, password) {
-    await login("resident", username, password);
-  }
-
-  async function login(role, username, password) {
-    try {
-      const response = await fetch(`http://localhost:8080/${role}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-  
-        // Directly proceed if the user is an admin
-        if (data.role === "admin") {
-          setUser(data);
-          router.push("/admin-dashboard");
+                return { firstName, lastName, role };
+            } else {
+                console.log(`Failed to login for role ${role}`);
+                throw new Error(`Failed to login for role ${role}`);
+            }
+        } catch (error) {
+            console.error("An error occurred during login:", error.message);
+            throw error;
         }
-        // For other roles, check if the user is verified
-        else if (data.verified === true) {
-          setUser(data);
-          // Navigate based on role
-          if (data.role === "resident") {
-            router.push("/dashboard");
-          }
-        } else {
-          alert("Login failed. User is not verified.");
-        }
-      } else {
-        const errorData = await response.json();
-        console.error("Login failed. Server response:", errorData);
-      }
-    } catch (error) {
-      console.error("An error occurred during login:", error);
-    } finally {
-      setLoading(false);
     }
-  }
-  
 
-  function logout() {
-    setUser(null);
-  }
+    function logout() {
+        window.localStorage.removeItem("user");
+        setUser(null);
+    }
 
-  return (
-    <AuthContext.Provider
-      value={{ user, loading, loginAdmin, loginResident, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, loading, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export function useAuth() {
-  return useContext(AuthContext);
+    return useContext(AuthContext);
 }

@@ -9,7 +9,8 @@ export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const { loginAdmin, loginResident } = useAuth();
+    const { user, login } = useAuth();
+    const [data, setData] = useState(null)
 
     function handleUsername(e) {
         setUsername(e.target.value);
@@ -26,9 +27,18 @@ export default function Login() {
     async function submitLogin(e) {
         e.preventDefault();
 
-        await loginAdmin(username, password);
-        await loginResident(username, password);
+        try {
+            const residentLogin = login(username, password, "resident");
+            const adminLogin = login(username, password, "admin");
+
+            await Promise.all([residentLogin, adminLogin]);
+
+            setData({residentLogin, adminLogin})
+        } catch (error) {
+            console.error("An error occurred during login:", error.message);
+        }
     }
+
 
     return (
         <div className="relative flex max-w-[1536px] my-[50px] mx-auto">

@@ -1,37 +1,10 @@
-import AdminFirstRow from "@/app/utils/admin/AdminFirstRow";
 import AdminSecondRow from "@/app/utils/admin/AdminSecondRow";
 import AdminThirdRow from "@/app/utils/admin/AdminThirdRow";
 import "../../css/admin.css";
 
 export default function Dashboard() {
     return (
-        <div className="w-full h-full py-12 px-6">
-            <div className="text-5xl font-bold">Dashboard</div>
-
-            <div className="container mx-auto mt-8 w-full">
-                <div className="flex space-x-5 h-[90px]">
-                    <AdminFirstRow
-                        img={"admin/people-people.png"}
-                        title="Total Users"
-                        numbers="12,233"
-                    />
-
-                    <AdminFirstRow
-                        img={"admin/checked-user-male.png"}
-                        title="Verified Users"
-                        numbers="10,250"
-                    />
-
-                    <AdminFirstRow
-                        img={"admin/delete-user.png"}
-                        title="Pending Users"
-                        numbers="2,028"
-                    />
-
-                    <AdminFirstRow img={"admin/admin.png"} title="Admins" numbers="6" />
-                </div>
-            </div>
-
+        <div className="w-full">
             <div className="container mx-auto mt-8 w-full">
                 <div className="flex space-x-5">
                     <div className="bg-white h-full w-1/2 border border-DDE1E6 p-4">
@@ -62,7 +35,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="container mx-auto mt-8 w-full">
+            <div className="container mx-auto py-8 w-full">
                 <div className="flex space-x-5">
                     <div className="bg-white h-[500px] w-1/2 p-5 border border-DDE1E6">
                         <div className="flex flex-col h-full justify-between">
