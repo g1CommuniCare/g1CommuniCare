@@ -2,7 +2,12 @@ const FirstRow = ({
   firstTitle = "",
   secondTitle = "",
   thirdTitle = "",
-  handleChange = () => {},
+  firstName = "",
+  lastName = "",
+  middleInitial = "",
+  handleFirstName = () => {},
+  handleLastName = () => {},
+  handleMiddleInitial = () => {},
 }) => {
   return (
     <div className="flex gap-8 w-full">
@@ -12,7 +17,8 @@ const FirstRow = ({
           type="text"
           id="firstNameId"
           name="firstName"
-          onChange={handleChange}
+          value={firstName}
+          onChange={handleFirstName}
           required
           className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
         />
@@ -23,7 +29,8 @@ const FirstRow = ({
           type="text"
           id="lastNameId"
           name="lastName"
-          onChange={handleChange}
+          value={lastName}
+          onChange={handleLastName}
           required
           className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
         />
@@ -34,7 +41,8 @@ const FirstRow = ({
           type="text"
           id="middleInitialId"
           name="middleInitial"
-          onChange={handleChange}
+          value={middleInitial}
+          onChange={handleMiddleInitial}
           required
           className="py-1 mt-2 peer relative h-[58px] w-full shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
         />
