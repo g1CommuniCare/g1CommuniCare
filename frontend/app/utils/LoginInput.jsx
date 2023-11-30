@@ -17,7 +17,6 @@ export default function LoginInput({
                     type="text"
                     name="username"
                     value={username}
-                    placeholder="Username"
                     className="bg-[#F2F4F8] h-12 w-full border-b border-slate-200 px-4 text-sm text-slate-500 outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500"
                     onChange={handleUsername}
                 />
@@ -30,7 +29,6 @@ export default function LoginInput({
                     type={showPassword ? "text" : "password"}
                     name="password"
                     value={password}
-                    placeholder="Password"
                     className="bg-[#F2F4F8] h-12 w-full border-b border-slate-200 px-4 text-sm text-slate-500 outline-none transition-all autofill:bg-white peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500"
                     onChange={handlePassword}
                 />
