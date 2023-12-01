@@ -85,7 +85,7 @@ public class ReportsFilingEntity {
         this.reportDate = reportDate;
         this.dateReported = dateReported;
         this.reportDetails = reportDetails;
-        this.reportStatus = reportStatus;
+        this.reportStatus = reportStatus = "Pending";
         this.isDeleted = isDeleted;
         this.reportUpdate = reportUpdate;
     }

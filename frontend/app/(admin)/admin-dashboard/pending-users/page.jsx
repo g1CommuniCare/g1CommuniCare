@@ -34,6 +34,7 @@ export default function PendingUsers() {
 
     async function handleYes() {
         const userId = approvedData.userId;
+        console.log(userId)
         await fetch(`http://localhost:8080/resident/verify/${userId}`, {
             method: "POST", // Assuming you use a PUT request to update the verification status
             headers: {
@@ -61,7 +62,7 @@ export default function PendingUsers() {
         <>
             {isLoading && (
                 <SkeletonTable
-                    title="Verified Users"
+                    title="Pending Users"
                     firstName="First Name"
                     lastName="Last Name"
                     middleInitial="Middle Initial"
@@ -73,7 +74,7 @@ export default function PendingUsers() {
             {data && (
                 <>
                     <TableForUsers
-                        title="Verified Users"
+                        title="Pending Users"
                         firstName="First Name"
                         lastName="Last Name"
                         middleInitial="Middle Initial"

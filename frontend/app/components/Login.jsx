@@ -34,6 +34,7 @@ export default function Login() {
             await Promise.all([residentLogin, adminLogin]);
 
             setData({residentLogin, adminLogin})
+
         } catch (error) {
             console.error("An error occurred during login:", error.message);
         }

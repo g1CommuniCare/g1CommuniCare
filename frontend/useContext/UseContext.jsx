@@ -18,34 +18,47 @@ export const AuthProvider = ({ children }) => {
                 username,
                 password,
             });
-    
+
             if (response.status === 200) {
-                const { firstName, lastName, role, adminId, residentId, isVerified } = response.data;
-    
+                const {
+                    firstName,
+                    lastName,
+                    role,
+                    adminId,
+                    residentId,
+                    isVerified,
+                    ...userDetails
+                } = response.data;
+
                 // Create a user object based on the role
                 let user;
-                if (role === 'admin') {
+                if (role === "admin") {
                     user = { firstName, lastName, role, adminId };
                     setUser(user);
-                    localStorage.setItem('user', JSON.stringify(user));
-                    router.push('/admin-dashboard');
-                } else if (role === 'resident') {
-                    user = { firstName, lastName, role, residentId, isVerified };
+                    localStorage.setItem("user", JSON.stringify(user));
+                    router.push("/admin-dashboard");
+                } else if (role === "resident") {
+                    user = {
+                        firstName,
+                        lastName,
+                        role,
+                        residentId,
+                        isVerified,
+                        ...userDetails,
+                    };
 
-                    console.log(isVerified)
-    
                     if (isVerified) {
                         setUser(user);
-                        localStorage.setItem('user', JSON.stringify(user));
-                        router.push('/dashboard');
+                        localStorage.setItem("user", JSON.stringify(user));
+                        router.push("/dashboard");
                     } else {
-                        console.log('Resident is not verified');
+                        console.log("Resident is not verified");
                         // Handle the unverified resident case, perhaps show a message or redirect to a different page
                     }
                 } else {
                     throw new Error(`Unknown role: ${role}`);
                 }
-    
+
                 console.log(user);
                 return user;
             } else {
@@ -53,11 +66,10 @@ export const AuthProvider = ({ children }) => {
                 throw new Error(`Failed to login for role ${role}`);
             }
         } catch (error) {
-            console.error('An error occurred during login:', error.message);
+            console.error("An error occurred during login:", error.message);
             throw error;
         }
     }
-    
 
     function logout() {
         window.localStorage.removeItem("user");

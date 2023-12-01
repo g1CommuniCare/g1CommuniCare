@@ -23,7 +23,7 @@ export default function AdminSecondRow({
                     <div>
                         <span className="text-[#697077]">{firstRow}</span>
                         <div className="flex items-center">
-                            <img src="admin/green-circle.svg" alt="bullet" />
+                            <img src="/admin/green-circle.svg" alt="bullet" />
                             <span className="font-semibold text-2xl pl-2">{firstRowNumber}</span>
                         </div>
                     </div>
@@ -31,7 +31,7 @@ export default function AdminSecondRow({
                     <div>
                         <span className="text-[#697077]">{secondRow}</span>
                         <div className="flex items-center">
-                            <img src="admin/orange-circle.svg" alt="bullet" />
+                            <img src="/admin/orange-circle.svg" alt="bullet" />
                             <span className="font-semibold text-2xl pl-2">{secondRowNumber}</span>
                         </div>
                     </div>
@@ -39,7 +39,7 @@ export default function AdminSecondRow({
                     <div>
                         <span className="text-[#697077]">{thirdRow}</span>
                         <div className="flex items-center">
-                            <img src="admin/red-circle.svg" alt="bullet" />
+                            <img src="/admin/red-circle.svg" alt="bullet" />
                             <span className="font-semibold text-2xl pl-2">{thirdRowNumber}</span>
                         </div>
                     </div>

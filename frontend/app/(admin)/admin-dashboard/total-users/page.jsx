@@ -14,7 +14,7 @@ export default function TotatUsers() {
         <>
             {isLoading && (
                 <SkeletonTable
-                    title="Verified Users"
+                    title="Total Users"
                     firstName="First Name"
                     lastName="Last Name"
                     middleInitial="Middle Initial"
@@ -25,7 +25,7 @@ export default function TotatUsers() {
             )}
             {data && (
                 <TableForUsers
-                    title="Verified Users"
+                    title="Total Users"
                     firstName="First Name"
                     lastName="Last Name"
                     middleInitial="Middle Initial"

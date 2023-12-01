@@ -14,68 +14,81 @@ export default function TableForUsers({
     showXButton = true,
     handleDeny = () => {},
     idFieldName,
-    data: data,
+    data,
 }) {
     const showAddressColumn = data && data.length > 0 && "address" in data[0];
 
     return (
-        <div>
+        <>
             <h1 className="my-8 text-2xl">{title}</h1>
-            <table className="table-fixed w-full text-center bg-slate-300 border-separate border border-slate-900">
+            <table className="w-full text-center bg-slate-300 border-separate border border-slate-900">
                 <thead>
                     <tr className="text-lg">
-                        <th className="border border-slate-600 p-2">{firstName}</th>
-                        <th className="border border-slate-600 p-2">{lastName}</th>
-                        <th className="border border-slate-600 p-2">{middleInitial}</th>
-                        <th className="border border-slate-600 p-2">{email}</th>
+                        <th className="border border-slate-600 px-2 py-4">{firstName}</th>
+                        <th className="border border-slate-600 px-2 py-4">{lastName}</th>
+                        <th className="border border-slate-600 px-2 py-4">{middleInitial}</th>
+                        <th className="border border-slate-600 px-2 py-4">{email}</th>
                         {showAddressColumn && (
-                            <th className="border border-slate-600 p-2">{address}</th>
+                            <th className="border border-slate-600 px-2 py-4">{address}</th>
                         )}
-                        <th className="border border-slate-600 p-2">{contactNumber}</th>
+                        <th className="border border-slate-600 px-2 py-4">{contactNumber}</th>
                         {showIsVerified && (
-                            <th className="border border-slate-600 p-2">{isVerified}</th>
+                            <th className="border border-slate-600 px-2 py-4">{isVerified}</th>
                         )}
                     </tr>
                 </thead>
-                {data &&
-                    data.map((user) => (
-                        <tbody
-                            key={user[idFieldName]}
-                            className="text-center bg-slate-500 text-white"
-                        >
-                            <tr>
-                                <td className="border border-slate-600 p-3">{user.firstName}</td>
-                                <td className="border border-slate-600 p-3">{user.lastName}</td>
-                                <td className="border border-slate-600 p-3">
+                <tbody>
+                    {data &&
+                        data.map((user) => (
+                            <tr
+                                key={user[idFieldName]}
+                                className="text-center w-full bg-slate-500 text-white text-sm"
+                            >
+                                <td className="border border-slate-600 px-3 py-5">
+                                    {user.firstName}
+                                </td>
+                                <td className="border border-slate-600 px-3 py-5">
+                                    {user.lastName}
+                                </td>
+                                <td className="border border-slate-600 px-3 py-5">
                                     {user.middleInitial}
                                 </td>
-                                <td className="border border-slate-600 p-3">{user.email}</td>
+                                <td className="border border-slate-600 px-3 py-5">{user.email}</td>
                                 {showAddressColumn && (
-                                    <td className="border border-slate-600 p-3">{user.address}</td>
+                                    <td className="border border-slate-600 px-3 py-5">
+                                        {user.address}
+                                    </td>
                                 )}
-                                <td className="border border-slate-600 p-3">
+                                <td className="border border-slate-600 px-3 py-5">
                                     {user.contactNumber}
                                 </td>
                                 {showIsVerified && (
-                                    <td className="border border-slate-600 p-3 flex justify-evenly">
+                                    <td className="border border-slate-600">
                                         {showSvg && (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M4.5 12.75l6 6 9-13.5"
-                                                />
-                                            </svg>
+                                            <div className="flex justify-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M4.5 12.75l6 6 9-13.5"
+                                                    />
+                                                </svg>
+                                            </div>
                                         )}
                                         {showCheckButton && (
-                                            <button onClick={() => handleApprove(user.firstName, user.residentId)} className="hover:bg-green-300 hover:animate-pulse p-2 rounded-lg">
+                                            <button
+                                                onClick={() =>
+                                                    handleApprove(user.firstName, user.residentId)
+                                                }
+                                                className="hover:bg-green-300 hover:animate-pulse p-2 rounded-lg"
+                                            >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"
@@ -93,7 +106,10 @@ export default function TableForUsers({
                                             </button>
                                         )}
                                         {showXButton && (
-                                            <button onClick={handleDeny} className="hover:bg-red-300 hover:animate-pulse p-2 rounded-lg">
+                                            <button
+                                                onClick={handleDeny}
+                                                className="hover:bg-red-300 hover:animate-pulse ml-3 p-2 rounded-lg"
+                                            >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"
@@ -113,9 +129,9 @@ export default function TableForUsers({
                                     </td>
                                 )}
                             </tr>
-                        </tbody>
-                    ))}
+                        ))}
+                </tbody>
             </table>
-        </div>
+        </>
     );
 }

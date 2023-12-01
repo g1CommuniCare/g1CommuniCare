@@ -36,7 +36,7 @@ export default function Navbar() {
 
     return (
         <nav className="flex flex-row items-start justify-start w-[310px]">
-            <div className="fixed w-[256px] h-screen justify-start overflow-auto top-[0] bg-white shadow-[4.0px_4.0px_4.0px_rgba(0,0,0,0.30)]">
+            <div className="fixed w-[256px] h-screen justify-start overflow-auto top-[0] left-0 bg-white shadow-[4.0px_4.0px_4.0px_rgba(0,0,0,0.30)]">
                 {user.role === "admin" && (
                     <Link
                         key="admin-dashboard"

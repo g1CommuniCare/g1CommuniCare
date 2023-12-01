@@ -11,7 +11,7 @@ export default function Admins() {
         <>
             {isLoading && (
                 <SkeletonTable
-                    title="Verified Users"
+                    title="Admins"
                     firstName="First Name"
                     lastName="Last Name"
                     middleInitial="Middle Initial"
@@ -29,7 +29,7 @@ export default function Admins() {
                     email="Email Address"
                     contactNumber="Contact Number"
                     showIsVerified={false}
-                    idFieldName="id"
+                    idFieldName="adminId"
                     data={data}
                 />
             )}
