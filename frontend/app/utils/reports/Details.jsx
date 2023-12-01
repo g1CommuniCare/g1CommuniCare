@@ -1,13 +1,13 @@
 import React from "react";
 
-const Details = ({ firstTitle = "", appointmentDetails = "", handleDetails = () => {} }) => {
+const Details = ({ firstTitle = "", reportDetails = "", handleDetails = () => {} }) => {
     return (
         <div className="flex gap-8 mt-6 ">
             <div className="flex flex-col flex-1 w-3/12">
                 <label htmlFor="address">{firstTitle}</label>
                 <textarea
                     type="text"
-                    value={appointmentDetails}
+                    value={reportDetails}
                     onChange={handleDetails}
                     placeholder="Write report details..."
                     id="address"

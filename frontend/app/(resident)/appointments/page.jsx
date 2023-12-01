@@ -1,10 +1,12 @@
 "use client";
+
 import Details from "@/app/utils/appointments/Details";
 import FirstRow from "@/app/utils/appointments/FirstRow";
 import FourthRow from "@/app/utils/appointments/FourthRow";
 import InputWithDate from "@/app/utils/appointments/InputWithDate";
 import SecondRow from "@/app/utils/appointments/SecondRow";
 import Submit from "@/app/utils/appointments/Submit";
+import Success from "@/app/utils/appointments/Success";
 import ThirdRow from "@/app/utils/appointments/ThirdRow";
 import { useAuth } from "@/useContext/UseContext";
 
@@ -12,6 +14,7 @@ import { useState } from "react";
 
 const Appointment = () => {
   const { user, login } = useAuth();
+
   const [firstName, setFirstName] = useState("");
   const handleFirstName = (e) => {
     setFirstName(e.target.value);
@@ -22,13 +25,13 @@ const Appointment = () => {
     setLastName(e.target.value);
   };
 
-  const middleInitialInput = 4;
+  const middleInitialInput = 3;
   const [middleInitial, setMiddleInitial] = useState("");
   const handleMiddleInitial = (e) => {
     const input = e.target.value;
 
     if (input.length > middleInitialInput) {
-      alert("Input should be 4 characters or less.");
+      alert("Input should be 3 characters or less.");
     } else {
       setMiddleInitial(input);
     }
@@ -48,12 +51,19 @@ const Appointment = () => {
   const handleAddress = (e) => {
     setAddress(e.target.value);
   };
-
+  const [isOthersSelected, setIsOthersSelected] = useState(false);
+  const [otherDepartment, setOtherDepartment] = useState("");
   const [department, setSelectDepartment] = useState("");
   const handleSelectDepartment = (e) => {
-    setSelectDepartment(e.target.value);
+    const selectedDepartment = e.target.value;
+
+    setIsOthersSelected(selectedDepartment === "opt");
+    setSelectDepartment(
+      isOthersSelected ? otherDepartment : selectedDepartment
+    );
   };
   const departmentTypes = [
+    { value: "", label: "" },
     { value: "council", label: "Barangay Council" },
     { value: "health", label: "Health Center" },
     { value: "ss", label: "Social Services" },
@@ -71,6 +81,7 @@ const Appointment = () => {
     setSelectMeetingFormat(e.target.value);
   };
   const meetingTypes = [
+    { value: "", label: "" },
     { value: "person", label: "In-Person" },
     { value: "email", label: "Email Correspondence" },
     { value: "video", label: "Video Conference" },
@@ -93,8 +104,15 @@ const Appointment = () => {
     setDetails(e.target.value);
   };
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const currentDate = new Date();
+    const timezoneOffset = currentDate.getTimezoneOffset(); // in minutes
+    const localDate = new Date(currentDate.getTime() - timezoneOffset * 60000);
+    const formattedCurrentDate = localDate.toISOString();
 
     const data = {
       firstName: firstName,
@@ -103,12 +121,22 @@ const Appointment = () => {
       contactNumber: contactNumber,
       email: email,
       address: address,
-      department: department,
+      department: isOthersSelected ? otherDepartment : department,
       purpose: purpose,
       meetingFormat: meetingFormat,
       meetingDate: `${date}T${time}:00`,
       appointmentDetails: appointmentDetails,
+      dateRequested: formattedCurrentDate,
+      appointmentStatus: "Pending",
     };
+
+    const isConfirmed = window.confirm(
+      "Are you sure you want to submit this appointment request?"
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -126,6 +154,20 @@ const Appointment = () => {
         throw new Error("Failed to submit appointment request");
       }
 
+      setFirstName("");
+      setLastName("");
+      setMiddleInitial("");
+      setContactNumber("");
+      setEmail("");
+      setAddress("");
+      setSelectDepartment("");
+      setPurpose("");
+      setSelectMeetingFormat("");
+      setDate("");
+      setTime("");
+      setDetails("");
+
+      setIsSubmitted(true);
       const responseData = await response.json();
       console.log("Appointment request submitted successfully:", responseData);
     } catch (error) {
@@ -134,13 +176,13 @@ const Appointment = () => {
   };
 
   return (
-    <div className="bg-slate-100 w-full ">
+    <div className="bg-slate-100 w-full h-full">
       <header
         className="h-96 w-full bg-cover text-black mb-8"
         style={{ backgroundImage: 'url("images/appointment-header.png")' }}
       >
-        <div className="flex justify-center flex-col my-auto ml-20 mr-96 h-full">
-          <h1 className="font-bold text-6xl mb-8">Appointments</h1>
+        <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
+          <h1 className="font-bold text-6xl mb-2">Appointments</h1>
           <span className=" flex justify-center font-small text-lg mt-2 mr-96">
             Efficiently schedule and manage appointments here. Seamlessly
             connect with barangay officials and departments for consultations or
@@ -149,72 +191,95 @@ const Appointment = () => {
           </span>
         </div>
       </header>
-      <div className="bg-slate-100 w-full pl-20 pr-80">
-        <form onSubmit={handleSubmit} className="pb-20">
-          {/* FIRST ROW */}
-          <FirstRow
-            firstTitle="First Name"
-            firstName={firstName}
-            handleFirstName={handleFirstName}
-            secondTitle="Last Name"
-            lastName={lastName}
-            handleLastName={handleLastName}
-            thirdTitle="Middle I."
-            middleInitial={middleInitial}
-            handleMiddleInitial={handleMiddleInitial}
-          />
+      {isSubmitted ? (
+        <Success />
+      ) : (
+        <div className="px-12 py-8 w-3/4">
+          <form onSubmit={handleSubmit} className="pb-20">
+            {/* FIRST ROW */}
+            <FirstRow
+              firstTitle="First Name"
+              firstName={firstName}
+              handleFirstName={handleFirstName}
+              secondTitle="Last Name"
+              lastName={lastName}
+              handleLastName={handleLastName}
+              thirdTitle="Middle I."
+              middleInitial={middleInitial}
+              handleMiddleInitial={handleMiddleInitial}
+            />
 
-          {/* SECOND ROW */}
-          <SecondRow
-            firstTitle="Contact Information"
-            contactNumber={contactNumber}
-            handleContactNumber={handleContactNumber}
-            secondTitle="Email Address"
-            email={email}
-            handleEmail={handleEmail}
-          />
+            {/* SECOND ROW */}
+            <SecondRow
+              firstTitle="Contact Information"
+              contactNumber={contactNumber}
+              handleContactNumber={handleContactNumber}
+              secondTitle="Email Address"
+              email={email}
+              handleEmail={handleEmail}
+            />
 
-          {/* THIRD ROW */}
-          <ThirdRow
-            firstTitle="Address"
-            address={address}
-            handleAddress={handleAddress}
-          />
+            {/* THIRD ROW */}
+            <ThirdRow
+              firstTitle="Address"
+              address={address}
+              handleAddress={handleAddress}
+            />
 
-          {/* FOURTH ROW */}
-          <FourthRow
-            firstTitle="Department"
-            department={department}
-            handleSelectDepartment={handleSelectDepartment}
-            departmentTypes={departmentTypes}
-            secondTitle="Purpose"
-            purpose={purpose}
-            handlePurpose={handlePurpose}
-          />
+            {/* FOURTH ROW */}
+            <FourthRow
+              firstTitle="Department"
+              department={department}
+              handleSelectDepartment={handleSelectDepartment}
+              departmentTypes={departmentTypes}
+              secondTitle="Purpose"
+              purpose={purpose}
+              handlePurpose={handlePurpose}
+            />
 
-          {/* FIFTH ROW */}
-          <InputWithDate
-            firstTitle="Meeting Format"
-            meetingFormat={meetingFormat}
-            handleSelectMeetingFormat={handleSelectMeetingFormat}
-            meetingTypes={meetingTypes}
-            secondTitle="Date"
-            date={date}
-            handleDate={handleDate}
-            thirdTitle="Time"
-            time={time}
-            handleTime={handleTime}
-          />
+            {/* Render text field for additional details if "Others" is selected */}
+            {isOthersSelected && (
+              <div className="flex gap-8 mt-12 mb-12">
+                <div className="h-[58px] w-5/12 ">
+                  <div className="flex flex-col flex-1">
+                    <label htmlFor="otherDetails">Specify Department</label>
+                    <input
+                      type="text"
+                      id="otherDetails"
+                      name="otherDetails"
+                      value={otherDepartment}
+                      onChange={(e) => setOtherDepartment(e.target.value)}
+                      className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {/* SIXTH ROW */}
-          <Details
-            firstTitle="Details"
-            appointmentDetails={appointmentDetails}
-            handleDetails={handleDetails}
-          />
-          <Submit />
-        </form>
-      </div>
+            {/* FIFTH ROW */}
+            <InputWithDate
+              firstTitle="Meeting Format"
+              meetingFormat={meetingFormat}
+              handleSelectMeetingFormat={handleSelectMeetingFormat}
+              meetingTypes={meetingTypes}
+              secondTitle="Date"
+              date={date}
+              handleDate={handleDate}
+              thirdTitle="Time"
+              time={time}
+              handleTime={handleTime}
+            />
+
+            {/* SIXTH ROW */}
+            <Details
+              firstTitle="Details"
+              appointmentDetails={appointmentDetails}
+              handleDetails={handleDetails}
+            />
+            <Submit />
+          </form>
+        </div>
+      )}
     </div>
   );
 };

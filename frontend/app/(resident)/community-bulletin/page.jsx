@@ -187,12 +187,12 @@ export default function Page() {
   return (
     <div className="w-full min-h-full">
       <header
-        className="h-72 w-full bg-cover text-black"
+        className="h-96 w-full bg-cover text-black"
         style={{ backgroundImage: 'url("images/community-header.png")' }}
       >
-        <div className="flex justify-center flex-col my-auto mx-12 h-full">
+        <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
           <h1 className="font-bold text-6xl">Community Bulletin</h1>
-          <span className="flex justify-center font-small text-lg mt-2">
+          <span className="flex justify-center font-small text-lg mt-2 mr-96">
             Stay informed and engaged here. Discover the latest announcements,
             upcoming events, and important news within our barangay. A central
             hub for community updates, ensuring you're always connected to what
