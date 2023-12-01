@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function SubNavbar() {
     return (
-        <div>
+        <>
             <div className="text-5xl pb-10 font-bold">Dashboard</div>
             <div className="flex space-x-5 h-[90px]">
                 <Link
@@ -46,6 +46,6 @@ export default function SubNavbar() {
                     <AdminFirstRow img={"/admin/admin.png"} title="Admins" numbers="6" />
                 </Link>
             </div>
-        </div>
+        </>
     );
 }

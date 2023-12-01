@@ -31,6 +31,8 @@ export const AuthProvider = ({ children }) => {
                     router.push('/admin-dashboard');
                 } else if (role === 'resident') {
                     user = { firstName, lastName, role, residentId, isVerified };
+
+                    console.log(isVerified)
     
                     if (isVerified) {
                         setUser(user);

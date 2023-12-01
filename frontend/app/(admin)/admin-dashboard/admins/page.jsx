@@ -1,14 +1,11 @@
 "use client";
 
+import useFetch from "@/app/api/FetchData";
 import SkeletonTable from "@/app/components/SkeletonTable";
 import TableForUsers from "@/app/components/admin/TableForUsers";
-import useFetch from "@/app/utils/FetchData";
 
 export default function Admins() {
-    const { data, isLoading, error } = useFetch(
-        "http://localhost:8080/admin/getAllAdmins",
-        2000
-    );
+    const { data, isLoading, error } = useFetch("http://localhost:8080/admin/getAllAdmins", 2000);
 
     return (
         <>
