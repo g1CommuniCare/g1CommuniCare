@@ -117,4 +117,16 @@ public class DocumentRequestController {
 
     }
 
+    // Get Document Request by ID
+    @GetMapping("/doc-req/{docreqId}")
+    public ResponseEntity<DocumentRequestEntity> getDocumentRequestById(@PathVariable int docreqId) {
+        List<DocumentRequestEntity> documentRequests = documentRequestService.findByDocreqId(docreqId);
+        if (documentRequests.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        DocumentRequestEntity documentRequest = documentRequests.get(0); // Assuming the first match is the desired
+                                                                         // one
+        return ResponseEntity.ok(documentRequest);
+    }
+
 }
