@@ -11,7 +11,7 @@ const Success = () => {
     <div className="h-96 w-full bg-cover text-black ">
       <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
         <h1 className="font-bold text-5xl mb-8">
-          Appointment Request Submitted Successfully!
+          Request Submitted Successfully!
         </h1>
         <span className=" flex justify-center font-small text-lg mt-2 mr-96">
           Your appointment request has been successfully submitted. We will

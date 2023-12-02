@@ -59,7 +59,7 @@ const Report = () => {
     setSelectReport(isOthersSelected ? otherReportDetails : selectedReportType);
   };
   const reportTypes = [
-    { value: "", label: "" },
+    { value: "", label: "-- Select a Report Type --" },
     { value: "noise", label: "Noise Complaint" },
     { value: "road", label: "Road Problems" },
     { value: "sanitatioon", label: "Sanitation Problems" },
