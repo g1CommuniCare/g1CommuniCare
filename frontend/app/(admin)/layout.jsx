@@ -19,16 +19,10 @@ export default function layout({ children }) {
         }
     }, [user, router]);
 
-    function handleLogout() {
-        logout();
-    }
-
     return (
         <>
             {user && (
                 <div className="flex">
-                    <p>Hi, {user.firstName}</p>
-                    <button onClick={handleLogout}>logout</button>
                     <Navbar />
                     {children}
                 </div>

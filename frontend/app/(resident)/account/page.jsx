@@ -1,19 +1,24 @@
 "use client";
-import useFetch from "@/app/api/FetchData";
+
 import { useAuth } from "@/useContext/UseContext";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Account() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageURL, setImageURL] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [myReport, setMyReport] = useState([]);
+    const [myRequest, setMyRequest] = useState([]);
+    const [currentMyReportPage, setCurrentMyReportPage] = useState(1);
+    const [currentMyRequestPage, setCurrentMyRequestPage] = useState(1);
     const { user, logout } = useAuth();
-    const { data, isLoading, error } = useFetch("");
 
-    const handleFileSelect = (event) => {
+    function handleFileSelect(event) {
         setSelectedFile(event.target.files[0]);
-    };
+    }
 
-    const handleFileUpload = async () => {
+    async function handleFileUpload() {
         if (selectedFile) {
             const formData = new FormData();
             formData.append("image", selectedFile);
@@ -40,9 +45,9 @@ export default function Account() {
                 console.error("Error uploading image", error);
             }
         }
-    };
+    }
 
-    const fetchImage = async () => {
+    async function fetchImage() {
         try {
             const imageResponse = await fetch(
                 `http://localhost:8080/resident/${user.residentId}/image`
@@ -56,7 +61,7 @@ export default function Account() {
         } catch (error) {
             console.error("Error fetching image", error);
         }
-    };
+    }
 
     function handleLogout() {
         logout();
@@ -70,7 +75,61 @@ export default function Account() {
     const address = user.address;
     const defaultProfileIamge = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
 
-    console.log(user);
+    const profileFormat = user.imageFormat;
+    const profileImage = user.profileImage;
+    // console.log(profileFormat);
+    // console.log(profileImage);
+
+    // console.log(user);
+
+    async function fetchReport() {
+        setIsLoading(true);
+        try {
+            const res = await axios(
+                `http://localhost:8080/reports-filing/getAllReportsFilingByResidentId/${user.residentId}`
+            );
+            const data = res.data;
+            setMyReport(data);
+        } catch (error) {
+            console.log("Error Fetching My Report");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function fetchRequest() {
+        setIsLoading(true);
+        try {
+            const res = await axios(
+                `http://localhost:8080/document-requests/document-requests-per-resident/${user.residentId}`
+            );
+            const data = res.data;
+            setMyRequest(data);
+            console.log(data);
+        } catch (error) {
+            console.log("Error Fetching My Report");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchReport();
+        fetchRequest();
+    }, []);
+
+    // Calculate the starting and ending index for the current page
+    const startIndexMyReports = (currentMyReportPage - 1) * rowsPerPage;
+    const endIndexMyReports = startIndexMyReports + rowsPerPage;
+
+    // Calculate the starting and ending index for the current page
+    const startIndexMyRequests = (currentMyRequestPage - 1) * rowsPerPage;
+    const endIndexMyRequests = startIndexMyRequests + rowsPerPage;
+
+    // Get the rows to display for the current page
+    const currentPageRowsMyReports = myReport.slice(startIndexMyReports, endIndexMyReports);
+    const currentPageRowsMyRequests = myRequest.slice(startIndexMyRequests, endIndexMyRequests);
+
     return (
         <div
             className="w-full p-8"
@@ -140,66 +199,28 @@ export default function Account() {
                             <div className="w-full overflow-x-auto">
                                 <table
                                     className="w-full text-left table-fixed border border-separate rounded border-slate-200"
-                                    cellspacing="0"
+                                    cellSpacing="0"
+                                    cellPadding={10}
                                 >
                                     <tbody>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Ayub Salas
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Agnes Sherman
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Jemma Cummings
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Jimi Cardenas
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Mateusz Tucker
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
+                                        {isLoading && <LoadingTable />}
+                                        {currentPageRowsMyReports?.map(
+                                            ({ repfilId, reportDetails, reportStatus }) => (
+                                                <MyReportTable
+                                                    key={repfilId}
+                                                    repfilId={repfilId}
+                                                    reportDetails={reportDetails}
+                                                    reportStatus={reportStatus}
+                                                />
+                                            )
+                                        )}
                                     </tbody>
                                 </table>
+                                <Pagination
+                                    total={myReport.length}
+                                    current={currentMyReportPage}
+                                    onPageChange={setCurrentMyReportPage}
+                                />
                             </div>
                         </div>
                         <div className="bg-white rounded-[22px] py-6 px-8">
@@ -207,66 +228,28 @@ export default function Account() {
                             <div className="w-full overflow-x-auto">
                                 <table
                                     className="w-full text-left table-fixed border border-separate rounded border-slate-200"
-                                    cellspacing="0"
+                                    cellSpacing="0"
+                                    cellPadding={10}
                                 >
                                     <tbody>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Ayub Salas
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Agnes Sherman
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Jemma Cummings
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Jimi Cardenas
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
-                                        <tr className="odd:bg-gray-200">
-                                            <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Mateusz Tucker
-                                            </td>
-                                            <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Designer
-                                            </td>
-                                            <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
-                                                Carroll Group
-                                            </td>
-                                        </tr>
+                                        {isLoading && <LoadingTable />}
+                                        {currentPageRowsMyRequests?.map(
+                                            ({ docreqId, documentType, documentStatus }) => (
+                                                <MyRequestTale
+                                                    key={docreqId}
+                                                    docreqId={docreqId}
+                                                    documentType={documentType}
+                                                    documentStatus={documentStatus}
+                                                />
+                                            )
+                                        )}
                                     </tbody>
                                 </table>
+                                <Pagination
+                                    total={myReport.length}
+                                    current={currentMyRequestPage}
+                                    onPageChange={setCurrentMyRequestPage}
+                                />
                             </div>
                         </div>
                     </div>
@@ -276,69 +259,116 @@ export default function Account() {
     );
 }
 
-function Table() {
-    <div className="w-full overflow-x-auto">
-        <table
-            className="w-full text-left border border-separate rounded border-slate-200"
-            cellspacing="0"
-        >
-            <tbody className="table-fixed">
-                <tr className="odd:bg-gray-200">
-                    <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Ayub Salas
-                    </td>
-                    <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Designer
-                    </td>
-                    <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Carroll Group
-                    </td>
-                </tr>
-                <tr className="odd:bg-gray-200">
-                    <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Agnes Sherman
-                    </td>
-                    <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Designer
-                    </td>
-                    <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Carroll Group
-                    </td>
-                </tr>
-                <tr className="odd:bg-gray-200">
-                    <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Jemma Cummings
-                    </td>
-                    <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Designer
-                    </td>
-                    <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Carroll Group
-                    </td>
-                </tr>
-                <tr className="odd:bg-gray-200">
-                    <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Jimi Cardenas
-                    </td>
-                    <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Designer
-                    </td>
-                    <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Carroll Group
-                    </td>
-                </tr>
-                <tr className="odd:bg-gray-200">
-                    <td className="h-12 px-6 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Mateusz Tucker
-                    </td>
-                    <td className="h-12 px-6 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Designer
-                    </td>
-                    <td className="h-12 px-6 text-right text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-slate-500">
-                        Carroll Group
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>;
+function LoadingTable() {
+    return (
+        <>
+            <tr className="odd:bg-gray-200 animate-pulse">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+            </tr>
+            <tr className="odd:bg-gray-200 animate-pulse">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+            </tr>
+            <tr className="odd:bg-gray-200 animate-pulse">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+            </tr>
+            <tr className="odd:bg-gray-200 animate-pulse">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+            </tr>
+            <tr className="odd:bg-gray-200 animate-pulse">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black"></td>
+            </tr>
+        </>
+    );
 }
+
+function MyReportTable({ repfilId, reportDetails, reportStatus }) {
+    return (
+        <>
+            <tr key={repfilId} className="odd:bg-gray-200">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
+                    REP-{repfilId}
+                </td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
+                    {reportDetails}
+                </td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
+                    {reportStatus}
+                </td>
+            </tr>
+        </>
+    );
+}
+
+function MyRequestTale({ docreqId, documentType, documentStatus }) {
+    return (
+        <>
+            <tr key={docreqId} className="odd:bg-gray-200">
+                <td className="h-12 pl-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
+                    REP-{docreqId}
+                </td>
+                <td className="h-12 text-center text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
+                    {documentType}
+                </td>
+                <td className="h-12 text-right pr-5 text-sm transition duration-300 border-t border-slate-200 stroke-slate-500 text-black">
+                    {documentStatus}
+                </td>
+            </tr>
+        </>
+    );
+}
+
+const rowsPerPage = 5; // Number of rows to display per page
+
+// Pagination component
+const Pagination = ({ total, current, onPageChange }) => {
+    const numPages = Math.ceil(total / rowsPerPage);
+    const pageNumbers = Array.from({ length: numPages }, (_, i) => i + 1);
+
+    return (
+        <div className="mt-4 flex justify-center space-x-2">
+            <button
+                onClick={() => onPageChange(current - 1)}
+                disabled={current === 1}
+                className={`px-3 py-1 rounded cursor-pointer ${
+                    current === 1
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-blue-500 text-white"
+                }`}
+            >
+                Prev
+            </button>
+            {pageNumbers.map((number) => (
+                <button
+                    key={number}
+                    onClick={() => onPageChange(number)}
+                    className={`px-3 py-1 rounded cursor-pointer ${
+                        current === number ? "bg-blue-700 text-white" : "bg-gray-200"
+                    }`}
+                >
+                    {number}
+                </button>
+            ))}
+            <button
+                onClick={() => onPageChange(current + 1)}
+                disabled={current === numPages}
+                className={`px-3 py-1 rounded cursor-pointer ${
+                    current === numPages
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-blue-500 text-white"
+                }`}
+            >
+                Next
+            </button>
+        </div>
+    );
+};

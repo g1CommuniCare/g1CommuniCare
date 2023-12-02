@@ -85,7 +85,7 @@ public class DocumentRequestEntity {
 
     public DocumentRequestEntity(int docreqId, ResidentEntity resident, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, String documentType,
-            String documentStatus, LocalDate requestDate, String purpose, byte[] validId, String imageFormat,
+            LocalDate requestDate, String purpose, byte[] validId, String imageFormat,
             Boolean toPrint, int printCopies, String referenceNumber, String denialReason, LocalDate claimDate,
             Boolean isDeleted) {
         this.docreqId = docreqId;
@@ -97,7 +97,6 @@ public class DocumentRequestEntity {
         this.contactNumber = contactNumber;
         this.address = address;
         this.documentType = documentType;
-        this.documentStatus = documentStatus;
         this.requestDate = requestDate;
         this.purpose = purpose;
         this.validId = validId;
@@ -112,6 +111,7 @@ public class DocumentRequestEntity {
 
     public DocumentRequestEntity() {
         this.isDeleted = false;
+        this.documentStatus = "Pending";
     }
 
     public DocumentRequestDTO toDTO() {

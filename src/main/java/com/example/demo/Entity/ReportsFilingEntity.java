@@ -66,12 +66,13 @@ public class ReportsFilingEntity {
     private String reportUpdate;
 
     public ReportsFilingEntity() {
+        this.reportStatus = "Pending";
         this.isDeleted = false;
     }
 
     public ReportsFilingEntity(int repfilId, ResidentEntity resident, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, String reportType,
-            LocalDateTime reportDate, LocalDateTime dateReported, String reportDetails, String reportStatus,
+            LocalDateTime reportDate, LocalDateTime dateReported, String reportDetails, 
             boolean isDeleted, String reportUpdate) {
         this.repfilId = repfilId;
         this.resident = resident;
@@ -85,7 +86,6 @@ public class ReportsFilingEntity {
         this.reportDate = reportDate;
         this.dateReported = dateReported;
         this.reportDetails = reportDetails;
-        this.reportStatus = reportStatus = "Pending";
         this.isDeleted = isDeleted;
         this.reportUpdate = reportUpdate;
     }

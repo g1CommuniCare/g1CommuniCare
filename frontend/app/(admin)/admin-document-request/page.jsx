@@ -1,171 +1,384 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
+import Search from "@/app/assets/Search";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Helper function to format the date
 const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+    return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
 };
 
 const rowsPerPage = 10; // Number of rows to display per page
 
 // Pagination component
 const Pagination = ({ total, current, onPageChange }) => {
-  const numPages = Math.ceil(total / rowsPerPage);
-  const pageNumbers = Array.from({ length: numPages }, (_, i) => i + 1);
+    const numPages = Math.ceil(total / rowsPerPage);
+    const pageNumbers = Array.from({ length: numPages }, (_, i) => i + 1);
 
-  return (
-    <div className="mt-4 flex justify-center space-x-2">
-      <button
-        onClick={() => onPageChange(current - 1)}
-        disabled={current === 1}
-        className={`px-3 py-1 rounded cursor-pointer ${current === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
-      >
-        Prev
-      </button>
-      {pageNumbers.map(number => (
-        <button
-          key={number}
-          onClick={() => onPageChange(number)}
-          className={`px-3 py-1 rounded cursor-pointer ${current === number ? 'bg-blue-700 text-white' : 'bg-gray-200'}`}
-        >
-          {number}
-        </button>
-      ))}
-      <button
-        onClick={() => onPageChange(current + 1)}
-        disabled={current === numPages}
-        className={`px-3 py-1 rounded cursor-pointer ${current === numPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
-      >
-        Next
-      </button>
-    </div>
-  );
+    return (
+        <div className="pt-8 flex justify-center space-x-2">
+            <button
+                onClick={() => onPageChange(current - 1)}
+                disabled={current === 1}
+                className={`px-3 py-1 rounded cursor-pointer ${
+                    current === 1
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-blue-500 text-white"
+                }`}
+            >
+                Previous
+            </button>
+            {pageNumbers.map((number) => (
+                <button
+                    key={number}
+                    onClick={() => onPageChange(number)}
+                    className={`px-3 py-1 rounded cursor-pointer ${
+                        current === number ? "bg-blue-700 text-white" : "bg-gray-200"
+                    }`}
+                >
+                    {number}
+                </button>
+            ))}
+            <button
+                onClick={() => onPageChange(current + 1)}
+                disabled={current === numPages}
+                className={`px-3 py-1 rounded cursor-pointer ${
+                    current === numPages
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-blue-500 text-white"
+                }`}
+            >
+                Next
+            </button>
+        </div>
+    );
 };
 
-
-
 export default function DocumentRequest() {
-  const [documentRequests, setDocumentRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+    const [documentRequests, setDocumentRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [statusFilter, setStatusFilter] = useState(documentRequests);
 
-  useEffect(() => {
-    axios
-      .get('http://localhost:8080/document-requests/all-document-requests')
-      .then((response) => {
-        setDocumentRequests(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
-  }, []);
+    async function fetchDocumentRequests() {
+        setLoading(true);
+        try {
+            const res = await axios("http://localhost:8080/document-requests/non-deleted");
+            const data = res.data;
+            setDocumentRequests(data);
+            console.log(data);
+        } catch (error) {
+            console.log("Error Fetching Document Requests", error);
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
-  // Calculate the starting and ending index for the current page
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
+    useEffect(() => {
+        fetchDocumentRequests();
+    }, []);
 
-  // Get the rows to display for the current page
-  const currentPageRows = documentRequests.slice(startIndex, endIndex);
+    // const filteredData = documentRequests.filter(({resident: {firstName, lastName}}))
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+    // Calculate the starting and ending index for the current page
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
-  return (
-    <div className="w-full h-full">
-      <header
-        className="h-72 w-full bg-cover text-black"
-        style={{ backgroundImage: 'url("/images/document-request-header.png")' }}
-      >
-        <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
-          <h1 className="font-bold text-6xl">Document Request</h1>
-          <span className="flex justify-center font-small text-lg mt-2 mr-96">
-            Effortlessly request essential barangay documents here. Choose your
-            document type, provide necessary details, and enjoy a streamlined,
-            secure process. Opt for document printing and make hassle-free
-            payments. Your essential paperwork, simplified.
-          </span>
-        </div>
-      </header>
-      <div className="w-80% p-4">
-        <div className="m-4 overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
-          <table className="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
-            <thead>
-              <tr className="text-left">
-                <th className="bg-gray-100 sticky top-0 border-b border-gray-200 pl-10 pr-3 py-4 text-gray-600 font-bold tracking-wider uppercase text-xs">Resident Name</th>
-                <th className="bg-gray-100 sticky top-0 border-b border-gray-200 px-3 py-4 text-gray-600 font-bold tracking-wider uppercase text-xs">Resident ID</th>
-                <th className="bg-gray-100 sticky top-0 border-b border-gray-200 px-3 py-4 text-gray-600 font-bold tracking-wider uppercase text-xs">Request ID</th>
-                <th className="bg-gray-100 sticky top-0 border-b border-gray-200 px-3 py-4 text-gray-600 font-bold tracking-wider uppercase text-xs">Document Type</th>
-                <th className="bg-gray-100 sticky top-0 border-b border-gray-200 px-3 py-4 text-gray-600 font-bold tracking-wider uppercase text-xs">Date Requested</th>
-                <th className="bg-gray-100 sticky top-0 border-b border-gray-200 px-3 py-4 text-gray-600 font-bold tracking-wider uppercase text-xs">Status</th>
-              </tr>                   
-            </thead>
-            <tbody>
-            {currentPageRows.map((request) => (
-              <Link
-                key={request.docreqId}
-                href={`/admin-document-request/${request.docreqId}`}
-              >
-                <tr className="cursor-pointer hover:bg-gray-100">
-                  <td className="py-3 pl-10 pr-3">
-                    <div className="flex items-center">
-                      <img
-                        src={`data:image/${request.resident.imageFormat};base64,${request.resident.profileImage}`}
-                        alt={`${request.resident.firstName}'s profile`}
-                        className="w-8 h-8 rounded-full"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = '/images/default-avatar.png';
-                        }}
-                      />
-                      <span className="ml-2">
-                        {`${request.resident.firstName} ${request.resident.middleInitial} ${request.resident.lastName}`}
-                      </span>
+    // Get the rows to display for the current page
+    const currentPageRows = documentRequests.slice(startIndex, endIndex);
+
+    if (error) return <div>Error: {error}</div>;
+
+    function handleStatus() {
+        const sortedArray = [...documentRequests].sort((a, b) => {
+            if (a.documentStatus === "Pending" && b.documentStatus !== "Pending") {
+                return -1;
+            } else if (a.documentStatus !== "Pending" && b.documentStatus === "Pending") {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        setDocumentRequests(sortedArray);
+        console.log(sortedArray);
+    }
+
+    return (
+        <>
+            <form className="px-5 pt-5">
+                <div className="relative">
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <Search />
                     </div>
-                  </td>
-                  <td className="p-3">{`RES-${request.resident.residentId}`}</td>
-                  <td className="p-3">{`DOC-${request.docreqId}`}</td>
-                  <td className="p-3">{request.documentType}</td>
-                  <td className="p-3">{formatDate(request.requestDate)}</td>
-                  <td className="md:table-cell block py-3 text-sm text-left">
-                    <span
-                      className={`inline-block px-1 py-1 rounded-full text-white text-center
-                        ${
-                          request.documentStatus === 'Pending'
-                            ? 'bg-yellow-500'
-                            : request.documentStatus === 'Approved'
-                            ? 'bg-green-500'
-                            : request.documentStatus === 'Denied'
-                            ? 'bg-red-500'
-                            : 'bg-gray-500'
-                        }`}
-                      style={{ width: '80px' }}
+                    <input
+                        type="text"
+                        id="default-search"
+                        placeholder="Search"
+                        className="w-full p-4 ps-12 border-gray-300 border-b-[2px] outline-none"
+                    />
+                </div>
+            </form>
+            <div className="w-80% p-5">
+                <div className="w-full overflow-x-auto">
+                    <table
+                        className="w-full text-left border border-separate rounded border-slate-200"
+                        cellSpacing="0"
+                        cellPadding={15}
                     >
-                      {request.documentStatus}
-                    </span>
-                  </td>
-                </tr>
-              </Link>
-            ))}
-            </tbody>
-          </table>
-        </div>
+                        <tbody>
+                            <tr>
+                                <TableHead
+                                    fullName="Name"
+                                    residentId="Resident ID"
+                                    requestId="Requested ID"
+                                    documentType="Document Type"
+                                    dateRequested="Date Requested"
+                                    status="Status"
+                                    handleStatus={handleStatus}
+                                />
+                            </tr>
+                            {loading && <TableDocumentRequestsSkeleton />}
+                            {currentPageRows.map(
+                                ({
+                                    docreqId,
+                                    resident: { ...resident },
+                                    documentType,
+                                    requestDate,
+                                    documentStatus,
+                                }) => (
+                                    <TableDocumentRequests
+                                        key={docreqId}
+                                        docreqId={docreqId}
+                                        residentId={resident.residentId}
+                                        firstName={resident.firstName}
+                                        lastName={resident.lastName}
+                                        documentType={documentType}
+                                        requestDate={requestDate}
+                                        documentStatus={documentStatus}
+                                    />  
+                                )
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                {/* Pagination */}
+                <Pagination
+                    total={documentRequests.length}
+                    current={currentPage}
+                    onPageChange={setCurrentPage}
+                />
+            </div>
+        </>
+    );
+}
 
-        {/* Pagination */}
-        <Pagination
-          total={documentRequests.length}
-          current={currentPage}
-          onPageChange={setCurrentPage}
-        />
-      </div>
-    </div>
-  );
+function TableDocumentRequests({
+    docreqId,
+    imageFormat,
+    profileImage,
+    residentId,
+    firstName,
+    lastName,
+    documentType,
+    requestDate,
+    documentStatus,
+}) {
+    const router = useRouter();
+
+    function handleClick() {
+        router.push(`/admin-document-request/${docreqId}`);
+        console.log(docreqId);
+    }
+
+    const fullName = firstName + " " + lastName;
+
+    return (
+        <>
+            <tr onClick={handleClick} className="hover:bg-gray-200 bg-white cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 text-slate-700 border-slate-200">
+                    <img
+                        src={`data:image/${imageFormat};base64,${profileImage}`}
+                        alt={`${fullName}'s profile`}
+                        className="relative inline-flex items-center justify-center w-10 h-10 text-lg text-white rounded-full bg-emerald-500"
+                    />
+                    <span className="ml-3">{fullName}</span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
+                    <span className="ml-2">RES-{residentId}</span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
+                    <span className="ml-2">DOC-{docreqId}</span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
+                    <span className="ml-2">{documentType}</span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
+                    <span className="ml-2">{requestDate}</span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
+                    <span className="ml-2">{documentStatus}</span>
+                </td>
+            </tr>
+        </>
+    );
+}
+
+function TableDocumentRequestsSkeleton() {
+    return (
+        <>
+            <tr className="hover:bg-gray-200 bg-white animate-pulse cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 bg-gray-50 border-slate-200">
+                    <span className="ml-3"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+            </tr>
+            <tr className="hover:bg-gray-200 bg-white animate-pulse cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 bg-gray-50 border-slate-200">
+                    <span className="ml-3"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+            </tr>
+            <tr className="hover:bg-gray-200 bg-white animate-pulse cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 bg-gray-50 border-slate-200">
+                    <span className="ml-3"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+            </tr>
+            <tr className="hover:bg-gray-200 bg-white animate-pulse cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 bg-gray-50 border-slate-200">
+                    <span className="ml-3"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+            </tr>
+            <tr className="hover:bg-gray-200 bg-white animate-pulse cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 bg-gray-50 border-slate-200">
+                    <span className="ml-3"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+            </tr>
+            <tr className="hover:bg-gray-200 bg-white animate-pulse cursor-pointer">
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 bg-gray-50 border-slate-200">
+                    <span className="ml-3"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 bg-gray-50 border-slate-200">
+                    <span className="ml-2"></span>
+                </td>
+            </tr>
+        </>
+    );
+}
+
+function TableHead({ fullName, residentId, requestId, documentType, dateRequested, status, handleStatus }) {
+    return (
+        <>
+            <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2 border-l-2">
+                {fullName}
+            </th>
+            <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2">
+                {residentId}
+            </th>
+            <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2">
+                {requestId}
+            </th>
+            <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2">
+                {documentType}
+            </th>
+            <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2">
+                {dateRequested}
+            </th>
+            <th scope="col" onClick={handleStatus} className="h-10 px-4 font-semibold border-t-2 border-b-2 border-r-2">
+                {status}
+            </th>
+        </>
+    );
 }
