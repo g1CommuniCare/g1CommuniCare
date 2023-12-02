@@ -11,6 +11,7 @@ import com.example.demo.Repository.DocumentRequestRepository;
 import com.example.demo.Repository.ResidentRepository;
 
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,7 +34,11 @@ public class DocumentRequestServices {
             ResidentEntity resident = residentOptional.get();
             // Set the retrieved resident in the documentRequest entity
             documentRequest.setResident(resident);
-
+            ///
+            String validIdBase64 = documentRequest.getValidIdBase64(); // Assuming you have a getter for the base64
+                                                                       // string
+            byte[] validId = Base64.getDecoder().decode(validIdBase64);
+            documentRequest.setValidId(validId);
             // Additional business logic if needed
 
             // Save the documentRequest entity
@@ -182,5 +187,15 @@ public class DocumentRequestServices {
     // Find Document Request by ID
     public List<DocumentRequestEntity> findByDocreqId(int docreqId) {
         return documentRequestRepository.findBydocreqId(docreqId);
+    }
+
+    // Get Valid ID Image by Document Request ID
+    public byte[] getValidIdImageByDocreqId(int docreqId) {
+        List<DocumentRequestEntity> documentRequests = documentRequestRepository.findBydocreqId(docreqId);
+        if (!documentRequests.isEmpty()) {
+            return documentRequests.get(0).getValidId();
+        } else {
+            return null;
+        }
     }
 }

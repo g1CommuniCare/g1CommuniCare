@@ -1,6 +1,7 @@
 package com.example.demo.Entity;
 
 import java.time.LocalDate;
+import java.util.Base64;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -295,6 +296,15 @@ public class DocumentRequestEntity {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    // Add a getter for the base64 string
+    public String getValidIdBase64() {
+        if (validId != null) {
+            return Base64.getEncoder().encodeToString(validId);
+        } else {
+            return null;
+        }
     }
 
 }

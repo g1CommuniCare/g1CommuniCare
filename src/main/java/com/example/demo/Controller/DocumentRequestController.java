@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -127,6 +128,29 @@ public class DocumentRequestController {
         DocumentRequestEntity documentRequest = documentRequests.get(0); // Assuming the first match is the desired
                                                                          // one
         return ResponseEntity.ok(documentRequest);
+    }
+
+    // Get VAlid ID Image by Document Request ID
+    @GetMapping("/{docreqId}/getValidIdImage")
+    public ResponseEntity<byte[]> getValidIdImageByDocreqId(@PathVariable int docreqId) {
+        List<DocumentRequestEntity> documentRequests = documentRequestService.findByDocreqId(docreqId);
+
+        if (documentRequests.isEmpty() || documentRequests.get(0).getValidId() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        DocumentRequestEntity documentRequest = documentRequests.get(0); // Assuming the first match is the desired
+                                                                         // one
+        String imageFormat = documentRequest.getImageFormat();
+        MediaType mediaType = MediaType.IMAGE_JPEG; // default to JPEG
+        if ("png".equalsIgnoreCase(imageFormat)) {
+            mediaType = MediaType.IMAGE_PNG;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .body(documentRequest.getValidId());
+
     }
 
 }
