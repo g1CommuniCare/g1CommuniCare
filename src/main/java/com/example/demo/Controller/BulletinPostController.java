@@ -47,20 +47,6 @@ public class BulletinPostController {
         return new ResponseEntity<>(createdPostDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{postId}")
-    public ResponseEntity<BulletinPostEntity> updateBulletinPost(
-            @PathVariable int postId,
-            @RequestBody BulletinPostEntity updatedPost) {
-        Optional<BulletinPostEntity> existingPost = bulletinPostServices.getBulletinPostById(postId);
-        if (existingPost.isPresent()) {
-            updatedPost.setPostId(postId);
-            BulletinPostEntity savedPost = bulletinPostServices.updateBulletinPost(updatedPost);
-            return ResponseEntity.ok(savedPost);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @DeleteMapping("/deletePost/{postId}")
     public String deleteBulletinPost(@PathVariable int postId) {
         return bulletinPostServices.deleteBulletinPost(postId);
@@ -92,5 +78,20 @@ public class BulletinPostController {
         String result = bulletinPostServices.updateBulletinPostIsDeleted(postId);
         HttpStatus status = result.contains("does not exist") ? HttpStatus.NOT_FOUND : HttpStatus.OK;
         return new ResponseEntity<>(result, status);
+    }
+
+    @PutMapping("/update/{postId}")
+    public ResponseEntity<String> updateBulletinPost(
+            @PathVariable int postId,
+            @RequestParam String title,
+            @RequestParam String content) {
+
+        String result = bulletinPostServices.updateBulletinPost(postId, title, content);
+
+        if (result.startsWith("Bulletin Post does not exist")) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
     }
 }

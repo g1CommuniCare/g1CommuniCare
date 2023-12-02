@@ -118,4 +118,19 @@ public class BulletinPostServices {
             return "Bulletin Post " + postId + " does not exist.";
         }
     }
+
+    // Update Bulletin Post
+    public String updateBulletinPost(int postId, String title, String content) {
+        BulletinPostEntity bulletinPost = bulletinPostRepository.findById(postId).orElse(null);
+
+        if (bulletinPost != null) {
+            bulletinPost.setPostTitle(title);
+            bulletinPost.setPostDescription(content);
+            bulletinPostRepository.save(bulletinPost);
+
+            return "Bulletin Post " + postId + " has been updated.";
+        } else {
+            return "Bulletin Post " + postId + " does not exist.";
+        }
+    }
 }
