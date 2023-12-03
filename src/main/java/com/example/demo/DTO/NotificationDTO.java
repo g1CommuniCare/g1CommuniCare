@@ -1,68 +1,37 @@
-package com.example.demo.Entity;
+package com.example.demo.DTO;
 
-import java.time.LocalDate;
+import com.example.demo.Entity.AdminEntity;
+import com.example.demo.Entity.AppointmentRequestEntity;
+import com.example.demo.Entity.DocumentRequestEntity;
+import com.example.demo.Entity.ReportsFilingEntity;
+import com.example.demo.Entity.ResidentEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "table_notification")
-public class NotificationEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class NotificationDTO {
     private int notificationId;
-
-    @Column(name = "title")
     private String title;
-
-    @Column(name = "message")
     private String message;
-
-    @Column(name = "isRead")
     private Boolean isRead;
-
-    @Column(name = "timestamp")
-    private LocalDate timestamp;
-
-    @ManyToOne
-    @JoinColumn(name = "sender_id")
+    private String timestamp;
     private AdminEntity senderAdmin;
-
-    @ManyToOne
-    @JoinColumn(name = "recipient_id")
     private ResidentEntity recipientResident;
-
-    @ManyToOne
-    @JoinColumn(name = "document_request_id")
     private DocumentRequestEntity relatedDocumentRequest;
-
-    @ManyToOne
-    @JoinColumn(name = "appointment_request_id")
     private AppointmentRequestEntity relatedAppointmentRequest;
-
-    @ManyToOne
-    @JoinColumn(name = "reports_filing_id")
     private ReportsFilingEntity relatedReportsFiling;
 
-    public NotificationEntity() {
+    public NotificationDTO() {
         this.isRead = false;
     }
 
-    public NotificationEntity(AdminEntity senderAdmin, ResidentEntity recipientResident, String title, String message,
-            DocumentRequestEntity relatedDocumentRequest, AppointmentRequestEntity relatedAppointmentRequest,
-            ReportsFilingEntity relatedReportsFiling) {
-        this.senderAdmin = senderAdmin;
-        this.recipientResident = recipientResident;
+    public NotificationDTO(int notificationId, String title, String message, Boolean isRead, String timestamp,
+            AdminEntity senderAdmin, ResidentEntity recipientResident, DocumentRequestEntity relatedDocumentRequest,
+            AppointmentRequestEntity relatedAppointmentRequest, ReportsFilingEntity relatedReportsFiling) {
+        this.notificationId = notificationId;
         this.title = title;
         this.message = message;
-        this.isRead = false;
-        this.timestamp = LocalDate.now();
+        this.isRead = isRead;
+        this.timestamp = timestamp;
+        this.senderAdmin = senderAdmin;
+        this.recipientResident = recipientResident;
         this.relatedDocumentRequest = relatedDocumentRequest;
         this.relatedAppointmentRequest = relatedAppointmentRequest;
         this.relatedReportsFiling = relatedReportsFiling;
@@ -100,11 +69,11 @@ public class NotificationEntity {
         this.isRead = isRead;
     }
 
-    public LocalDate getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDate timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -13,6 +13,8 @@ export default function Account() {
         setSelectedFile(event.target.files[0]);
     };
 
+   
+
     const handleFileUpload = async () => {
         if (selectedFile) {
             const formData = new FormData();
@@ -48,6 +50,7 @@ export default function Account() {
             const imageBlob = await imageResponse.blob();
             const imageObjectURL = URL.createObjectURL(imageBlob);
             setImageURL(imageObjectURL);
+            console.log(user);
         } catch (error) {
             console.error('Error fetching image', error);
         }

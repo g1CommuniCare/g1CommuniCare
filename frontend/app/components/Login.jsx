@@ -4,6 +4,7 @@ import { useAuth } from "@/useContext/UseContext";
 import { useState } from "react";
 import LoginInput from "../utils/LoginInput";
 import Registration from "./Registration";
+import AlertIconsDanger from '/app/components/AlertIconsDanger'; // Importing the custom alert component
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -11,6 +12,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const { user, login } = useAuth();
     const [data, setData] = useState(null)
+    const [loginError, setLoginError] = useState(false); // State for login error
 
     function handleUsername(e) {
         setUsername(e.target.value);
@@ -26,6 +28,7 @@ export default function Login() {
 
     async function submitLogin(e) {
         e.preventDefault();
+        setLoginError(false); // Reset login error before attempting login
 
         try {
             const residentLogin = login(username, password, "resident");
@@ -33,16 +36,17 @@ export default function Login() {
 
             await Promise.all([residentLogin, adminLogin]);
 
-            setData({residentLogin, adminLogin})
+            setData({residentLogin, adminLogin});
 
         } catch (error) {
             console.error("An error occurred during login:", error.message);
+            setLoginError(true); // Set login error if login fails
         }
     }
 
-
     return (
         <div className="relative flex max-w-[1536px] my-[50px] mx-auto">
+            {/* Custom Alert for invalid login */}
             <div className="ml-[4%] w-[794px]">
                 <img src="/images/login.png" alt="CommuniCare Login Image" />
             </div>
@@ -51,6 +55,9 @@ export default function Login() {
                     <div className="flex justify-center">
                         <img src="/images/loginLogo.png" alt="CommuniCare Logo" className="w-[334px]" />
                     </div>
+                    {loginError && (
+                <AlertIconsDanger message="Invalid Login Credentials. Try Again" />
+            )}
 
                     <LoginInput
                         username={username}
@@ -79,6 +86,7 @@ export default function Login() {
                     <span className="h-[.8px] w-full bg-[#DDE1E6] my-8"></span>
 
                     <Registration SignUpTitle="Sign up" />
+                    
                 </div>
             </form>
         </div>

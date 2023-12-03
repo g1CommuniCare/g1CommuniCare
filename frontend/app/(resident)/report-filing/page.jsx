@@ -1,5 +1,5 @@
 "use client";
-
+import React, { useState } from "react";
 import Details from "@/app/utils/reports/Details";
 import FirstRow from "@/app/utils/reports/FirstRow";
 import InputWithDate from "@/app/utils/reports/InputWithDate";
@@ -7,8 +7,8 @@ import SecondRow from "@/app/utils/reports/SecondRow";
 import Submit from "@/app/utils/reports/Submit";
 import Success from "@/app/utils/reports/Success";
 import ThirdRow from "@/app/utils/reports/ThirdRow";
+import ConfirmationPopup from "@/app/components/ConfirmationPopup";
 import { useAuth } from "@/useContext/UseContext";
-import { useState } from "react";
 
 const Report = () => {
   const { user, login } = useAuth();
@@ -27,7 +27,6 @@ const Report = () => {
   const [middleInitial, setMiddleInitial] = useState("");
   const handleMiddleInitial = (e) => {
     const input = e.target.value;
-
     if (input.length > middleInitialInput) {
       alert("Input should be 3 characters or less.");
     } else {
@@ -54,27 +53,24 @@ const Report = () => {
   const [reportType, setSelectReport] = useState("");
   const handleSelectReport = (e) => {
     const selectedReportType = e.target.value;
-
     setIsOthersSelected(selectedReportType === "opt");
-    setSelectReport(isOthersSelected ? otherReportDetails : selectedReportType);
+    setSelectReport(selectedReportType);
   };
   const reportTypes = [
     { value: "", label: "-- Select a Report Type --" },
     { value: "noise", label: "Noise Complaint" },
     { value: "road", label: "Road Problems" },
-    { value: "sanitatioon", label: "Sanitation Problems" },
+    { value: "sanitation", label: "Sanitation Problems" },
     { value: "opt", label: "Others" },
   ];
 
   const [date, setDate] = useState("");
   const handleDate = (e) => {
-    console.log("Selected Date:", e.target.value);
     setDate(e.target.value);
   };
 
   const [time, setTime] = useState("");
   const handleTime = (e) => {
-    console.log("Selected Time:", e.target.value);
     setTime(e.target.value);
   };
 
@@ -82,18 +78,20 @@ const Report = () => {
   const handleDetails = (e) => {
     setDetails(e.target.value);
   };
+
   const [otherReportDetails, setOtherReportDetails] = useState("");
-
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setShowConfirmationPopup(true);
+  };
 
-    const currentDate = new Date();
-    const timezoneOffset = currentDate.getTimezoneOffset(); // in minutes
-    const localDate = new Date(currentDate.getTime() - timezoneOffset * 60000);
-    const formattedCurrentDate = localDate.toISOString();
-
+  const handleConfirmSubmit = async () => {
+    setShowConfirmationPopup(false); // Close the confirmation popup
+  
+    // Prepare the data for submission
     const data = {
       firstName: firstName,
       lastName: lastName,
@@ -105,22 +103,14 @@ const Report = () => {
       reportDate: `${date}T${time}:00`,
       reportDetails: reportDetails,
       reportStatus: "Pending",
-      dateReported: formattedCurrentDate,
+      dateReported: new Date().toISOString(), // Use the current date-time
       reportUpdate: "",
     };
-
-    const isConfirmed = window.confirm(
-      "Are you sure you want to submit this report?"
-    );
-
-    if (!isConfirmed) {
-      return;
-    }
-
+  
     try {
+      // Send the data to the server
       const response = await fetch(
-        `http://localhost:8080//reports-filing/addReport/${user.residentId}`,
-        {
+        `http://localhost:8080/reports-filing/addReport/${user.residentId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -128,11 +118,17 @@ const Report = () => {
           body: JSON.stringify(data),
         }
       );
-
+  
       if (!response.ok) {
-        throw new Error("Failed to submit appointment request");
+        throw new Error("Failed to submit report");
       }
-
+  
+      // Handle the response (e.g., show success message, clear form)
+      setIsSubmitted(true);
+      const responseData = await response.json();
+      console.log("Report submitted successfully:", responseData);
+  
+      // Reset form fields after submission
       setFirstName("");
       setLastName("");
       setMiddleInitial("");
@@ -143,13 +139,15 @@ const Report = () => {
       setDate("");
       setTime("");
       setDetails("");
-
-      setIsSubmitted(true);
-      const responseData = await response.json();
-      console.log("Appointment request submitted successfully:", responseData);
+      setOtherReportDetails("");
     } catch (error) {
-      console.error("Error submitting appointment request:", error.message);
+      console.error("Error submitting report:", error.message);
     }
+  };
+  
+
+  const handleCancelSubmit = () => {
+    setShowConfirmationPopup(false);
   };
 
   return (
@@ -168,83 +166,76 @@ const Report = () => {
           </span>
         </div>
       </header>
-
       {isSubmitted ? (
         <Success />
       ) : (
         <div className="px-12 py-8 w-3/4">
           <form onSubmit={handleSubmit} className="pb-20">
-            {/* FIRST ROW */}
             <FirstRow
               firstTitle="First Name"
               firstName={firstName}
-              handleFirstName={handleFirstName}
+              handleFirstName={(e) => setFirstName(e.target.value)}
               secondTitle="Last Name"
               lastName={lastName}
-              handleLastName={handleLastName}
+              handleLastName={(e) => setLastName(e.target.value)}
               thirdTitle="Middle I."
               middleInitial={middleInitial}
-              handleMiddleInitial={handleMiddleInitial}
+              handleMiddleInitial={(e) => {
+                const input = e.target.value;
+                if (input.length <= 3) setMiddleInitial(input);
+              }}
             />
-
-            {/* SECOND ROW */}
             <SecondRow
               firstTitle="Contact Information"
               contactNumber={contactNumber}
-              handleContactNumber={handleContactNumber}
+              handleContactNumber={(e) => setContactNumber(e.target.value)}
               secondTitle="Email Address"
               email={email}
-              handleEmail={handleEmail}
+              handleEmail={(e) => setEmail(e.target.value)}
             />
-
-            {/* THIRD ROW */}
             <ThirdRow
               firstTitle="Address"
               address={address}
-              handleAddress={handleAddress}
+              handleAddress={(e) => setAddress(e.target.value)}
             />
-
-            {/* FIFTH ROW */}
             <InputWithDate
               firstTitle="Report Type"
               reportType={reportType}
-              handleSelectReport={handleSelectReport}
+              handleSelectReport={(e) => setSelectReport(e.target.value)}
               reportTypes={reportTypes}
               secondTitle="Date"
               date={date}
-              handleDate={handleDate}
+              handleDate={(e) => setDate(e.target.value)}
               thirdTitle="Time"
               time={time}
-              handleTime={handleTime}
+              handleTime={(e) => setTime(e.target.value)}
             />
-
-            {/* Render text field for additional details if "Others" is selected */}
-            {isOthersSelected && (
-              <div className="flex gap-8 mt-6 mb-12">
-                <div className="h-[58px] w-5/12 ">
-                  <div className="flex flex-col flex-1">
-                    <label htmlFor="otherDetails">Specify Report Type</label>
-                    <input
-                      type="text"
-                      id="otherDetails"
-                      name="otherDetails"
-                      value={otherReportDetails}
-                      onChange={(e) => setOtherReportDetails(e.target.value)}
-                      className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-                    />
-                  </div>
-                </div>
+            {reportType === "opt" && (
+              <div className="mt-6 mb-12">
+                <label htmlFor="otherDetails">Specify Report Type</label>
+                <input
+                  type="text"
+                  id="otherDetails"
+                  value={otherReportDetails}
+                  onChange={(e) => setOtherReportDetails(e.target.value)}
+                  className="w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500"
+                />
               </div>
             )}
-
-            {/* SIXTH ROW */}
             <Details
               firstTitle="Details"
               reportDetails={reportDetails}
-              handleDetails={handleDetails}
+              handleDetails={(e) => setDetails(e.target.value)}
             />
             <Submit />
           </form>
+          {showConfirmationPopup && (
+            <ConfirmationPopup
+              message="Are you sure you want to submit this report?"
+              onConfirm={handleConfirmSubmit}
+              onCancel={handleCancelSubmit}
+            />
+          )}
         </div>
       )}
     </div>

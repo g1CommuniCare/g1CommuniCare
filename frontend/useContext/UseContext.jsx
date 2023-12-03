@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
                 // Create a user object based on the role
                 let user;
                 if (role === "admin") {
-                    user = { firstName, lastName, role, adminId };
+                    user = { firstName, lastName, role, adminId, ...userDetails };
                     setUser(user);
                     localStorage.setItem("user", JSON.stringify(user));
                     router.push("/admin-dashboard");

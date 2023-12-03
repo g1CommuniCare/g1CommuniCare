@@ -9,7 +9,7 @@ import Submit from "@/app/utils/appointments/Submit";
 import Success from "@/app/utils/appointments/Success";
 import ThirdRow from "@/app/utils/appointments/ThirdRow";
 import { useAuth } from "@/useContext/UseContext";
-
+import ConfirmationPopup from "@/app/components/ConfirmationPopup";
 import { useState } from "react";
 
 const Appointment = () => {
@@ -105,15 +105,17 @@ const Appointment = () => {
   };
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = async (e) => {
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setShowConfirmationPopup(true);
+  };
 
-    const currentDate = new Date();
-    const timezoneOffset = currentDate.getTimezoneOffset(); // in minutes
-    const localDate = new Date(currentDate.getTime() - timezoneOffset * 60000);
-    const formattedCurrentDate = localDate.toISOString();
-
+  const handleConfirmSubmit = async () => {
+    setShowConfirmationPopup(false);
+  
+    // Prepare the data for submission
     const data = {
       firstName: firstName,
       lastName: lastName,
@@ -126,22 +128,13 @@ const Appointment = () => {
       meetingFormat: meetingFormat,
       meetingDate: `${date}T${time}:00`,
       appointmentDetails: appointmentDetails,
-      dateRequested: formattedCurrentDate,
+      dateRequested: new Date().toISOString(),
       appointmentStatus: "Pending",
     };
-
-    const isConfirmed = window.confirm(
-      "Are you sure you want to submit this appointment request?"
-    );
-
-    if (!isConfirmed) {
-      return;
-    }
-
+  
     try {
       const response = await fetch(
-        `http://localhost:8080/appointment-requests/add-appointment-request/${user.residentId}`,
-        {
+        `http://localhost:8080/appointment-requests/add-appointment-request/${user.residentId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -149,11 +142,12 @@ const Appointment = () => {
           body: JSON.stringify(data),
         }
       );
-
+  
       if (!response.ok) {
         throw new Error("Failed to submit appointment request");
       }
-
+  
+      // Resetting form fields after successful submission
       setFirstName("");
       setLastName("");
       setMiddleInitial("");
@@ -161,12 +155,13 @@ const Appointment = () => {
       setEmail("");
       setAddress("");
       setSelectDepartment("");
+      setOtherDepartment("");
       setPurpose("");
       setSelectMeetingFormat("");
       setDate("");
       setTime("");
       setDetails("");
-
+  
       setIsSubmitted(true);
       const responseData = await response.json();
       console.log("Appointment request submitted successfully:", responseData);
@@ -175,6 +170,10 @@ const Appointment = () => {
     }
   };
 
+  const handleCancelSubmit = () => {
+    setShowConfirmationPopup(false);
+  };
+  
   return (
     <div className="bg-slate-100 w-full h-full">
       <header
@@ -278,6 +277,13 @@ const Appointment = () => {
             />
             <Submit />
           </form>
+          {showConfirmationPopup && (
+            <ConfirmationPopup
+              message="Are you sure you want to submit this appointment request?"
+              onConfirm={handleConfirmSubmit}
+              onCancel={handleCancelSubmit}
+            />
+          )}
         </div>
       )}
     </div>
