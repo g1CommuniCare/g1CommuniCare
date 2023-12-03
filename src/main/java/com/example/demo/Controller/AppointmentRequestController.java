@@ -79,4 +79,11 @@ public class AppointmentRequestController {
         String resultMessage = appointmentRequestServices.updateApprovedDetails(appreqId, approvedDetails);
         return new ResponseEntity<>(resultMessage, HttpStatus.OK);
     }
+
+    // Get appointment request by id
+    @GetMapping("/get-appointment-request/{appreqId}")
+    public ResponseEntity<AppointmentRequestEntity> getAppointmentRequestById(@PathVariable int appreqId) {
+        AppointmentRequestEntity appointmentRequest = appointmentRequestServices.getAppointmentRequestById(appreqId);
+        return new ResponseEntity<>(appointmentRequest, HttpStatus.OK);
+    }
 }
