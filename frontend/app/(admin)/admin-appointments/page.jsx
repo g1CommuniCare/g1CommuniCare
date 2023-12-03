@@ -3,6 +3,7 @@ import Search from "@/app/assets/Search";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import PDFGenerator from '@/app/components/PDFGenerator';
 
 // Helper function to format the date
 const formatDate = (date) => {
@@ -64,7 +65,7 @@ export default function AppointmentRequest() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-
+    
     async function fetchAppointmentRequests() {
         setLoading(true);
         try {
@@ -106,6 +107,22 @@ export default function AppointmentRequest() {
         setAppointmentRequest(sortedArray);
     }
 
+        // Function to generate PDF
+        const generatePDF = () => {
+            // You can use the PDFGenerator component to generate the PDF
+            PDFGenerator(appointmentRequests);
+        };
+
+        console.log(appointmentRequests)
+
+        const [showPDFViewer, setShowPDFViewer] = useState(false);
+
+        const openPDFViewerInNewTab = () => {
+            const pdfContent = <PDFGenerator data={appointmentRequests} />;
+            const pdfBlob = new Blob([pdfContent], { type: 'application/pdf' });
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            window.open(pdfUrl, '_blank');
+          };
     return (
         <>
             <form className="px-5 pt-5">
@@ -173,6 +190,14 @@ export default function AppointmentRequest() {
                     onPageChange={setCurrentPage}
                 />
             </div>
+                {/* Add a button to trigger PDF generation */}
+                    {/* Add a button to trigger PDF generation */}
+                    <button
+                        onClick={() => openPDFViewerInNewTab()} // Open the PDF viewer in a new tab
+                        className="px-3 py-1 rounded cursor-pointer bg-blue-500 text-white"
+                    >
+                        Generate PDF
+                    </button>
         </>
     );
 }
