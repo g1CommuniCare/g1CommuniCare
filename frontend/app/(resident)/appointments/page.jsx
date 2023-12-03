@@ -57,18 +57,18 @@ const Appointment = () => {
   const handleSelectDepartment = (e) => {
     const selectedDepartment = e.target.value;
 
-    setIsOthersSelected(selectedDepartment === "opt");
+    setIsOthersSelected(selectedDepartment === "Others");
     setSelectDepartment(
       isOthersSelected ? otherDepartment : selectedDepartment
     );
   };
   const departmentTypes = [
-    { value: "", label: "" },
-    { value: "council", label: "Barangay Council" },
-    { value: "health", label: "Health Center" },
-    { value: "ss", label: "Social Services" },
-    { value: "safety", label: "Safety Office" },
-    { value: "opt", label: "Others" },
+    { value: "", label: "-- Select a Department --" },
+    { value: "Barangay Council", label: "Barangay Council" },
+    { value: "Health Center", label: "Health Center" },
+    { value: "Social Service", label: "Social Services" },
+    { value: "Safety Office", label: "Safety Office" },
+    { value: "Others", label: "Others" },
   ];
 
   const [purpose, setPurpose] = useState("");
@@ -81,11 +81,11 @@ const Appointment = () => {
     setSelectMeetingFormat(e.target.value);
   };
   const meetingTypes = [
-    { value: "", label: "" },
-    { value: "person", label: "In-Person" },
-    { value: "email", label: "Email Correspondence" },
-    { value: "video", label: "Video Conference" },
-    { value: "office", label: "Office Visit" },
+    { value: "", label: "-- Select a Meeting Format --" },
+    { value: "In-Person", label: "In-Person" },
+    { value: "Email", label: "Email Correspondence" },
+    { value: "Video", label: "Video Conference" },
+    { value: "Office Visit", label: "Office Visit" },
   ];
   const [date, setDate] = useState("");
   const handleDate = (e) => {
@@ -247,6 +247,7 @@ const Appointment = () => {
                       id="otherDetails"
                       name="otherDetails"
                       value={otherDepartment}
+                      required
                       onChange={(e) => setOtherDepartment(e.target.value)}
                       className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
                     />

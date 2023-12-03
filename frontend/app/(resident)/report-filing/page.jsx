@@ -51,17 +51,18 @@ const Report = () => {
 
   const [isOthersSelected, setIsOthersSelected] = useState(false);
   const [reportType, setSelectReport] = useState("");
+  const [otherReportDetails, setOtherReportDetails] = useState("");
   const handleSelectReport = (e) => {
     const selectedReportType = e.target.value;
-    setIsOthersSelected(selectedReportType === "opt");
+    setIsOthersSelected(selectedReportType === "Others");
     setSelectReport(selectedReportType);
   };
   const reportTypes = [
     { value: "", label: "-- Select a Report Type --" },
-    { value: "noise", label: "Noise Complaint" },
-    { value: "road", label: "Road Problems" },
-    { value: "sanitation", label: "Sanitation Problems" },
-    { value: "opt", label: "Others" },
+    { value: "Noise", label: "Noise Complaint" },
+    { value: "Road", label: "Road Problems" },
+    { value: "Sanitation", label: "Sanitation Problems" },
+    { value: "Others", label: "Others" },
   ];
 
   const [date, setDate] = useState("");
@@ -79,7 +80,7 @@ const Report = () => {
     setDetails(e.target.value);
   };
 
-  const [otherReportDetails, setOtherReportDetails] = useState("");
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
 
@@ -210,7 +211,7 @@ const Report = () => {
               time={time}
               handleTime={(e) => setTime(e.target.value)}
             />
-            {reportType === "opt" && (
+            {reportType === "Others" && (
               <div className="mt-6 mb-12">
                 <label htmlFor="otherDetails">Specify Report Type</label>
                 <input
