@@ -1,13 +1,14 @@
 "use client";
 import React, { useState } from "react";
-
-import FourthRow from "@/app/utils/docreq/FourthRow";
-import SecondRow from "@/app/utils/docreq/SecondRow";
-import Submit from "@/app/utils/docreq/Submit";
-import ThirdRow from "@/app/utils/docreq/ThirdRow";
-import FirstRow from "@/app/utils/docreq/FirstRow";
-import FifthRow from "@/app/utils/docreq/FifthRow";
 import { useAuth } from "@/useContext/UseContext";
+
+import FirstRow from "@/app/utils/docreq/FirstRow";
+import SecondRow from "@/app/utils/docreq/SecondRow";
+import ThirdRow from "@/app/utils/docreq/ThirdRow";
+import FourthRow from "@/app/utils/docreq/FourthRow";
+import FifthRow from "@/app/utils/docreq/FifthRow";
+import PrintChoice from "@/app/utils/docreq/PrintChoice";
+import Submit from "@/app/utils/docreq/Submit";
 
 export default function DocumentRequest() {
   const { user, login } = useAuth();
@@ -55,12 +56,18 @@ export default function DocumentRequest() {
     setDocumentType(e.target.value);
   };
   const documentTypes = [
-    { value: "", label: "" },
+    { value: "", label: "Select Document" },
     { value: "barangayclearance", label: "Barangay Clearance" },
     { value: "barangayid", label: "Barangay ID" },
     { value: "certificateOfIndigency", label: "Certificate of Indigency" },
     { value: "businessPermit", label: "Business Permit" },
+    { value: "others", label: "Others (Please Specify)" },
   ];
+
+  const [specifiedDocumentType, setSpecifiedDocumentType] = useState("");
+  const handleSpecifiedDocumentType = (e) => {
+    setSpecifiedDocumentType(e.target.value);
+  };
 
   const [purpose, setPurpose] = useState("");
   const handlePurpose = (e) => {
@@ -71,14 +78,18 @@ export default function DocumentRequest() {
   const handleValidIdType = (e) => {
     setValidIdType(e.target.value);
   };
-
   const validIdTypes = [
-    { value: "", label: "" },
+    { value: "", label: "Select Valid ID" },
     { value: "driverslicense", label: "Driver's License" },
     { value: "governmentissuedid", label: "Government Issued ID" },
     { value: "passport", label: "Passport" },
     { value: "schoolid", label: "School ID" },
+    { value: "others", label: "Others (Please Specify)" },
   ];
+  const [specifiedValidIdType, setSpecifiedValidIdType] = useState("");
+  const handleSpecifiedValidIdType = (e) => {
+    setSpecifiedValidIdType(e.target.value);
+  };
 
   const [validId, setValidId] = useState(null);
   const [imageFormat, setImageFormat] = useState(null);
@@ -86,13 +97,13 @@ export default function DocumentRequest() {
   const storeUploadedPhoto = (photo) => {
     const reader = new FileReader();
     reader.onload = () => {
-      const base64String = reader.result.split(',')[1]; // Extract base64 data
+      const base64String = reader.result.split(",")[1]; // Extract base64 data
       setValidId(base64String); // Set the base64 string in the state
 
       // Determine the image format (e.g., JPEG, PNG)
       let imgFormat = "";
       if (photo.type) {
-        imgFormat = photo.type.split('/')[1];
+        imgFormat = photo.type.split("/")[1];
       }
       setImageFormat(imgFormat); // Set the image format in the state
     };
@@ -121,6 +132,16 @@ export default function DocumentRequest() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    let finalDocumentType = documentType;
+    if (documentType === "others") {
+      finalDocumentType = specifiedDocumentType;
+    }
+
+    let finalValidIdType = validIdType;
+    if (validIdType === "others") {
+      finalValidIdType = specifiedValidIdType;
+    }
+
     if (validId != null) {
       const dataDocumentRequest = {
         firstName: firstName,
@@ -129,10 +150,11 @@ export default function DocumentRequest() {
         email: email,
         contactNumber: contactNumber,
         address: address,
-        documentType: documentType,
+        documentType: finalDocumentType,
         documentStatus: "Pending",
         requestDate: new Date(),
         purpose: purpose,
+        validIdType: finalValidIdType,
         validId: validId,
         imageFormat: imageFormat,
         toPrint: toPrint,
@@ -145,7 +167,8 @@ export default function DocumentRequest() {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/document-requests/add-document-request/${user.residentId}`, {
+          `http://localhost:8080/document-requests/add-document-request/${user.residentId}`,
+          {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -163,6 +186,8 @@ export default function DocumentRequest() {
       } catch (error) {
         console.log("Error submitting document request:", error.message);
       }
+
+      console.log(dataDocumentRequest);
     } else {
       alert("Please upload a valid ID.");
       return;
@@ -172,7 +197,7 @@ export default function DocumentRequest() {
   return (
     <div className="w-full h-full">
       <header
-        className="h-72 w-full bg-cover text-black"
+        className="h-96 w-full bg-cover text-black"
         style={{ backgroundImage: 'url("images/document-request-header.png")' }}
       >
         <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
@@ -215,7 +240,6 @@ export default function DocumentRequest() {
             address={address}
             handleAddress={handleAddress}
           />
-          {/* FOURTH ROW */}
           <FourthRow
             firstTitle="Document Type"
             documentType={documentType}
@@ -224,6 +248,8 @@ export default function DocumentRequest() {
             secondTitle="Purpose"
             purpose={purpose}
             handlePurpose={handlePurpose}
+            specifiedDocumentType={specifiedDocumentType}
+            handleSpecifiedDocumentType={handleSpecifiedDocumentType}
           />
           {/* FIFTH ROW */}
           <FifthRow
@@ -232,141 +258,22 @@ export default function DocumentRequest() {
             handleValidIdType={handleValidIdType}
             validIdTypes={validIdTypes}
             storeUploadedPhoto={storeUploadedPhoto}
+            specifiedValidIdType={specifiedValidIdType}
+            handleSpecifiedValidIdType={handleSpecifiedValidIdType}
+          />
+          {/* Choose to print or not to print */}
+          <PrintChoice
+            toPrint={toPrint}
+            handlePrintOptionChange={handlePrintOptionChange}
+            printCopies={printCopies}
+            handlePrintCopiesChange={handlePrintCopiesChange}
+            referenceNumber={referenceNumber}
+            handleReferenceNumber={handleReferenceNumber}
           />
 
-          <div className="flex flex-col gap-5 mt-16 w-full">
-            <div>
-              <p>Do you want to have your document printed?</p>
-              <div className="mt-3">
-                <label
-                  htmlFor="printDocument"
-                  className="inline-flex items-center"
-                >
-                  <input
-                    id="printDocument"
-                    type="radio"
-                    name="printOption"
-                    value="yes"
-                    checked={toPrint}
-                    onChange={handlePrintOptionChange}
-                    className="form-checkbox h-5 w-5 text-indigo-600 transition-all duration-300 ease-in-out focus:ring focus:ring-indigo-200"
-                  />
-                  <span className="ml-2">Yes</span>
-                </label>
-                <label
-                  htmlFor="notPrintDocument"
-                  className="inline-flex items-center ml-6"
-                >
-                  <input
-                    id="notPrintDocument"
-                    type="radio"
-                    name="notPrintOption"
-                    value="no"
-                    checked={!toPrint}
-                    onChange={handlePrintOptionChange}
-                    className="form-checkbox h-5 w-5 text-indigo-600 transition-all duration-300 ease-in-out focus:ring focus:ring-indigo-200"
-                  />
-                  <span className="ml-2">No</span>
-                </label>
-              </div>
-            </div>
-
-            {toPrint && (
-              <div className="mt-1">
-                <p>
-                  If you choose to have it printed, how many copies would you
-                  like?
-                </p>
-                <div className="flex flex-col w-5/12">
-                  <label htmlFor="printCopiesId" className="mb-1"></label>
-                  <input
-                    type="number"
-                    id="printCopiesId"
-                    name="printCopies"
-                    value={printCopies}
-                    onChange={handlePrintCopiesChange}
-                    className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-                  />
-                </div>
-              </div>
-            )}
-
-            {toPrint && (
-              <div className="mt-3">
-                <p>Document Pricing:</p>
-                <table className="w-full border-collapse border border-slate-200 mt-3">
-                  <colgroup>
-                    <col style={{ width: "50%" }} />
-                    <col style={{ width: "50%" }} />
-                  </colgroup>
-                  <thead>
-                    <tr className="bg-gray-200">
-                      <th className="border border-slate-200 p-2">
-                        Document Type
-                      </th>
-                      <th className="border border-slate-200 p-2">Pricing</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white">
-                    <tr>
-                      <td className="border border-slate-200 p-2">
-                        Barangay Clearance
-                      </td>
-                      <td className="border border-slate-200 p-2">
-                        Php 100.00
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-200 p-2">
-                        Barangay ID
-                      </td>
-                      <td className="border border-slate-200 p-2">
-                        Php 150.00
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-200 p-2">
-                        Certificate of Indigency
-                      </td>
-                      <td className="border border-slate-200 p-2">Php 50.00</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-200 p-2">
-                        Barangay Permit
-                      </td>
-                      <td className="border border-slate-200 p-2">
-                        Php 500.00
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-200 p-2">Others</td>
-                      <td className="border border-slate-200 p-2">
-                      Php 200.00
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            <div className="mt-3">
-              <p className="mb-1">
-                Reference Number (if any):
-              </p>
-              <input
-                type="text"
-                value={referenceNumber}
-                onChange={handleReferenceNumber}
-                placeholder="Reference Number"
-                className="w-5/12 h-[48px] py-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-              />
-            </div>
-
-            <Submit />
-          </div>
+          <Submit />
         </form>
       </div>
     </div>
   );
 }
-
