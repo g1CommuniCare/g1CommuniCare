@@ -3,16 +3,24 @@ import Search from "@/app/assets/Search";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import PDFGenerator from '@/app/components/PDFGenerator';
+import Modal from 'react-modal';
+import PDFGeneratorApp from '@/app/components/PDFGeneratorApp';
 
-// Helper function to format the date
-const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
+// Helper function to format the date as "01/01/2023"
+const formatDate = (dateArray) => {
+    if (dateArray.length < 3) {
+        return ""; // Return an empty string for invalid date arrays
+    }
+
+    const [year, month, day] = dateArray.slice(0, 3);
+
+    // Use String.padStart to add leading zeros where needed
+    const formattedMonth = String(month).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+
+    return `${formattedMonth}/${formattedDay}/${year}`;
 };
+
 
 const rowsPerPage = 10; // Number of rows to display per page
 
@@ -106,26 +114,22 @@ export default function AppointmentRequest() {
 
         setAppointmentRequest(sortedArray);
     }
+    console.log(appointmentRequests);
+    const [showPDFModal, setShowPDFModal] = useState(false);
 
-        // Function to generate PDF
-        const generatePDF = () => {
-            // You can use the PDFGenerator component to generate the PDF
-            PDFGenerator(appointmentRequests);
-        };
+    function handleGeneratePDF() {
+        event.preventDefault();
+        setShowPDFModal(true);
+    }
 
-        console.log(appointmentRequests)
+    function handleClosePDFModal() {
+        setShowPDFModal(false);
+      }
 
-        const [showPDFViewer, setShowPDFViewer] = useState(false);
-
-        const openPDFViewerInNewTab = () => {
-            const pdfContent = <PDFGenerator data={appointmentRequests} />;
-            const pdfBlob = new Blob([pdfContent], { type: 'application/pdf' });
-            const pdfUrl = URL.createObjectURL(pdfBlob);
-            window.open(pdfUrl, '_blank');
-          };
     return (
         <>
             <form className="px-5 pt-5">
+            <div className="flex justify-center items-center px-5 pt-5">
                 <div className="relative">
                     <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <Search />
@@ -134,9 +138,16 @@ export default function AppointmentRequest() {
                         type="text"
                         id="default-search"
                         placeholder="Search"
-                        className="w-full p-4 ps-12 border-gray-300 border-b-[2px] outline-none"
+                        className="w-11/12 p-4 ps-12 border-gray-300 border-b-[2px] outline-none"
                     />
                 </div>
+                <button
+                    onClick={handleGeneratePDF}
+                    className="px-3 py-1 rounded cursor-pointer bg-blue-500 text-white"
+                >
+                    Generate PDF
+                </button>
+            </div>
             </form>
             <div className="w-80% p-5">
                 <div className="w-full overflow-x-auto">
@@ -190,14 +201,19 @@ export default function AppointmentRequest() {
                     onPageChange={setCurrentPage}
                 />
             </div>
-                {/* Add a button to trigger PDF generation */}
-                    {/* Add a button to trigger PDF generation */}
-                    <button
-                        onClick={() => openPDFViewerInNewTab()} // Open the PDF viewer in a new tab
-                        className="px-3 py-1 rounded cursor-pointer bg-blue-500 text-white"
-                    >
-                        Generate PDF
-                    </button>
+            {/* Conditionally render the PDF modal */}
+            <Modal
+                isOpen={showPDFModal}
+                onRequestClose={handleClosePDFModal} // Close modal when requested
+                contentLabel="PDF Modal"
+            >
+                 <button onClick={handleClosePDFModal} className="absolute top-4 right-2 p-2 bg-white rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                 </button>
+                <PDFGeneratorApp data={appointmentRequests} />
+            </Modal>
         </>
     );
 }
@@ -222,6 +238,7 @@ function TableAppointmentRequests({
 
     const fullName = firstName + " " + lastName;
     const residentProfile = `data:image/${imageFormat};base64,${profileImage}`;
+    const formattedDateRequested = formatDate(dateRequested);
 
     return (
         <>
@@ -244,7 +261,7 @@ function TableAppointmentRequests({
                     <span className="ml-2">{department}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{dateRequested}</span>
+                    <span className="ml-2">{formattedDateRequested}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
                     <span className="ml-2">{appointmentStatus}</span>

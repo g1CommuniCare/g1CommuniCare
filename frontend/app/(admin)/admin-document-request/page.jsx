@@ -4,6 +4,8 @@ import axios from "axios";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Modal from 'react-modal';
+import PDFGeneratorDoc from '@/app/components/PDFGeneratorDoc';
 
 // Helper function to format the date
 const formatDate = (date) => {
@@ -107,19 +109,38 @@ export default function DocumentRequest() {
         setDocumentRequests(sortedArray);
     }
 
+    const [showPDFModal, setShowPDFModal] = useState(false);
+
+    function handleGeneratePDF() {
+        event.preventDefault();
+        setShowPDFModal(true);
+    }
+
+    function handleClosePDFModal() {
+        setShowPDFModal(false);
+    }
+
     return (
         <>
             <form className="px-5 pt-5">
-                <div className="relative">
-                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <Search />
+                <div className="flex justify-center items-center px-5 pt-5">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <Search />
+                        </div>
+                        <input
+                            type="text"
+                            id="default-search"
+                            placeholder="Search"
+                            className="w-11/12 p-4 ps-12 border-gray-300 border-b-[2px] outline-none"
+                        />
                     </div>
-                    <input
-                        type="text"
-                        id="default-search"
-                        placeholder="Search"
-                        className="w-full p-4 ps-12 border-gray-300 border-b-[2px] outline-none"
-                    />
+                    <button
+                        onClick={handleGeneratePDF}
+                        className="px-3 py-1 rounded cursor-pointer bg-blue-500 text-white"
+                    >
+                        Generate PDF
+                    </button>
                 </div>
             </form>
             <div className="w-80% p-5">
@@ -174,6 +195,19 @@ export default function DocumentRequest() {
                     onPageChange={setCurrentPage}
                 />
             </div>
+            {/* Conditionally render the PDF modal */}
+            <Modal
+                isOpen={showPDFModal}
+                onRequestClose={handleClosePDFModal} // Close modal when requested
+                contentLabel="PDF Modal"
+            >
+                <button onClick={handleClosePDFModal} className="absolute top-4 right-2 p-2 bg-white rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </button>
+                <PDFGeneratorDoc data={documentRequests} />
+            </Modal>
         </>
     );
 }
