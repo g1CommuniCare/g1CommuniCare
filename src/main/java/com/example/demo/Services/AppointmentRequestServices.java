@@ -122,4 +122,9 @@ public class AppointmentRequestServices {
         }
     }
 
+    // Get appointment request by id
+    public AppointmentRequestEntity getAppointmentRequestById(int appreqId) {
+        return appointmentRequestRepository.findById(appreqId).orElse(null);
+    }
+
 }
