@@ -1,6 +1,7 @@
 package com.example.demo.DTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class DocumentRequestDTO {
     private int docreqId;
@@ -21,7 +22,7 @@ public class DocumentRequestDTO {
     private int printCopies;
     private String referenceNumber;
     private String denialReason;
-    private LocalDate claimDate;
+    private LocalDateTime claimDate;
     private Boolean isDeleted;
 
     public int getDocreqId() {
@@ -168,11 +169,11 @@ public class DocumentRequestDTO {
         this.denialReason = denialReason;
     }
 
-    public LocalDate getClaimDate() {
+    public LocalDateTime getClaimDate() {
         return claimDate;
     }
 
-    public void setClaimDate(LocalDate claimDate) {
+    public void setClaimDate(LocalDateTime claimDate) {
         this.claimDate = claimDate;
     }
 
@@ -187,7 +188,7 @@ public class DocumentRequestDTO {
     public DocumentRequestDTO(int docreqId, String firstName, String lastName, String middleInitial, String email,
             String contactNumber, String address, String documentType, String documentStatus, LocalDate requestDate,
             String purpose, byte[] validId, String imageFormat, String validIdType, boolean toPrint, int printCopies,
-            String referenceNumber, String denialReason, LocalDate claimDate, Boolean isDeleted) {
+            String referenceNumber, String denialReason, LocalDateTime claimDate, Boolean isDeleted) {
         this.docreqId = docreqId;
         this.firstName = firstName;
         this.lastName = lastName;

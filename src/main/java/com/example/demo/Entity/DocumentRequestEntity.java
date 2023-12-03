@@ -1,6 +1,7 @@
 package com.example.demo.Entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 import javax.persistence.CascadeType;
@@ -81,7 +82,7 @@ public class DocumentRequestEntity {
     private String denialReason;
 
     @Column(name = "claim_date")
-    private LocalDate claimDate;
+    private LocalDateTime claimDate;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
@@ -89,7 +90,7 @@ public class DocumentRequestEntity {
     public DocumentRequestEntity(int docreqId, ResidentEntity resident, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, String documentType,
             LocalDate requestDate, String purpose, byte[] validId, String imageFormat, String validIdType,
-            Boolean toPrint, int printCopies, String referenceNumber, String denialReason, LocalDate claimDate,
+            Boolean toPrint, int printCopies, String referenceNumber, String denialReason, LocalDateTime claimDate,
             Boolean isDeleted) {
         this.docreqId = docreqId;
         this.resident = resident;
@@ -295,11 +296,11 @@ public class DocumentRequestEntity {
         this.denialReason = denialReason;
     }
 
-    public LocalDate getClaimDate() {
+    public LocalDateTime getClaimDate() {
         return claimDate;
     }
 
-    public void setClaimDate(LocalDate claimDate) {
+    public void setClaimDate(LocalDateTime claimDate) {
         this.claimDate = claimDate;
     }
 

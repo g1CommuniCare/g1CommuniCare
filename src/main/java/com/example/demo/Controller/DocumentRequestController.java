@@ -12,7 +12,7 @@ import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Services.DocumentRequestServices;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -70,7 +70,7 @@ public class DocumentRequestController {
     // Endpoint to set the claimDate of a Document Request
     @PutMapping("/{id}/set-claim-date")
     public String setClaimDate(@PathVariable int id, @RequestParam String newClaimDate) {
-        LocalDate claimDate = LocalDate.parse(newClaimDate); // Convert string to LocalDate
+        LocalDateTime claimDate = LocalDateTime.parse(newClaimDate); // Convert string to LocalDate
         return documentRequestService.setClaimDate(id, claimDate);
     }
 

@@ -10,7 +10,7 @@ import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.DocumentRequestRepository;
 import com.example.demo.Repository.ResidentRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -127,7 +127,7 @@ public class DocumentRequestServices {
     // }
 
     // Method to set the claimDate of a Document Request
-    public String setClaimDate(int id, LocalDate newClaimDate) {
+    public String setClaimDate(int id, LocalDateTime newClaimDate) {
         List<DocumentRequestEntity> documentRequests = documentRequestRepository.findBydocreqId(id);
 
         if (!documentRequests.isEmpty()) {
