@@ -16,6 +16,7 @@ public class DocumentRequestDTO {
     private String purpose;
     private byte[] validId;
     private String imageFormat;
+    private String validIdType;
     private boolean toPrint;
     private int printCopies;
     private String referenceNumber;
@@ -127,6 +128,14 @@ public class DocumentRequestDTO {
         this.imageFormat = imageFormat;
     }
 
+    public String getValidIdType() {
+        return validIdType;
+    }
+
+    public void setValidIdType(String validIdType) {
+        this.validIdType = validIdType;
+    }
+
     public boolean isToPrint() {
         return toPrint;
     }
@@ -177,7 +186,7 @@ public class DocumentRequestDTO {
 
     public DocumentRequestDTO(int docreqId, String firstName, String lastName, String middleInitial, String email,
             String contactNumber, String address, String documentType, String documentStatus, LocalDate requestDate,
-            String purpose, byte[] validId, String imageFormat, boolean toPrint, int printCopies,
+            String purpose, byte[] validId, String imageFormat, String validIdType, boolean toPrint, int printCopies,
             String referenceNumber, String denialReason, LocalDate claimDate, Boolean isDeleted) {
         this.docreqId = docreqId;
         this.firstName = firstName;
@@ -192,6 +201,7 @@ public class DocumentRequestDTO {
         this.purpose = purpose;
         this.validId = validId;
         this.imageFormat = imageFormat;
+        this.validIdType = validIdType;
         this.toPrint = toPrint;
         this.printCopies = printCopies;
         this.referenceNumber = referenceNumber;

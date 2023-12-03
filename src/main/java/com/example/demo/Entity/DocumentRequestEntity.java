@@ -65,6 +65,9 @@ public class DocumentRequestEntity {
     @Column(name = "image_format")
     private String imageFormat;
 
+    @Column(name = "valid_id_type")
+    private String validIdType;
+
     @Column(name = "to_print")
     private Boolean toPrint;
 
@@ -85,7 +88,7 @@ public class DocumentRequestEntity {
 
     public DocumentRequestEntity(int docreqId, ResidentEntity resident, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, String documentType,
-            LocalDate requestDate, String purpose, byte[] validId, String imageFormat,
+            LocalDate requestDate, String purpose, byte[] validId, String imageFormat, String validIdType,
             Boolean toPrint, int printCopies, String referenceNumber, String denialReason, LocalDate claimDate,
             Boolean isDeleted) {
         this.docreqId = docreqId;
@@ -101,6 +104,7 @@ public class DocumentRequestEntity {
         this.purpose = purpose;
         this.validId = validId;
         this.imageFormat = imageFormat;
+        this.validIdType = validIdType;
         this.toPrint = toPrint;
         this.printCopies = printCopies;
         this.referenceNumber = referenceNumber;
@@ -129,6 +133,7 @@ public class DocumentRequestEntity {
         documentRequestDTO.setPurpose(this.purpose);
         documentRequestDTO.setValidId(this.validId);
         documentRequestDTO.setImageFormat(this.imageFormat);
+        documentRequestDTO.setValidIdType(this.validIdType);
         documentRequestDTO.setToPrint(this.toPrint);
         documentRequestDTO.setPrintCopies(this.printCopies);
         documentRequestDTO.setReferenceNumber(this.referenceNumber);
@@ -248,6 +253,14 @@ public class DocumentRequestEntity {
 
     public void setImageFormat(String imageFormat) {
         this.imageFormat = imageFormat;
+    }
+
+    public String getValidIdType() {
+        return validIdType;
+    }
+
+    public void setValidIdType(String validIdType) {
+        this.validIdType = validIdType;
     }
 
     public Boolean getToPrint() {
