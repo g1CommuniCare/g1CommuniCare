@@ -73,14 +73,14 @@ export default function Account() {
     const email = user.email;
     const birthDate = user.date.join(" / ");
     const address = user.address;
+
+    // DISPLAYS THE DEFAULT IMAGE
+    // User's fullname: Don Massimo -> DM(defualt profile image)
     const defaultProfileIamge = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
-
-    const profileFormat = user.imageFormat;
-    const profileImage = user.profileImage;
-    // console.log(profileFormat);
-    // console.log(profileImage);
-
-    // console.log(user);
+    const noProfile = defaultProfileIamge;
+    const profile = `data:image/${user.imageFormat};base64,${user.profileImage}`;
+    console.log(noProfile);
+    console.log(profile);
 
     async function fetchReport() {
         setIsLoading(true);
@@ -105,7 +105,6 @@ export default function Account() {
             );
             const data = res.data;
             setMyRequest(data);
-            console.log(data);
         } catch (error) {
             console.log("Error Fetching My Report");
         } finally {
@@ -153,9 +152,15 @@ export default function Account() {
 
                 <div className="flex justify-between gap-8 rounded-[22px] p-7 bg-slate-100/70">
                     <div className="relative">
-                        <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center rounded-full border-2 border-white bg-slate-500 text-6xl text-white">
-                            {defaultProfileIamge}
-                        </p>
+                        {noProfile ? (
+                            <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center rounded-full border-2 border-white bg-slate-500 text-6xl text-white">
+                                {noProfile}
+                            </p>
+                        ) : (
+                            <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
+                                <img src={profile} alt="" className="h-48 w-48 rounded-full" />
+                            </p>
+                        )}
                         <div className="mt-24 py-24 px-10 bg-white w-full rounded-[22px]">
                             <div className="flex flex-col">
                                 <input type="file" onChange={handleFileSelect} />

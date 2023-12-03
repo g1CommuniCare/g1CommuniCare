@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }) => {
                     throw new Error(`Unknown role: ${role}`);
                 }
 
-                console.log(user);
                 return user;
             } else {
                 console.log(`Failed to login for role ${role}`);

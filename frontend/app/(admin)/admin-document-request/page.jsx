@@ -64,7 +64,6 @@ export default function DocumentRequest() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [statusFilter, setStatusFilter] = useState(documentRequests);
 
     async function fetchDocumentRequests() {
         setLoading(true);
@@ -72,7 +71,6 @@ export default function DocumentRequest() {
             const res = await axios("http://localhost:8080/document-requests/non-deleted");
             const data = res.data;
             setDocumentRequests(data);
-            console.log(data);
         } catch (error) {
             console.log("Error Fetching Document Requests", error);
             setError(error);
@@ -84,8 +82,6 @@ export default function DocumentRequest() {
     useEffect(() => {
         fetchDocumentRequests();
     }, []);
-
-    // const filteredData = documentRequests.filter(({resident: {firstName, lastName}}))
 
     // Calculate the starting and ending index for the current page
     const startIndex = (currentPage - 1) * rowsPerPage;
@@ -108,7 +104,6 @@ export default function DocumentRequest() {
         });
 
         setDocumentRequests(sortedArray);
-        console.log(sortedArray);
     }
 
     return (
@@ -157,13 +152,15 @@ export default function DocumentRequest() {
                                     <TableDocumentRequests
                                         key={docreqId}
                                         docreqId={docreqId}
+                                        imageFormat={resident.imageFormat}
+                                        profileImage={resident.profileImage}
                                         residentId={resident.residentId}
                                         firstName={resident.firstName}
                                         lastName={resident.lastName}
                                         documentType={documentType}
                                         requestDate={requestDate}
                                         documentStatus={documentStatus}
-                                    />  
+                                    />
                                 )
                             )}
                         </tbody>
@@ -182,9 +179,9 @@ export default function DocumentRequest() {
 
 function TableDocumentRequests({
     docreqId,
+    residentId,
     imageFormat,
     profileImage,
-    residentId,
     firstName,
     lastName,
     documentType,
@@ -199,13 +196,14 @@ function TableDocumentRequests({
     }
 
     const fullName = firstName + " " + lastName;
+    const residentProfile = `data:image/${imageFormat};base64,${profileImage}`;
 
     return (
         <>
             <tr onClick={handleClick} className="hover:bg-gray-200 bg-white cursor-pointer">
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-l-2 text-slate-700 border-slate-200">
                     <img
-                        src={`data:image/${imageFormat};base64,${profileImage}`}
+                        src={residentProfile}
                         alt={`${fullName}'s profile`}
                         className="relative inline-flex items-center justify-center w-10 h-10 text-lg text-white rounded-full bg-emerald-500"
                     />
@@ -358,7 +356,15 @@ function TableDocumentRequestsSkeleton() {
     );
 }
 
-function TableHead({ fullName, residentId, requestId, documentType, dateRequested, status, handleStatus }) {
+function TableHead({
+    fullName,
+    residentId,
+    requestId,
+    documentType,
+    dateRequested,
+    status,
+    handleStatus,
+}) {
     return (
         <>
             <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2 border-l-2">
@@ -376,7 +382,11 @@ function TableHead({ fullName, residentId, requestId, documentType, dateRequeste
             <th scope="col" className="h-10 px-4 font-semibold border-t-2 border-b-2">
                 {dateRequested}
             </th>
-            <th scope="col" onClick={handleStatus} className="h-10 px-4 font-semibold border-t-2 border-b-2 border-r-2">
+            <th
+                scope="col"
+                onClick={handleStatus}
+                className="h-10 px-4 font-semibold border-t-2 border-b-2 border-r-2 cursor-pointer hover:bg-gray-200"
+            >
                 {status}
             </th>
         </>
