@@ -1,6 +1,7 @@
 "use client";
 import Search from "@/app/assets/Search";
 import axios from "axios";
+import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -158,7 +159,7 @@ export default function DocumentRequest() {
                                         firstName={resident.firstName}
                                         lastName={resident.lastName}
                                         documentType={documentType}
-                                        requestDate={requestDate}
+                                        requestDate={formatDate(requestDate)}
                                         documentStatus={documentStatus}
                                     />
                                 )

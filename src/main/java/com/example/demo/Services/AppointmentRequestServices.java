@@ -100,6 +100,7 @@ public class AppointmentRequestServices {
         if (appointmentRequest != null) {
             appointmentRequest.setDenialReason(denialReason);
             // Save the updated appointment request to the database
+            appointmentRequest.setAppointmentStatus("Denied");
             appointmentRequestRepository.save(appointmentRequest);
             return "Appointment request updated successfully.";
         } else {
@@ -115,6 +116,7 @@ public class AppointmentRequestServices {
         if (appointmentRequest != null) {
             appointmentRequest.setApprovedDetails(approvedDetails);
             // Save the updated appointment request to the database
+            appointmentRequest.setAppointmentStatus("Approved");
             appointmentRequestRepository.save(appointmentRequest);
             return "Appointment request updated successfully.";
         } else {

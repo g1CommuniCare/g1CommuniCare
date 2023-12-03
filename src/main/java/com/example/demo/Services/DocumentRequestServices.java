@@ -133,6 +133,7 @@ public class DocumentRequestServices {
         if (!documentRequests.isEmpty()) {
             for (DocumentRequestEntity documentRequest : documentRequests) {
                 documentRequest.setClaimDate(newClaimDate);
+                documentRequest.setDocumentStatus("Approved");
                 documentRequestRepository.save(documentRequest);
             }
             return "Claim date updated successfully for " + documentRequests.size() + " document requests.";
@@ -161,6 +162,7 @@ public class DocumentRequestServices {
         if (!documentRequests.isEmpty()) {
             for (DocumentRequestEntity documentRequest : documentRequests) {
                 documentRequest.setDenialReason(newDenialReason);
+                documentRequest.setDocumentStatus("Denied");
                 documentRequestRepository.save(documentRequest);
             }
             return "Denial reason updated successfully for " + documentRequests.size() + " document requests.";

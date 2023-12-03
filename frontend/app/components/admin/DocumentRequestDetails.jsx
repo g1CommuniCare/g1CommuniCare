@@ -1,19 +1,69 @@
 "use client";
-
+import { useState } from "react";
 import CopySvg from "@/app/utils/CopySvg";
 
 export default function DocumentRequestDetails({ data, fullName }) {
+    
     function handleCopy() {
-        alert("COPIIIIIIIIIIIIIIIIIIIIIIIIIED");
-    }
-
-    function handleApprove() {
-        alert("APROOOOOOOOOOOOVEDDDDDDD")
+        alert("Copied!");
     }
 
     function handleDeny() {
-        alert("DENIIIIIIIIIIIIIIIIIIIIIIIED");
+        setShowDenyPopup(true); // Show the Deny popup
     }
+    const [showApprovalPopup, setShowApprovalPopup] = useState(false);
+    const [claimDate, setClaimDate] = useState('');
+    const [claimTime, setClaimTime] = useState('');
+
+    const handleApproveClick = () => {
+        setShowApprovalPopup(true); // Show the approval popup
+    };
+
+    const handleApprovalSubmit = async () => {
+        // Construct the full date-time string in ISO format
+        const dateTime = `${claimDate}T${claimTime}`;
+        // Call your API to set the claim date
+        // Here, you would use fetch or axios to PUT the data to your API
+        const response = await fetch(`http://localhost:8080/document-requests/${data.docreqId}/set-claim-date?newClaimDate=${dateTime}`, {
+            method: 'PUT',
+        });
+        const result = await response.text();
+        alert(result); // Or handle the result in a more user-friendly way
+        setShowApprovalPopup(false); // Close the popup after submission
+    };
+
+    const [showPopup, setShowPopup] = useState(false);
+    const [showDenyPopup, setShowDenyPopup] = useState(false); // State for Deny popup
+    const [denyReason, setDenyReason] = useState(''); // State for Deny reason
+
+    const handlePopupOpen = () => {
+        setShowPopup(true);
+    };
+
+    const handlePopupClose = () => {
+        setShowPopup(false);
+    };
+
+    const validIdImageSrc = `data:image/${data.imageFormat};base64,${data.validId}`;
+
+    function formatDate(dateString) {
+        // Ensure dateString is a string
+        const dateStr = String(dateString);
+    
+        // Replace commas with hyphens to get the format "YYYY - MM - DD"
+        return dateStr.replace(/,/g, '-');
+    }
+
+    const handleDenySubmit = async () => {
+        // Call your API to set the denial reason
+        const response = await fetch(`http://localhost:8080/document-requests/${data.docreqId}/set-denial-reason?newDenialReason=${denyReason}`, {
+            method: 'PUT',
+        });
+        const result = await response.text();
+        alert(result); // Or handle the result in a more user-friendly way
+        setShowDenyPopup(false); // Close the Deny popup after submission
+    };
+
     return (
         <div className="flex flex-col w-full p-5">
             <div className="w-[1094px] bg-gray-200/80 rounded-2xl mx-auto p-5">
@@ -62,7 +112,7 @@ export default function DocumentRequestDetails({ data, fullName }) {
                             </div>
                             <>
                                 <p className="text-xs text-gray-500 leading-3">Day of Request:</p>
-                                <p className="pb-2 font-medium">{data.requestDate}</p>
+                                <p className="pb-2 font-medium">{formatDate(data.requestDate)}</p>
                             </>
                             <>
                                 <p className="text-xs text-gray-500 leading-3">Document Type:</p>
@@ -74,13 +124,117 @@ export default function DocumentRequestDetails({ data, fullName }) {
                             </>
                             <>
                                 <p className="text-xs text-gray-500 leading-3">Valid ID:</p>
-                                <p className="font-medium">{data.validId}</p>
+                                <p className="font-medium">{data.validIdType}
+                                <button
+                                onClick={handlePopupOpen}
+                                className="bg-[#3F948B] hover:bg-[#337770] w-[148px] text-sm text-white p-2 rounded-lg ml-6 mr-6"
+                            >
+                                Show Valid ID
+                            </button>
+                                </p>
+
                             </>
+
+                                {showPopup && (
+                                    <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+                                        <div className="bg-white p-6 rounded-lg shadow-xl z-50">
+                                            <div className="flex justify-end">
+                                                <button 
+                                                    onClick={handlePopupClose}
+                                                    className="text-lg font-semibold"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div className="mt-4">
+                                                <img src={validIdImageSrc} alt="Valid ID" className="max-w-xs mx-auto"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {showApprovalPopup && (
+                                    <div className="fixed inset-0 overflow-y-auto flex items-center justify-center">
+                                        <div className="fixed inset-0 transition-opacity backdrop-filter backdrop-blur-sm">
+                                        <div className="absolute inset-0 bg-gray-500 opacity-70"></div>
+                                        </div>
+
+                                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all max-w-xl w-3/12">
+                                        <div className="bg-white p-8 w-full max-w-3xl">
+                                            <div className="sm:flex sm:justify-center items-center">
+                                            <div className="mt-4 text-center sm:mt-0 sm:text-left w-10/12">
+                                                <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 text-center">
+                                                Set Claim/Pickup Date
+                                                </h3>
+                                                <div className="mt-2 text-center">
+                                                <div className="mt-2 text-center">
+                                                    <input type="date" value={claimDate} onChange={(e) => setClaimDate(e.target.value)} className="mr-2" />
+                                                    <input type="time" value={claimTime} onChange={(e) => setClaimTime(e.target.value)} className="mr-2" />
+                                                </div>
+                                                <div className="flex justify-center mt-8">
+                                                    <button
+                                                    type="button"
+                                                    onClick={() => setShowApprovalPopup(false)}
+                                                    className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                                                    >
+                                                    No
+                                                    </button>
+                                                    <button
+                                                    type="button"
+                                                    onClick={handleApprovalSubmit}
+                                                    className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#3F948B] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-800"
+                                                    >
+                                                    Approve
+                                                    </button>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    )}
+                                {showDenyPopup && (
+                                    <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+                                        <div className="bg-white p-6 rounded-lg shadow-xl z-50">
+                                            <div className="mt-4 text-center sm:mt-0 sm:text-left w-10/12">
+                                                <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 text-center">
+                                                Indicate Denial Reasons
+                                                </h3>
+                                                <div className="mt-2 text-center">
+                                                    <textarea
+                                                        value={denyReason}
+                                                        onChange={(e) => setDenyReason(e.target.value)}
+                                                        className="w-full h-24 border border-gray-300 rounded-md p-2"
+                                                        placeholder="Enter Denial Reasons"
+                                                    ></textarea>
+                                                    <div className="flex justify-center mt-8">
+                                                        <button
+                                                        type="button"
+                                                        onClick={() => setShowDenyPopup(false)}
+                                                        className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                                                        >
+                                                        Close
+                                                        </button>
+                                                        <button
+                                                        type="button"
+                                                        onClick={handleDenySubmit}
+                                                        className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#F57E77] hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-800"
+                                                        >
+                                                        Submit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                         </div>
                     </div>
                 </div>
                 <button
-                    onClick={handleApprove}
+                    onClick={handleApproveClick}
                     className="bg-[#3F948B] hover:bg-[#337770] w-[148px] text-sm text-white p-2 rounded-lg mt-8 mr-6"
                 >
                     Approve

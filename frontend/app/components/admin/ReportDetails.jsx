@@ -1,19 +1,47 @@
 "use client";
 
+import { useState } from "react";
 import CopySvg from "@/app/utils/CopySvg";
 
 export default function ReportDetails({ data, fullName }) {
-  function handleCopy() {
+  const [showUpdateStatusPopup, setShowUpdateStatusPopup] = useState(false);
+  const [updateText, setUpdateText] = useState('');
+
+  const [showResolvePopup, setShowResolvePopup] = useState(false);
+
+  const handleCopy = () => {
     alert("COPIIIIIIIIIIIIIIIIIIIIIIIIIED");
   }
 
-  function handleApprove() {
-    alert("APROOOOOOOOOOOOVEDDDDDDD");
+  const handleUpdateStatus = () => {
+    setShowUpdateStatusPopup(true);
   }
 
-  function handleDeny() {
-    alert("DENIIIIIIIIIIIIIIIIIIIIIIIED");
+  const handleResolve = () => {
+    setShowResolvePopup(true);
   }
+
+  const handleUpdateStatusSubmit = async () => {
+    // Send an API fetch request to update report update
+    const response = await fetch(`http://localhost:8080/reports-filing/updateReportUpdate/${data.repfilId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateText),
+    });
+    const result = await response.text();
+    alert(result); // Or handle the result in a more user-friendly way
+    setShowUpdateStatusPopup(false); // Close the Update Status popup after submission
+  };
+
+  const handleResolveSubmit = async () => {
+    // Send an API fetch request to update report status
+    const response = await fetch(`http://localhost:8080/reports-filing/updateReportStatus/${data.repfilId}`, {
+      method: 'PUT',
+      body: JSON.stringify("Resolved"),
+    });
+    const result = await response.text();
+    alert(result); // Or handle the result in a more user-friendly way
+    setShowResolvePopup(false); // Close the Resolve popup after submission
+  };
   return (
     <div className="flex flex-col w-full p-5">
       <div className="w-[950px] bg-gray-200/80 rounded-2xl mx-auto p-5">
@@ -98,17 +126,77 @@ export default function ReportDetails({ data, fullName }) {
         </div>
 
         <button
-          onClick={handleApprove}
-          className="bg-[#3F948B] hover:bg-[#337770] w-[148px] text-sm text-white p-2 rounded-lg mt-8 mr-6"
+          onClick={handleUpdateStatus}
+          className="bg-[#ff8838] hover:bg-[#337770] w-[148px] text-sm text-white p-2 rounded-lg mt-8 mr-6"
         >
-          Approve
+          Update Status
         </button>
         <button
-          onClick={handleDeny}
-          className="bg-[#F57E77] hover:bg-[#ac5853] w-[148px] text-sm text-white p-2 rounded-lg"
+          onClick={handleResolve}
+          className="bg-[#3F948B] hover:bg-[#ac5853] w-[148px] text-sm text-white p-2 rounded-lg"
         >
-          Deny
+          Resolve
         </button>
+        {showUpdateStatusPopup && (
+        <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl z-50">
+            <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 text-center">
+              Provide an Update on the Report
+            </h3>
+            <div className="mt-2 text-center">
+              <textarea
+                value={updateText}
+                onChange={(e) => setUpdateText(e.target.value)}
+                className="w-full h-24 border border-gray-300 rounded-md p-2"
+                placeholder="Enter Report Update"
+              ></textarea>
+              <div className="flex justify-center mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowUpdateStatusPopup(false)}
+                  className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={handleUpdateStatusSubmit}
+                  className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#ff8838] hover:bg-[#337770] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff8838]"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showResolvePopup && (
+        <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl z-50">
+            <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 text-center">
+              Mark this problem as Resolved?
+            </h3>
+            <div className="mt-2 text-center">
+              <div className="flex justify-center mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowResolvePopup(false)}
+                  className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResolveSubmit}
+                  className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#3F948B] hover:bg-[#ac5853] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3F948B]"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
