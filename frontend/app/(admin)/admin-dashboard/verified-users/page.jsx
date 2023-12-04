@@ -1,6 +1,6 @@
 "use client";
 
-import useFetch from "@/app/api/FetchData";
+import useFetch from "@/app/api/UseData";
 import SkeletonTable from "@/app/components/SkeletonTable";
 import TableForUsers from "@/app/components/admin/TableForUsers";
 

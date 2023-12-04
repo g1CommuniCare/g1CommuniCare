@@ -61,6 +61,12 @@ public class ResidentEntity {
     @Column(name = "image_format")
     private String imageFormat;
 
+    public ResidentEntity() {
+        this.isVerified = false;
+        this.isDeleted = false;
+        this.role = "resident";
+    }
+
     public ResidentEntity(int residentId, String username, String password, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, LocalDate date,
             Boolean isVerified, Boolean isDeleted, String role, byte[] profileImage, String imageFormat) {
@@ -159,12 +165,6 @@ public class ResidentEntity {
 
     public void setDate(LocalDate date) {
         this.date = date;
-    }
-
-    public ResidentEntity() {
-        this.isVerified = false;
-        this.isDeleted = false;
-        this.role = "resident";
     }
 
     public Boolean getIsVerified() {

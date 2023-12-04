@@ -102,7 +102,7 @@ public class AdminController {
 
     }
 
-    // GET RESIDENT PROFILE IMAGE BY ID
+    // GET ADMIN PROFILE IMAGE BY ID
     @GetMapping(value = "/{adminId}/image")
     public ResponseEntity<byte[]> getAdminImage(@PathVariable int adminId) {
         List<AdminEntity> admins = adminService.findByAdminId(adminId);

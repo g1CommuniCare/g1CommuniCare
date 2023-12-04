@@ -9,7 +9,7 @@ import com.example.demo.Entity.ResidentEntity;
 public class NotificationDTO {
     private int notificationId;
     private String title;
-    private String message;
+    private String welcomeMessage;
     private Boolean isRead;
     private String timestamp;
     private AdminEntity senderAdmin;
@@ -22,13 +22,12 @@ public class NotificationDTO {
         this.isRead = false;
     }
 
-    public NotificationDTO(int notificationId, String title, String message, Boolean isRead, String timestamp,
+    public NotificationDTO(int notificationId, String title, String welcomeMessage, String timestamp,
             AdminEntity senderAdmin, ResidentEntity recipientResident, DocumentRequestEntity relatedDocumentRequest,
             AppointmentRequestEntity relatedAppointmentRequest, ReportsFilingEntity relatedReportsFiling) {
         this.notificationId = notificationId;
         this.title = title;
-        this.message = message;
-        this.isRead = isRead;
+        this.welcomeMessage = welcomeMessage;
         this.timestamp = timestamp;
         this.senderAdmin = senderAdmin;
         this.recipientResident = recipientResident;
@@ -54,11 +53,11 @@ public class NotificationDTO {
     }
 
     public String getMessage() {
-        return message;
+        return welcomeMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(String welcomeMessage) {
+        this.welcomeMessage = welcomeMessage;
     }
 
     public Boolean getIsRead() {

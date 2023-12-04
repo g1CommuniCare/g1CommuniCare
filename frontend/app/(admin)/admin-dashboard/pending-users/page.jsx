@@ -1,9 +1,10 @@
 "use client";
 
-import useFetch from "@/app/api/FetchData";
+import useFetch from "@/app/api/UseData";
 import PopUp from "@/app/components/PopUp";
 import SkeletonTable from "@/app/components/SkeletonTable";
 import TableForUsers from "@/app/components/admin/TableForUsers";
+import axios from "axios";
 import { useState } from "react";
 
 export default function PendingUsers() {
@@ -34,22 +35,29 @@ export default function PendingUsers() {
 
     async function handleYes() {
         const userId = approvedData.userId;
-        console.log(userId)
-        await fetch(`http://localhost:8080/resident/verify/${userId}`, {
-            method: "POST", // Assuming you use a PUT request to update the verification status
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                isVerified: true,
-            }),
+        const verified = approvedData.isVerified;
+        console.log(userId);
+        await axios.post(`http://localhost:8080/resident/verify/${userId}`, {
+            isVerified: true,
         });
+
+        // GET THE VERIFIEDDATA === TRUE
+        const verifiedData = data?.filter((user) => user.isVerified === true);
+        console.log(verifiedData);
+
+        if (verifiedData) {
+            await axios.post(`http://localhost:8080/notifications/${userId}`);
+        }
+
         console.log("user has been approved");
         // Hide the modal
         setShowModal(false);
         // Reset the approvedData state
         setApprovedData(null);
     }
+
+    // const verified = data?.map(user => user.isVerified)
+    // console.log(verified);
 
     function handleNo() {
         // Hide the modal

@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.DTO.NotificationDTO;
 import com.example.demo.Entity.NotificationEntity;
+import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.NotificationRepository;
 
 @Service
 public class NotificationServices {
+
+    private ResidentServices residentServices;
 
     private final NotificationRepository notificationRepository;
 
@@ -20,19 +23,15 @@ public class NotificationServices {
         this.notificationRepository = notificationRepository;
     }
 
-    // // Create and save a notification
-    // public NotificationEntity createNotification(AdminEntity senderAdmin,
-    // ResidentEntity recipientResident,
-    // String title, String message, DocumentRequestEntity relatedDocumentRequest,
-    // AppointmentRequestEntity relatedAppointmentRequest, ReportsFilingEntity
-    // relatedReportsFiling) {
-
-    // NotificationEntity notification = new NotificationEntity(senderAdmin,
-    // recipientResident, title, message,
-    // relatedDocumentRequest, relatedAppointmentRequest, relatedReportsFiling);
-
-    // return notificationRepository.save(notification);
-    // }
+    // WELCOME MESSAGE FOR THE RESIDENT
+    public void createWelcomeNotification(ResidentEntity resident) {
+        if (resident.getIsVerified() == true) {
+            NotificationEntity notification = new NotificationEntity();
+            notification.setMessage("Welcome to CommuniCare");
+            notification.setRecipientResident(resident);
+            notificationRepository.save(notification);
+        }
+    }
 
     public NotificationEntity createNotification(NotificationDTO notificationDTO) {
         // Extract data from DTO and create NotificationEntity
@@ -46,7 +45,7 @@ public class NotificationServices {
 
         // Save the notification entity
         return notificationRepository.save(notification);
-    }
+    }   
 
     // Mark a notification as read
     public void markNotificationAsRead(int notificationId) {
@@ -62,5 +61,4 @@ public class NotificationServices {
         return notificationRepository.findByRecipientResidentResidentIdOrderByTimestampDesc(residentId);
     }
 
-    // You can add more methods as needed for your specific use case
 }

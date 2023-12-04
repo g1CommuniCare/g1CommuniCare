@@ -1,46 +1,109 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import useNotifications from "@/app/api/UseNotification";
+import { useAuth } from "@/useContext/UseContext";
+import { useEffect } from "react";
 
 export default function Notification() {
-  const [notifications, setNotifications] = useState([]);
+    const { user } = useAuth();
 
-  useEffect(() => {
-    // Replace {residentId} with actual resident ID.
-    const residentId = 2; // Example ID
-    const fetchNotifications = async () => {
-      const result = await axios(`http://localhost:8080/notifications/resident/${residentId}`);
-      setNotifications(result.data);
-    };
+    // async function fetchNotifications() {
+    //     const res = await axios.get(
+    //         `http://localhost:8080/notifications/resident/${user.residentId}`
+    //     );
+    //     const data = res.data;
+    //     setNotifications(data);
+    // }
 
-    fetchNotifications();
-  }, []);
+    // console.log(notifications);
 
-  // Function to mark a notification as read
-  const markAsRead = async (notificationId) => {
-    // API call to mark the notification as read
-    console.log(`Marking notification ${notificationId} as read`);
-    // Update the state to reflect the change
-    setNotifications(notifications.map((notif) => 
-      notif.notificationId === notificationId ? { ...notif, isRead: true } : notif
-    ));
-  };
+    // const isRead = notifications?.map((isRead) => isRead.isRead);
+    // console.log(isRead);
+    // const notificationId = notifications.map((notificationId) => notificationId.notificationId);
+    // console.log(notificationId);
 
-  return (
-    <div className="p-4">
-      {notifications.map((notif) => (
+    // async function handleReadNotification() {
+    //     const res = await axios.post(
+    //         `http://localhost:8080/notifications/mark-as-read/${notificationId}`
+    //     );
+    //     const data = res.data;
+    //     console.log(data);
+    // }
+
+    // GET THE NOTIFICATION FOR THE RESIDENT USING CUSTOM FETCH HOOK
+    const { notifications, isLoading, error } = useNotifications(
+        `http://localhost:8080/notifications/resident/${user.residentId}`
+    );
+
+    console.log(notifications);
+
+    const notificationId = notifications?.map((notificationId) => notificationId.notificationId);
+
+    console.log(notificationId);
+
+    // const [notifications, setNotifications] = useState([]);
+
+    async function handlReadNotification() {
+        // const res = await axios.post(
+        //     `http://localhost:8080/notifications/mark-as-read/${notifications.notificationId}`
+        // );
+        // const data = res.data;
+        // setIsRead(data);
+        // console.log(data);
+
+        const response = await fetch(
+            `http://localhost:8080/notifications/mark-as-read/${notificationId}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ isRead: true }),
+            }
+        );
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error("Failed to mark notification as read:", errorMessage);
+        } else {
+            const data = await response.text();
+            console.log("Notification marked as read successfully:", data);
+        }
+
+        console.log(notifications);
+    }
+
+    // useEffect(() => {
+    //     handlReadNotification();
+    //     fetchNotifications();
+    // }, []);
+
+    // const data = notifications?.map((notif) => notif.message);
+    // console.log(data);
+
+    const fullName = user.firstName + " " + user.lastName;
+    // console.log(fullName);
+
+    return (
         <div
-          key={notif.notificationId}
-          className={`p-4 mb-2 rounded-lg ${notif.isRead ? 'bg-gray-200' : 'bg-white'} flex items-center justify-between`}
-          onClick={() => markAsRead(notif.notificationId)}
+            className="w-full p-8 bg-cover"
+            style={{ backgroundImage: 'url("images/profileBackgroundImage.png")' }}
         >
-          <div>
-            <h3 className="text-lg font-bold">{notif.title}</h3>
-            <p className="text-gray-700">{notif.message}</p>
-          </div>
-          
+            <h1 className="font-bold text-6xl p-5">Notification</h1>
+            <div className="flex flex-col justify-start gap-8 h-screen rounded-[22px] p-7 bg-slate-50/80">
+                <img
+                    src="/images/Notification.png"
+                    alt="Notification Image"
+                    className="w-10 h-10"
+                />
+                {notifications?.map(({ notificationId, message }) => (
+                    <div key={notificationId}>
+                        <p onClick={handlReadNotification} className="bg-gray-200 p-7 rounded-lg">
+                            {message}, <i>{fullName}!</i>
+                        </p>
+                    </div>
+                ))}
+            </div>
         </div>
-      ))}
-    </div>
-  );
+    );
 }

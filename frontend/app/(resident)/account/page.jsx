@@ -77,10 +77,18 @@ export default function Account() {
     // DISPLAYS THE DEFAULT IMAGE
     // User's fullname: Don Massimo -> DM(defualt profile image)
     const defaultProfileIamge = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
-    const noProfile = defaultProfileIamge;
     const profile = `data:image/${user.imageFormat};base64,${user.profileImage}`;
-    console.log(noProfile);
-    console.log(profile);
+    const checkProfileImage = `data:image/${user.imageFormat === null};base64,${
+        user.profileImage === null
+    }`
+        ? profile
+        : `data:image/${user.imageFormat};base64,${user.profileImage}`;
+
+    // if (user.profileImage === null) {
+    //     console.log("Default profile image:", defaultProfileIamge);
+    // } else {
+    //     console.log("Profile image exists:", checkProfileImage);
+    // }
 
     async function fetchReport() {
         setIsLoading(true);
@@ -131,7 +139,7 @@ export default function Account() {
 
     return (
         <div
-            className="w-full p-8"
+            className="w-full p-8 bg-cover"
             style={{ backgroundImage: 'url("images/profileBackgroundImage.png")' }}
         >
             <>
@@ -152,30 +160,26 @@ export default function Account() {
 
                 <div className="flex justify-between gap-8 rounded-[22px] p-7 bg-slate-100/70">
                     <div className="relative">
-                        {noProfile ? (
+                        {user.profileImage === null ? (
                             <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center rounded-full border-2 border-white bg-slate-500 text-6xl text-white">
-                                {noProfile}
+                                {defaultProfileIamge}
                             </p>
                         ) : (
                             <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
-                                <img src={profile} alt="" className="h-48 w-48 rounded-full" />
+                                <img
+                                    src={checkProfileImage}
+                                    alt=""
+                                    className="h-48 w-48 rounded-full"
+                                />
                             </p>
                         )}
-                        <div className="mt-24 py-24 px-10 bg-white w-full rounded-[22px]">
+                        <div className="mt-24 py-24 px-10 bg-white w-[511px] rounded-[22px]">
                             <div className="flex flex-col">
-                                <input type="file" onChange={handleFileSelect} />
-                                <button onClick={handleFileUpload}>Upload Image</button>
-                                <button onClick={fetchImage}>Retrieve Image</button>{" "}
-                                {/* New button for fetching the image */}
-                                {imageURL && (
-                                    <div>
-                                        <img
-                                            src={imageURL}
-                                            alt="Uploaded"
-                                            style={{ maxWidth: "300px", maxHeight: "300px" }}
-                                        />
-                                    </div>
-                                )}
+                                <ChangeProfile
+                                    imageURL={imageURL}
+                                    handleFileSelect={handleFileSelect}
+                                    handleFileUpload={handleFileUpload}
+                                />
                             </div>
                             <div className="text-center">
                                 <h2 className="font-semibold text-xl">{fullname}</h2>
@@ -240,7 +244,7 @@ export default function Account() {
                                         {isLoading && <LoadingTable />}
                                         {currentPageRowsMyRequests?.map(
                                             ({ docreqId, documentType, documentStatus }) => (
-                                                <MyRequestTale
+                                                <MyRequestTable
                                                     key={docreqId}
                                                     docreqId={docreqId}
                                                     documentType={documentType}
@@ -261,6 +265,22 @@ export default function Account() {
                 </div>
             </>
         </div>
+    );
+}
+
+function ChangeProfile({ handleFileSelect, handleFileUpload }) {
+    return (
+        <>
+            <label className="block">
+                <span className="sr-only">Choose profile photo</span>
+                <input
+                    type="file"
+                    onChange={handleFileSelect}
+                    className="block w-full mx-auto text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                />
+            </label>
+            <button onClick={handleFileUpload}>Upload Image</button>
+        </>
     );
 }
 
@@ -314,7 +334,7 @@ function MyReportTable({ repfilId, reportDetails, reportStatus }) {
     );
 }
 
-function MyRequestTale({ docreqId, documentType, documentStatus }) {
+function MyRequestTable({ docreqId, documentType, documentStatus }) {
     return (
         <>
             <tr key={docreqId} className="odd:bg-gray-200">

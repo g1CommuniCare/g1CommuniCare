@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.example.demo.DTO.NotificationDTO;
+
 @Entity
 @Table(name = "table_notification")
 public class NotificationEntity {
@@ -21,8 +23,8 @@ public class NotificationEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "message")
-    private String message;
+    @Column(name = "welcome_message")
+    private String welcomeMessage;
 
     @Column(name = "isRead")
     private Boolean isRead;
@@ -54,18 +56,32 @@ public class NotificationEntity {
         this.isRead = false;
     }
 
-    public NotificationEntity(AdminEntity senderAdmin, ResidentEntity recipientResident, String title, String message,
+    public NotificationEntity(AdminEntity senderAdmin, ResidentEntity recipientResident, String title, String welcomeMessage,
             DocumentRequestEntity relatedDocumentRequest, AppointmentRequestEntity relatedAppointmentRequest,
             ReportsFilingEntity relatedReportsFiling) {
         this.senderAdmin = senderAdmin;
         this.recipientResident = recipientResident;
         this.title = title;
-        this.message = message;
-        this.isRead = false;
+        this.welcomeMessage = welcomeMessage;
         this.timestamp = LocalDate.now();
         this.relatedDocumentRequest = relatedDocumentRequest;
         this.relatedAppointmentRequest = relatedAppointmentRequest;
         this.relatedReportsFiling = relatedReportsFiling;
+    }
+
+    public NotificationDTO toDTO() {
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setNotificationId(this.notificationId);
+        notificationDTO.setTitle(this.title);
+        notificationDTO.setMessage(this.welcomeMessage);
+        notificationDTO.setIsRead(this.isRead);
+        notificationDTO.setSenderAdmin(this.senderAdmin);
+        notificationDTO.setRecipientResident(this.recipientResident);
+        notificationDTO.setRelatedDocumentRequest(this.relatedDocumentRequest);
+        notificationDTO.setRelatedAppointmentRequest(this.relatedAppointmentRequest);
+        notificationDTO.setRelatedReportsFiling(this.relatedReportsFiling);
+
+        return notificationDTO;
     }
 
     public int getNotificationId() {
@@ -85,11 +101,11 @@ public class NotificationEntity {
     }
 
     public String getMessage() {
-        return message;
+        return welcomeMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(String welcomeMessage) {
+        this.welcomeMessage = welcomeMessage;
     }
 
     public Boolean getIsRead() {

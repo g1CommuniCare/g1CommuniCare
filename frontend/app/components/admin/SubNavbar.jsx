@@ -1,6 +1,6 @@
 "use client";
 
-import useFetch from "@/app/api/FetchData";
+import useFetch from "@/app/api/UseData";
 import AdminFirstRow from "@/app/utils/admin/AdminFirstRow";
 import Link from "next/link";
 import { useEffect, useState } from "react";

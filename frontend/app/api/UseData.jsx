@@ -9,7 +9,6 @@ export default function useFetch(url, delay = 0) {
 
     async function fetchData() {
         setIsLoading(true);
-        
         try {
             // Simulate a delay before fetching the data
             await new Promise((resolve) => setTimeout(resolve, delay));

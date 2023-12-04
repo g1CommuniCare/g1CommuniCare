@@ -42,25 +42,6 @@ export default function Account() {
         }
     }
 
-    // async function fetchImage() {
-    //     try {
-    //         const imageResponse = await fetch(`http://localhost:8080/admin/${user.adminId}/image`);
-    //         if (!imageResponse.ok) {
-    //             throw new Error(`HTTP error! status: ${imageResponse.status}`);
-    //         }
-    //         const imageBlob = await imageResponse.blob();
-    //         const imageObjectURL = URL.createObjectURL(imageBlob);
-    //         setImageURL(imageObjectURL);
-
-    //         console.log(imageResponse);
-    //         console.log(imageObjectURL);
-
-    //         return imageObjectURL;
-    //     } catch (error) {
-    //         console.error("Error fetching image", error);
-    //     }
-    // }
-
     function handleLogout() {
         logout();
     }
@@ -74,17 +55,25 @@ export default function Account() {
     // DISPLAYS THE DEFAULT IMAGE
     // User's fullname: Don Massimo -> DM(defualt profile image)
     const defaultProfileIamge = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
-    const noProfile = `data:image/${user.imageFormat === null};base64,${user.profileImage === null}`;
     const profile = `data:image/${user.imageFormat};base64,${user.profileImage}`;
-    console.log(noProfile);
-    console.log(profile);
+    const checkProfileImage = `data:image/${user.imageFormat === null};base64,${
+        user.profileImage === null
+    }`
+        ? profile
+        : `data:image/${user.imageFormat};base64,${user.profileImage}`;
+
+    if (user.profileImage === null) {
+        console.log("Default profile image:", defaultProfileIamge);
+    } else {
+        console.log("Profile image exists:", checkProfileImage);
+    }
 
     console.log(user);
 
     return (
         <div
             className="w-full p-8"
-            style={{ backgroundImage: 'url("images/profileBackgroundImage.png")' }}
+            style={{ backgroundImage: 'url("/images/profileBackgroundImage.png")' }}
         >
             <>
                 <div className="p-5">
@@ -104,22 +93,25 @@ export default function Account() {
 
                 <div className="flex justify-center gap-8 rounded-[22px] p-7 bg-slate-100/70">
                     <div className="relative">
-                        {!noProfile ? (
+                        {user.profileImage === null ? (
                             <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center rounded-full border-2 border-white bg-slate-500 text-6xl text-white">
-                                {noProfile}
+                                {defaultProfileIamge}
                             </p>
                         ) : (
                             <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
-                                <img src={profile} alt="" className="h-48 w-48 rounded-full" />
+                                <img
+                                    src={checkProfileImage}
+                                    alt=""
+                                    className="h-48 w-48 rounded-full"
+                                />
                             </p>
                         )}
-                        <div className="mt-24 py-24 px-10 bg-white w-full rounded-[22px]">
+                        <div className="mt-24 py-24 px-10 bg-white w-[511px] rounded-[22px]">
                             <div className="flex flex-col">
                                 <ChangeProfile
                                     imageURL={imageURL}
                                     handleFileSelect={handleFileSelect}
                                     handleFileUpload={handleFileUpload}
-                                    profile={profile}
                                 />
                             </div>
                             <div className="text-center">
