@@ -124,7 +124,7 @@ export default function DocumentRequest() {
         <>
             <form className="px-5 pt-5">
                 <div className="flex justify-center items-center px-5 pt-5">
-                    <div className="relative">
+                    <div className="relative w-full flex justify-start">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <Search />
                         </div>
@@ -132,14 +132,14 @@ export default function DocumentRequest() {
                             type="text"
                             id="default-search"
                             placeholder="Search"
-                            className="w-11/12 p-4 ps-12 border-gray-300 border-b-[2px] outline-none"
+                            className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
                         />
                     </div>
                     <button
                         onClick={handleGeneratePDF}
-                        className="px-3 py-1 rounded cursor-pointer bg-blue-500 text-white"
+                        className="ml-2 h-[58px] inline-flex items-center py-1 mt-2 justify-center h-12 px-8 text-sm font-medium tracking-wide text-white transition duration-300 rounded-xl whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none"
                     >
-                        Generate PDF
+                        Export to PDF
                     </button>
                 </div>
             </form>

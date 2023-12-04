@@ -4,11 +4,11 @@ const ModalOverlay = ({ children }) => (
   </div>
 );
 
-const ConfirmationPopup = ({ message, onConfirm, onCancel }) => {
+const ConfirmationPopup = ({ message, onConfirm }) => {
   return (
     <ModalOverlay>
       <div
-        className="rounded-3xl border border-emerald-100 bg-white p-4 shadow-lg sm:p-6 lg:p-8 transform scale-100 transition-transform ease-in-out duration-300"
+        className="max-w-md rounded-3xl border border-emerald-100 bg-white p-4 shadow-lg sm:p-6 lg:p-8 transform scale-100 transition-transform ease-in-out duration-300"
         role="alert"
       >
         <div className="flex items-center gap-4">

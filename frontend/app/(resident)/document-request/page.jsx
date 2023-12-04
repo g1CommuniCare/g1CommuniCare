@@ -8,9 +8,9 @@ import ThirdRow from "@/app/utils/docreq/ThirdRow";
 import FourthRow from "@/app/utils/docreq/FourthRow";
 import FifthRow from "@/app/utils/docreq/FifthRow";
 import PrintChoice from "@/app/utils/docreq/PrintChoice";
-import ConfirmationPopup from "@/app/components/ConfirmationPopup";
 import Submit from "@/app/utils/docreq/Submit";
 import Success from "@/app/utils/docreq/Success";
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
 export default function DocumentRequest() {
   const { user, login } = useAuth();
@@ -292,7 +292,7 @@ export default function DocumentRequest() {
         </form>
         {showConfirmationPopup && (
             <ConfirmationPopup
-              message="Are you sure you want to submit this report?"
+              message="Are you sure you want to submit this request?"
               onConfirm={handleConfirmSubmit}
               onCancel={handleCancelSubmit}
             />

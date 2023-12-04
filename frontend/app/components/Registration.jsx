@@ -4,9 +4,12 @@ import FirstRow from "../utils/FirstRow";
 import FourthRow from "../utils/FourthRow";
 import SecondRow from "../utils/SecondRow";
 import ThirdRow from "../utils/ThirdRow";
+import ConfirmationPopup from "../utils/ConfirmationPupUp";
+import SuccessPopup from "../utils/SuccessPopUp";
 
 export default function Registration({ SignUpTitle }) {
     const [isShowing, setIsShowing] = useState(false);
+    const [isSuccessPopupShowing, setIsSuccessPopupShowing] = useState(false);
 
     const initialState = {
         firstName: "",
@@ -102,11 +105,17 @@ export default function Registration({ SignUpTitle }) {
             })
             .then((data) => {
                 console.log(data); // Handle the response from the server
-                alert("Successfully applied for registration!");
             })
             .catch((error) => {
                 console.error("Error:", error);
             });
+
+            setIsSuccessPopupShowing(true);
+    }
+
+    function handleSuccessPopupConfirm() {
+        setIsSuccessPopupShowing(false);
+        setIsShowing(false); // Optionally close the registration modal as well
     }
 
     const wrapperRef = useRef(null);
@@ -243,6 +252,13 @@ export default function Registration({ SignUpTitle }) {
                         </div>
                     </div>
                 </div>
+            )}
+            {isSuccessPopupShowing && (
+                <SuccessPopup
+                    message="Congratulations! Registration successful. Please wait until your account is verified."
+                    onConfirm={handleSuccessPopupConfirm}
+                    onCancel={() => setIsSuccessPopupShowing(false)}
+                />
             )}
         </div>
     );

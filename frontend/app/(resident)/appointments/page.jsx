@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 import Details from "@/app/utils/appointments/Details";
 import FirstRow from "@/app/utils/appointments/FirstRow";
 import FourthRow from "@/app/utils/appointments/FourthRow";
@@ -9,7 +10,6 @@ import Submit from "@/app/utils/appointments/Submit";
 import Success from "@/app/utils/appointments/Success";
 import ThirdRow from "@/app/utils/appointments/ThirdRow";
 import { useAuth } from "@/useContext/UseContext";
-import ConfirmationPopup from "@/app/components/ConfirmationPopup";
 import { useState } from "react";
 
 const Appointment = () => {
