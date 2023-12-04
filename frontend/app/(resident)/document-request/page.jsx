@@ -8,7 +8,9 @@ import ThirdRow from "@/app/utils/docreq/ThirdRow";
 import FourthRow from "@/app/utils/docreq/FourthRow";
 import FifthRow from "@/app/utils/docreq/FifthRow";
 import PrintChoice from "@/app/utils/docreq/PrintChoice";
+import ConfirmationPopup from "@/app/components/ConfirmationPopup";
 import Submit from "@/app/utils/docreq/Submit";
+import Success from "@/app/utils/docreq/Success";
 
 export default function DocumentRequest() {
   const { user, login } = useAuth();
@@ -125,12 +127,21 @@ export default function DocumentRequest() {
   };
 
   const [referenceNumber, setReferenceNumber] = useState("");
+  
   const handleReferenceNumber = (e) => {
     setReferenceNumber(e.target.value);
   };
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowConfirmationPopup(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    setShowConfirmationPopup(false); 
 
     let finalDocumentType = documentType;
     if (documentType === "others") {
@@ -180,9 +191,10 @@ export default function DocumentRequest() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        
+        setIsSubmitted(true);
         const responseData = await response.json();
-        alert("Document Request has been sent!");
+        
       } catch (error) {
         console.log("Error submitting document request:", error.message);
       }
@@ -192,6 +204,9 @@ export default function DocumentRequest() {
       alert("Please upload a valid ID.");
       return;
     }
+  };
+  const handleCancelSubmit = () => {
+    setShowConfirmationPopup(false);
   };
 
   return (
@@ -210,9 +225,11 @@ export default function DocumentRequest() {
           </span>
         </div>
       </header>
-
+      {isSubmitted ? (
+        <Success />
+      ) : (
       <div className="px-12 py-8 w-3/4">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} >
           {/* FIRST ROW */}
           <FirstRow
             firstTitle="First Name"
@@ -273,7 +290,15 @@ export default function DocumentRequest() {
 
           <Submit />
         </form>
+        {showConfirmationPopup && (
+            <ConfirmationPopup
+              message="Are you sure you want to submit this report?"
+              onConfirm={handleConfirmSubmit}
+              onCancel={handleCancelSubmit}
+            />
+          )}
       </div>
+      )}
     </div>
   );
 }

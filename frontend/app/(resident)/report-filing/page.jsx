@@ -7,8 +7,9 @@ import SecondRow from "@/app/utils/reports/SecondRow";
 import Submit from "@/app/utils/reports/Submit";
 import Success from "@/app/utils/reports/Success";
 import ThirdRow from "@/app/utils/reports/ThirdRow";
-import ConfirmationPopup from "@/app/components/ConfirmationPopup";
 import { useAuth } from "@/useContext/UseContext";
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
+
 
 const Report = () => {
   const { user, login } = useAuth();
@@ -152,7 +153,7 @@ const Report = () => {
   };
 
   return (
-    <div className="bg-slate-100 w-full h-full">
+    <div className=" w-full h-full">
       <header
         className="h-96 w-full bg-cover text-black mb-8"
         style={{ backgroundImage: 'url("images/report-filing-header.png")' }}
@@ -171,7 +172,7 @@ const Report = () => {
         <Success />
       ) : (
         <div className="px-12 py-8 w-3/4">
-          <form onSubmit={handleSubmit} className="pb-20">
+          <form onSubmit={handleSubmit} >
             <FirstRow
               firstTitle="First Name"
               firstName={firstName}
