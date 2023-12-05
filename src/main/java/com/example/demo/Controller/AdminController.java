@@ -99,7 +99,12 @@ public class AdminController {
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the image");
         }
+    }
 
+    //Get Admin by Id
+    @GetMapping("/getAdminById/{id}")
+    public List<AdminEntity> getAdminById(@PathVariable int id) {
+        return adminService.findByAdminId(id);
     }
 
     // GET ADMIN PROFILE IMAGE BY ID

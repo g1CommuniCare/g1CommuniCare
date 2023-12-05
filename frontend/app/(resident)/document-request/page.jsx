@@ -292,8 +292,8 @@ export default function DocumentRequest() {
           {showConfirmationPopup && (
             <ConfirmationPopup
               message="Are you sure you want to submit this request?"
-              onConfirm={handleConfirmSubmit}
               onCancel={handleCancelSubmit}
+              onConfirm={handleConfirmSubmit}
             />
           )}
         </div>

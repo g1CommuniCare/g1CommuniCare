@@ -1,23 +1,36 @@
 "use client";
 
 import { useAuth } from "@/useContext/UseContext";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Account() {
     const [selectedFile, setSelectedFile] = useState(null);
-    const [imageURL, setImageURL] = useState(null);
-    const [updateImage, setUpdateImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const { user, logout } = useAuth();
 
+    const adminId = user.adminId;
+    const firstName = user.firstName;
+    const fullname = firstName + " " + user.middleInitial + " " + user.lastName;
+    const contactNumber = user.contactNumber;
+    const email = user.email;
+    // // DISPLAYS THE DEFAULT IMAGE
+    // // User's fullname: Don Massimo -> DM(defualt profile image)
+    const defaultProfileImage = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
+
     function handleFileSelect(event) {
-        setSelectedFile(event.target.files[0]);
+        const file = event.target.files[0];
+        setSelectedFile(file);
+
+        const previewURL = URL.createObjectURL(file);
+        setPreviewImage(previewURL);
     }
 
     async function handleFileUpload() {
         if (selectedFile) {
             const formData = new FormData();
             formData.append("image", selectedFile);
-
+            console.log(selectedFile);
             try {
                 const uploadResponse = await fetch(
                     `http://localhost:8080/admin/${user.adminId}/uploadImage`,
@@ -26,49 +39,34 @@ export default function Account() {
                         body: formData,
                     }
                 );
-
                 if (!uploadResponse.ok) {
                     throw new Error(`HTTP error! status: ${uploadResponse.status}`);
                 }
-
                 const result = await uploadResponse.text();
                 console.log("Image upload successful", result);
-
                 // Fetch the image after successful upload
-                // fetchImage();
             } catch (error) {
                 console.error("Error uploading image", error);
             }
         }
     }
 
+    const [updatedImage, setUpdatedImage] = useState("");
+    async function fetchUpdatedImage() {
+        const res = await axios(`http://localhost:8080/admin/getAdminById/${adminId}`);
+        const data = res.data;
+        setUpdatedImage(data);
+    }
+    // console.log("THE NEW IMAGE", updatedImage);
+    // console.log("THE OLD IMAGE", user.profileImage);
+
+    useEffect(() => {
+        fetchUpdatedImage();
+    }, []);
+
     function handleLogout() {
         logout();
     }
-
-    const adminId = user.adminId;
-    const firstName = user.firstName;
-    const fullname = firstName + " " + user.middleInitial + " " + user.lastName;
-    const contactNumber = user.contactNumber;
-    const email = user.email;
-
-    // DISPLAYS THE DEFAULT IMAGE
-    // User's fullname: Don Massimo -> DM(defualt profile image)
-    const defaultProfileIamge = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
-    const profile = `data:image/${user.imageFormat};base64,${user.profileImage}`;
-    const checkProfileImage = `data:image/${user.imageFormat === null};base64,${
-        user.profileImage === null
-    }`
-        ? profile
-        : `data:image/${user.imageFormat};base64,${user.profileImage}`;
-
-    if (user.profileImage === null) {
-        console.log("Default profile image:", defaultProfileIamge);
-    } else {
-        console.log("Profile image exists:", checkProfileImage);
-    }
-
-    console.log(user);
 
     return (
         <div
@@ -93,23 +91,13 @@ export default function Account() {
 
                 <div className="flex justify-center gap-8 rounded-[22px] p-7 bg-slate-100/70">
                     <div className="relative">
-                        {user.profileImage === null ? (
-                            <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center rounded-full border-2 border-white bg-slate-500 text-6xl text-white">
-                                {defaultProfileIamge}
-                            </p>
-                        ) : (
-                            <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
-                                <img
-                                    src={checkProfileImage}
-                                    alt=""
-                                    className="h-48 w-48 rounded-full"
-                                />
-                            </p>
-                        )}
                         <div className="mt-24 py-24 px-10 bg-white w-[511px] rounded-[22px]">
                             <div className="flex flex-col">
                                 <ChangeProfile
-                                    imageURL={imageURL}
+                                    user={user}
+                                    previewImage={previewImage}
+                                    updatedImage={updatedImage}
+                                    defaultProfileImage={defaultProfileImage}
                                     handleFileSelect={handleFileSelect}
                                     handleFileUpload={handleFileUpload}
                                 />
@@ -136,10 +124,40 @@ export default function Account() {
     );
 }
 
-function ChangeProfile({ handleFileSelect, handleFileUpload }) {
+function ChangeProfile({
+    previewImage,
+    updatedImage,
+    defaultProfileImage,
+    handleFileSelect,
+    handleFileUpload,
+}) {
     return (
         <>
             <label className="block">
+                {previewImage
+                    ? previewImage && (
+                          <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
+                              <img
+                                  src={previewImage}
+                                  alt="Selected Image"
+                                  className="h-48 w-48 rounded-full"
+                              />
+                          </p>
+                      )
+                    : updatedImage &&
+                      updatedImage?.map(({ adminId, imageFormat, profileImage }) => (
+                          <p
+                              key={adminId}
+                              className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center"
+                          >
+                              <img
+                                  src={`data:image/${imageFormat};base64,${profileImage}`}
+                                  alt={defaultProfileImage}
+                                  className="h-48 w-48 rounded-full"
+                              />
+                          </p>
+                      ))}
+
                 <span className="sr-only">Choose profile photo</span>
                 <input
                     type="file"

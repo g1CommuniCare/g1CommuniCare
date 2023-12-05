@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.Entity.AdminEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Services.ResidentServices;
 
@@ -39,6 +40,12 @@ public class ResidentController {
     @GetMapping("/getAllResident")
     public List<ResidentEntity> getAllResident() {
         return residentService.getAllResidents();
+    }
+
+    //Get Resident by Id
+    @GetMapping("/getResidentById/{id}")
+    public List<ResidentEntity> getResidentById(@PathVariable int id) {
+        return residentService.findResidentsById(id);
     }
 
     // DELETE RESIDENT

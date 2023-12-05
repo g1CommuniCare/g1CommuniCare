@@ -4,7 +4,7 @@ const ModalOverlay = ({ children }) => (
   </div>
 );
 
-const ConfirmationPopup = ({ message, onConfirm }) => {
+const ConfirmationPopup = ({ message, onCancel, onConfirm }) => {
   return (
     <ModalOverlay>
       <div

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export default function Account() {
     const [selectedFile, setSelectedFile] = useState(null);
-    const [imageURL, setImageURL] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [myReport, setMyReport] = useState([]);
     const [myRequest, setMyRequest] = useState([]);
@@ -14,10 +14,23 @@ export default function Account() {
     const [currentMyRequestPage, setCurrentMyRequestPage] = useState(1);
     const { user, logout } = useAuth();
 
-    function handleFileSelect(event) {
-        setSelectedFile(event.target.files[0]);
-    }
+    const residentId = user.residentId;
+    const firstName = user.firstName;
+    const fullname = firstName + " " + user.middleInitial + " " + user.lastName;
+    const email = user.email;
+    const birthDate = user.date.join(" / ");
+    const address = user.address;
+    // // DISPLAYS THE DEFAULT IMAGE
+    // // User's fullname: Don Massimo -> DM(defualt profile image)
+    const defaultProfileImage = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
 
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+
+        const previewURL = URL.createObjectURL(file);
+        setPreviewImage(previewURL);
+    }
     async function handleFileUpload() {
         if (selectedFile) {
             const formData = new FormData();
@@ -40,55 +53,29 @@ export default function Account() {
                 console.log("Image upload successful", result);
 
                 // Fetch the image after successful upload
-                fetchImage();
+                fetchUpdatedImage();
             } catch (error) {
                 console.error("Error uploading image", error);
             }
         }
     }
 
-    async function fetchImage() {
-        try {
-            const imageResponse = await fetch(
-                `http://localhost:8080/resident/${user.residentId}/image`
-            );
-            if (!imageResponse.ok) {
-                throw new Error(`HTTP error! status: ${imageResponse.status}`);
-            }
-            const imageBlob = await imageResponse.blob();
-            const imageObjectURL = URL.createObjectURL(imageBlob);
-            setImageURL(imageObjectURL);
-        } catch (error) {
-            console.error("Error fetching image", error);
-        }
+    const [updatedImage, setUpdatedImage] = useState("");
+    async function fetchUpdatedImage() {
+        const res = await axios(`http://localhost:8080/resident/getResidentById/${residentId}`);
+        const data = res.data;
+        setUpdatedImage(data);
     }
+    // console.log("THE NEW IMAGE", updatedImage);
+    // console.log("THE OLD IMAGE", user.profileImage);
+
+    useEffect(() => {
+        fetchUpdatedImage();
+    }, []);
 
     function handleLogout() {
         logout();
     }
-
-    const residentId = user.residentId;
-    const firstName = user.firstName;
-    const fullname = firstName + " " + user.middleInitial + " " + user.lastName;
-    const email = user.email;
-    const birthDate = user.date.join(" / ");
-    const address = user.address;
-
-    // DISPLAYS THE DEFAULT IMAGE
-    // User's fullname: Don Massimo -> DM(defualt profile image)
-    const defaultProfileIamge = (firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
-    const profile = `data:image/${user.imageFormat};base64,${user.profileImage}`;
-    const checkProfileImage = `data:image/${user.imageFormat === null};base64,${
-        user.profileImage === null
-    }`
-        ? profile
-        : `data:image/${user.imageFormat};base64,${user.profileImage}`;
-
-    // if (user.profileImage === null) {
-    //     console.log("Default profile image:", defaultProfileIamge);
-    // } else {
-    //     console.log("Profile image exists:", checkProfileImage);
-    // }
 
     async function fetchReport() {
         setIsLoading(true);
@@ -160,23 +147,13 @@ export default function Account() {
 
                 <div className="flex justify-between gap-8 rounded-[22px] p-7 bg-slate-100/70">
                     <div className="relative">
-                        {user.profileImage === null ? (
-                            <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center rounded-full border-2 border-white bg-slate-500 text-6xl text-white">
-                                {defaultProfileIamge}
-                            </p>
-                        ) : (
-                            <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
-                                <img
-                                    src={checkProfileImage}
-                                    alt=""
-                                    className="h-48 w-48 rounded-full"
-                                />
-                            </p>
-                        )}
                         <div className="mt-24 py-24 px-10 bg-white w-[511px] rounded-[22px]">
                             <div className="flex flex-col">
                                 <ChangeProfile
-                                    imageURL={imageURL}
+                                    user={user}
+                                    previewImage={previewImage}
+                                    updatedImage={updatedImage}
+                                    defaultProfileImage={defaultProfileImage}
                                     handleFileSelect={handleFileSelect}
                                     handleFileUpload={handleFileUpload}
                                 />
@@ -268,10 +245,44 @@ export default function Account() {
     );
 }
 
-function ChangeProfile({ handleFileSelect, handleFileUpload }) {
+function ChangeProfile({
+    previewImage,
+    updatedImage,
+    defaultProfileImage,
+    handleFileSelect,
+    handleFileUpload,
+}) {
     return (
         <>
             <label className="block">
+                {previewImage ? (
+                    <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center">
+                        <img
+                            src={previewImage}
+                            alt="Selected Image"
+                            className="h-48 w-48 rounded-full"
+                        />
+                    </p>
+                // user.profileImage === null ? (
+                //     <p className="absolute inset-0 mx-auto inline-flex h-48 w-48 font-bold text-7xl rounded-full items-center justify-center bg-gray-300">
+                //         {defaultProfileImage}
+                //     </p>
+                ) : (
+                    updatedImage &&
+                    updatedImage.map(({ residentId, imageFormat, profileImage }) => (
+                        <p
+                            key={residentId}
+                            className="absolute inset-0 mx-auto inline-flex h-48 w-48 items-center justify-center"
+                        >
+                            <img
+                                src={`data:image/${imageFormat};base64,${profileImage}`}
+                                alt={defaultProfileImage}
+                                className="h-48 w-48 rounded-full"
+                            />
+                        </p>
+                    ))
+                )}
+
                 <span className="sr-only">Choose profile photo</span>
                 <input
                     type="file"
