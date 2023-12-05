@@ -10,7 +10,6 @@ import ThirdRow from "@/app/utils/reports/ThirdRow";
 import { useAuth } from "@/useContext/UseContext";
 import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
-
 const Report = () => {
   const { user, login } = useAuth();
 
@@ -81,7 +80,6 @@ const Report = () => {
     setDetails(e.target.value);
   };
 
-
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
 
@@ -92,7 +90,7 @@ const Report = () => {
 
   const handleConfirmSubmit = async () => {
     setShowConfirmationPopup(false); // Close the confirmation popup
-  
+
     // Prepare the data for submission
     const data = {
       firstName: firstName,
@@ -108,11 +106,12 @@ const Report = () => {
       dateReported: new Date().toISOString(), // Use the current date-time
       reportUpdate: "",
     };
-  
+
     try {
       // Send the data to the server
       const response = await fetch(
-        `http://localhost:8080/reports-filing/addReport/${user.residentId}`, {
+        `http://localhost:8080/reports-filing/addReport/${user.residentId}`,
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -120,16 +119,16 @@ const Report = () => {
           body: JSON.stringify(data),
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to submit report");
       }
-  
+
       // Handle the response (e.g., show success message, clear form)
       setIsSubmitted(true);
       const responseData = await response.json();
       console.log("Report submitted successfully:", responseData);
-  
+
       // Reset form fields after submission
       setFirstName("");
       setLastName("");
@@ -146,14 +145,13 @@ const Report = () => {
       console.error("Error submitting report:", error.message);
     }
   };
-  
 
   const handleCancelSubmit = () => {
     setShowConfirmationPopup(false);
   };
 
   return (
-    <div className=" w-full h-full">
+    <div className=" w-full h-full  bg-slate-100">
       <header
         className="h-96 w-full bg-cover text-black mb-8"
         style={{ backgroundImage: 'url("images/report-filing-header.png")' }}
@@ -172,7 +170,7 @@ const Report = () => {
         <Success />
       ) : (
         <div className="px-12 py-8 w-3/4">
-          <form onSubmit={handleSubmit} >
+          <form onSubmit={handleSubmit}>
             <FirstRow
               firstTitle="First Name"
               firstName={firstName}

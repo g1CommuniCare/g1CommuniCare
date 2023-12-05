@@ -127,7 +127,7 @@ export default function DocumentRequest() {
   };
 
   const [referenceNumber, setReferenceNumber] = useState("");
-  
+
   const handleReferenceNumber = (e) => {
     setReferenceNumber(e.target.value);
   };
@@ -141,7 +141,7 @@ export default function DocumentRequest() {
   };
 
   const handleConfirmSubmit = async () => {
-    setShowConfirmationPopup(false); 
+    setShowConfirmationPopup(false);
 
     let finalDocumentType = documentType;
     if (documentType === "others") {
@@ -191,10 +191,9 @@ export default function DocumentRequest() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         setIsSubmitted(true);
         const responseData = await response.json();
-        
       } catch (error) {
         console.log("Error submitting document request:", error.message);
       }
@@ -210,7 +209,7 @@ export default function DocumentRequest() {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className=" bg-slate-100 w-full h-full">
       <header
         className="h-96 w-full bg-cover text-black"
         style={{ backgroundImage: 'url("images/document-request-header.png")' }}
@@ -228,76 +227,76 @@ export default function DocumentRequest() {
       {isSubmitted ? (
         <Success />
       ) : (
-      <div className="px-12 py-8 w-3/4">
-        <form onSubmit={handleSubmit} >
-          {/* FIRST ROW */}
-          <FirstRow
-            firstTitle="First Name"
-            firstName={firstName}
-            handleFirstName={handleFirstName}
-            secondTitle="Last Name"
-            lastName={lastName}
-            handleLastName={handleLastName}
-            thirdTitle="Middle I."
-            middleInitial={middleInitial}
-            handleMiddleInitial={handleMiddleInitial}
-          />
-          {/* SECOND ROW */}
-          <SecondRow
-            firstTitle="Contact Information"
-            contactNumber={contactNumber}
-            handlecontactNumber={handlecontactNumber}
-            secondTitle="Email Address"
-            email={email}
-            handleEmail={handleEmail}
-          />
-          {/* THIRD ROW */}
-          <ThirdRow
-            firstTitle="Address"
-            address={address}
-            handleAddress={handleAddress}
-          />
-          <FourthRow
-            firstTitle="Document Type"
-            documentType={documentType}
-            handleDocumentType={handleDocumentType}
-            documentTypes={documentTypes}
-            secondTitle="Purpose"
-            purpose={purpose}
-            handlePurpose={handlePurpose}
-            specifiedDocumentType={specifiedDocumentType}
-            handleSpecifiedDocumentType={handleSpecifiedDocumentType}
-          />
-          {/* FIFTH ROW */}
-          <FifthRow
-            firstTitle="Valid ID"
-            validIdType={validIdType}
-            handleValidIdType={handleValidIdType}
-            validIdTypes={validIdTypes}
-            storeUploadedPhoto={storeUploadedPhoto}
-            specifiedValidIdType={specifiedValidIdType}
-            handleSpecifiedValidIdType={handleSpecifiedValidIdType}
-          />
-          {/* Choose to print or not to print */}
-          <PrintChoice
-            toPrint={toPrint}
-            handlePrintOptionChange={handlePrintOptionChange}
-            printCopies={printCopies}
-            handlePrintCopiesChange={handlePrintCopiesChange}
-            referenceNumber={referenceNumber}
-            handleReferenceNumber={handleReferenceNumber}
-          />
+        <div className="px-12 py-8 w-3/4">
+          <form onSubmit={handleSubmit}>
+            {/* FIRST ROW */}
+            <FirstRow
+              firstTitle="First Name"
+              firstName={firstName}
+              handleFirstName={handleFirstName}
+              secondTitle="Last Name"
+              lastName={lastName}
+              handleLastName={handleLastName}
+              thirdTitle="Middle I."
+              middleInitial={middleInitial}
+              handleMiddleInitial={handleMiddleInitial}
+            />
+            {/* SECOND ROW */}
+            <SecondRow
+              firstTitle="Contact Information"
+              contactNumber={contactNumber}
+              handlecontactNumber={handlecontactNumber}
+              secondTitle="Email Address"
+              email={email}
+              handleEmail={handleEmail}
+            />
+            {/* THIRD ROW */}
+            <ThirdRow
+              firstTitle="Address"
+              address={address}
+              handleAddress={handleAddress}
+            />
+            <FourthRow
+              firstTitle="Document Type"
+              documentType={documentType}
+              handleDocumentType={handleDocumentType}
+              documentTypes={documentTypes}
+              secondTitle="Purpose"
+              purpose={purpose}
+              handlePurpose={handlePurpose}
+              specifiedDocumentType={specifiedDocumentType}
+              handleSpecifiedDocumentType={handleSpecifiedDocumentType}
+            />
+            {/* FIFTH ROW */}
+            <FifthRow
+              firstTitle="Valid ID"
+              validIdType={validIdType}
+              handleValidIdType={handleValidIdType}
+              validIdTypes={validIdTypes}
+              storeUploadedPhoto={storeUploadedPhoto}
+              specifiedValidIdType={specifiedValidIdType}
+              handleSpecifiedValidIdType={handleSpecifiedValidIdType}
+            />
+            {/* Choose to print or not to print */}
+            <PrintChoice
+              toPrint={toPrint}
+              handlePrintOptionChange={handlePrintOptionChange}
+              printCopies={printCopies}
+              handlePrintCopiesChange={handlePrintCopiesChange}
+              referenceNumber={referenceNumber}
+              handleReferenceNumber={handleReferenceNumber}
+            />
 
-          <Submit />
-        </form>
-        {showConfirmationPopup && (
+            <Submit />
+          </form>
+          {showConfirmationPopup && (
             <ConfirmationPopup
               message="Are you sure you want to submit this request?"
               onConfirm={handleConfirmSubmit}
               onCancel={handleCancelSubmit}
             />
           )}
-      </div>
+        </div>
       )}
     </div>
   );
