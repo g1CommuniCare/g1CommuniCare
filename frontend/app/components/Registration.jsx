@@ -255,9 +255,11 @@ export default function Registration({ SignUpTitle }) {
             )}
             {isSuccessPopupShowing && (
                 <SuccessPopup
+                title="Registered Successfully!"
                     message="Congratulations! Registration successful. Please wait until your account is verified."
                     onConfirm={handleSuccessPopupConfirm}
                     onCancel={() => setIsSuccessPopupShowing(false)}
+                    btnMessage= "Back to Log in Page"
                 />
             )}
         </div>

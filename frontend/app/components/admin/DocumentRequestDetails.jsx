@@ -1,8 +1,17 @@
 "use client";
 import { useState } from "react";
 import CopySvg from "@/app/utils/CopySvg";
+import SuccessPopup from "@/app/utils/SuccessPopUp";
 
 export default function DocumentRequestDetails({ data, fullName }) {
+
+    const [isShowing, setIsShowing] = useState(false);
+  const [isSuccessPopupShowing, setIsSuccessPopupShowing] = useState(false);
+
+  function handleSuccessPopupConfirm() {
+    setIsSuccessPopupShowing(false);
+    setIsShowing(false); // Optionally close the registration modal as well
+}
     
     function handleCopy() {
         alert("Copied!");
@@ -28,8 +37,8 @@ export default function DocumentRequestDetails({ data, fullName }) {
             method: 'PUT',
         });
         const result = await response.text();
-        alert(result); // Or handle the result in a more user-friendly way
         setShowApprovalPopup(false); // Close the popup after submission
+        setIsSuccessPopupShowing(true);
     };
 
     const [showPopup, setShowPopup] = useState(false);
@@ -60,8 +69,8 @@ export default function DocumentRequestDetails({ data, fullName }) {
             method: 'PUT',
         });
         const result = await response.text();
-        alert(result); // Or handle the result in a more user-friendly way
         setShowDenyPopup(false); // Close the Deny popup after submission
+        setIsSuccessPopupShowing(true);
     };
 
     return (
@@ -160,17 +169,17 @@ export default function DocumentRequestDetails({ data, fullName }) {
                                         <div className="absolute inset-0 bg-gray-500 opacity-70"></div>
                                         </div>
 
-                                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all max-w-xl w-3/12">
-                                        <div className="bg-white p-8 w-full max-w-3xl">
+                                        <div className="max-w-xl rounded-3xl border border-emerald-100 bg-white p-2 shadow-lg sm:p-4 lg:p-8 transform scale-100 transition-transform ease-in-out duration-300">
+                                        <div className="bg-white p-4 w-full max-w-xl">
                                             <div className="sm:flex sm:justify-center items-center">
-                                            <div className="mt-4 text-center sm:mt-0 sm:text-left w-10/12">
+                                            <div className="mt-4 text-center sm:mt-0 sm:text-left w-9/12">
                                                 <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 text-center">
-                                                Set Claim/Pickup Date
+                                                Set Pickup Date
                                                 </h3>
                                                 <div className="mt-2 text-center">
-                                                <div className="mt-2 text-center">
-                                                    <input type="date" value={claimDate} onChange={(e) => setClaimDate(e.target.value)} className="mr-2" />
-                                                    <input type="time" value={claimTime} onChange={(e) => setClaimTime(e.target.value)} className="mr-2" />
+                                                <div className="mt-2 w-full flex flex-row justify-between gap-6">
+                                                    <input type="date" value={claimDate} onChange={(e) => setClaimDate(e.target.value)} className="peer relative w-96 h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400" />
+                                                    <input type="time" value={claimTime} onChange={(e) => setClaimTime(e.target.value)} className="peer relative w-96 h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400" />
                                                 </div>
                                                 <div className="flex justify-center mt-8">
                                                     <button
@@ -178,12 +187,12 @@ export default function DocumentRequestDetails({ data, fullName }) {
                                                     onClick={() => setShowApprovalPopup(false)}
                                                     className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
                                                     >
-                                                    No
+                                                    Cancel
                                                     </button>
                                                     <button
                                                     type="button"
                                                     onClick={handleApprovalSubmit}
-                                                    className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#3F948B] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-800"
+                                                    className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-500 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-800"
                                                     >
                                                     Approve
                                                     </button>
@@ -230,6 +239,15 @@ export default function DocumentRequestDetails({ data, fullName }) {
                                         </div>
                                     </div>
                                 )}
+                                {isSuccessPopupShowing && (
+                <SuccessPopup
+                    title="Request Updated!"
+                    message="Document request status has been updated successfully!"
+                    onConfirm={handleSuccessPopupConfirm}
+                    onCancel={() => setIsSuccessPopupShowing(false)}
+                    btnMessage="Close"
+                />
+            )}
                         </div>
                     </div>
                 </div>
