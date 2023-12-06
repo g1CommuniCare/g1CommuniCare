@@ -143,7 +143,7 @@ export default function ReportFiling() {
                     </div>
                     <button
                         onClick={handleGeneratePDF}
-                        className="ml-2 h-[58px] inline-flex items-center py-1 mt-2 justify-center h-12 px-8 text-sm font-medium tracking-wide text-white transition duration-300 rounded-xl whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none"
+                        className="ml-2 inline-flex items-center py-1 mt-2 justify-center h-12 px-8 text-sm font-medium tracking-wide text-white transition duration-300 rounded-xl whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none"
                     >
                         Export to PDF
                     </button>
@@ -188,6 +188,7 @@ export default function ReportFiling() {
                                         reportType={reportType}
                                         dateReported={dateReported}
                                         reportStatus={reportStatus}
+                                        setReportFiled={setReportFiled}
                                     />
                                 )
                             )}
@@ -228,6 +229,7 @@ function TableReportsFiled({
     reportType,
     dateReported,
     reportStatus,
+    setReportFiled
 }) {
     const router = useRouter();
 
@@ -241,6 +243,28 @@ function TableReportsFiled({
     const formattedDateReported = formatDate(dateReported);
     const formattedReportStatus = reportStatus ? reportStatus.replace(/"/g, '') : '';
 
+    async function handleDelete(event, repfilId) {
+        event.stopPropagation();
+    
+        try {
+            const response = await fetch(`http://localhost:8080/reports-filing/soft-delete/${repfilId}`, {
+                method: 'PUT',
+            });
+    
+            if (response.ok) {
+                console.log('Report soft-deleted successfully.');
+                // Remove the deleted item from the state without reloading the page
+                setReportFiled(currentReportsFiled => 
+                    currentReportsFiled.filter(request => request.repfilId !== repfilId)
+                );
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error soft-deleting Report', error);
+        }
+    }
+
     return (
         <>
             <tr onClick={handleClick} className="hover:bg-gray-200 bg-white cursor-pointer">
@@ -253,19 +277,40 @@ function TableReportsFiled({
                     <span className="ml-3">{fullName}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">RES-{residentId}</span>
+                    <span>RES-{residentId}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">REP-{repfilId}</span>
+                    <span>REP-{repfilId}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{reportType}</span>
+                    <span>{reportType}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{formattedDateReported}</span>
+                    <span>{formattedDateReported}</span>
                 </td>
-                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{formattedReportStatus}</span>
+                <td className="h-10 px-4 text-center text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
+                    <span 
+                        style={{
+                        display: 'inline-block', // Needed to apply width to a span
+                        width: '100px', // Set the desired width here
+                        padding: '0.25rem 1rem',
+                        borderRadius: '9999px',
+                        backgroundColor: formattedReportStatus === 'Resolved' ? '#22f200' : // Green shade
+                                        formattedReportStatus === 'Pending' ? '#ff9f2e' : // Yellow shade
+                                        '#e5e7eb', // Default case, grey shade
+                        color: 'black',
+                        textAlign: 'center', // Centers the text within the fixed width
+                        }}
+                    >
+                        {formattedReportStatus}
+                    </span>
+                </td>
+                <td className="h-10 px-2 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
+                    <button onClick={(event) => handleDelete(event, repfilId)} className="text-red-500 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                    </button>
                 </td>
             </tr>
         </>
@@ -428,10 +473,13 @@ function TableHead({
             <th
                 scope="col"
                 onClick={handleStatus}
-                className="h-10 px-4 font-semibold border-t-2 border-b-2 border-r-2 cursor-pointer hover:bg-gray-200"
+                className="h-10 px-4 text-center font-semibold border-t-2 border-b-2 cursor-pointer hover:bg-gray-200"
             >
                 {reportStatus}
             </th>
+            <th scope="col" className="h-10 px-1 font-semibold border-t-2 border-b-2 border-r-2">
+                
+                </th>
         </>
     );
 }

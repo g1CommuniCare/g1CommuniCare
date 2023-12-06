@@ -132,42 +132,6 @@ export default function Dashboard() {
                     <div className="bg-white h-[500px] w-1/2 p-5 border border-DDE1E6">
                         <div className="flex flex-col h-full justify-between">
                             <span className="font-bold text-xl">Community Bulletin Engagement</span>
-
-                            {/* <div className="container h-[90px] w-full p-4 bg-gray-100 flex">
-                                <AdminThirdRow
-                                    title="Barangay Clean-Up Day"
-                                    author="Bianca Jessa Carabio"
-                                    upvotes="156"
-                                    downvotes="03"
-                                />
-                            </div>
-
-                            <div className="container h-[90px] w-full p-4 bg-gray-100 flex">
-                                <AdminThirdRow
-                                    title="Road Maintenance Notice"
-                                    author="Joshua Jhonn B. Borres"
-                                    upvotes="213"
-                                    downvotes="109"
-                                />
-                            </div>
-
-                            <div className="container h-[90px] w-full p-4 bg-gray-100 flex">
-                                <AdminThirdRow
-                                    title="Fire Safety Awareness"
-                                    author="France Gieb S. Mier"
-                                    upvotes="312"
-                                    downvotes="01"
-                                />
-                            </div>
-
-                            <div className="container h-[90px] w-full p-4 bg-gray-100 flex">
-                                <AdminThirdRow
-                                    title="Monthly Barangay Meeting"
-                                    author="Bermar Villarazo Jr."
-                                    upvotes="314"
-                                    downvotes="00"
-                                />
-                            </div> */}
                             {posts.map((post) => (
                                 <div key={post.postId} className="container h-[90px] w-full py-4 pl-5 pr-10 bg-gray-100 flex justify-between items-center">
                                 <div>

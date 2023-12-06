@@ -143,7 +143,7 @@ export default function AppointmentRequest() {
                     </div>
                     <button
                         onClick={handleGeneratePDF}
-                        className="ml-2 h-[58px] inline-flex items-center py-1 mt-2 justify-center h-12 px-8 text-sm font-medium tracking-wide text-white transition duration-300 rounded-xl whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none"
+                        className="ml-2 inline-flex items-center py-1 mt-2 justify-center h-12 px-8 text-sm font-medium tracking-wide text-white transition duration-300 rounded-xl whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none"
                     >
                         Export to PDF
                     </button>
@@ -188,6 +188,7 @@ export default function AppointmentRequest() {
                                         department={department}
                                         dateRequested={dateRequested}
                                         appointmentStatus={appointmentStatus}
+                                        setAppointmentRequest={setAppointmentRequest}
                                     />
                                 )
                             )}
@@ -228,6 +229,7 @@ function TableAppointmentRequests({
     department,
     dateRequested,
     appointmentStatus,
+    setAppointmentRequest,
 }) {
     const router = useRouter();
 
@@ -239,6 +241,30 @@ function TableAppointmentRequests({
     const fullName = firstName + " " + lastName;
     const residentProfile = `data:image/${imageFormat};base64,${profileImage}`;
     const formattedDateRequested = formatDate(dateRequested);
+
+    function handleDelete(event, appreqId) {
+        event.stopPropagation();
+
+        try {
+            axios.put(`http://localhost:8080/appointment-requests/soft-delete/${appreqId}`)
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log('Appointment request soft-deleted successfully.');
+                        // Remove the deleted item from the state without reloading the page
+                        setAppointmentRequest(currentAppointmentRequests => 
+                            currentAppointmentRequests.filter(request => request.appreqId !== appreqId)
+                        );
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error soft-deleting appointment request', error);
+                });
+        } catch (error) {
+            console.error('Error soft-deleting appointment request', error);
+        }
+    }
 
     return (
         <>
@@ -252,19 +278,41 @@ function TableAppointmentRequests({
                     <span className="ml-3">{fullName}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">RES-{residentId}</span>
+                    <span>RES-{residentId}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">APP-{appreqId}</span>
+                    <span>APP-{appreqId}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{department}</span>
+                    <span>{department}</span>
                 </td>
                 <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{formattedDateRequested}</span>
+                    <span>{formattedDateRequested}</span>
                 </td>
-                <td className="h-10 px-4 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
-                    <span className="ml-2">{appointmentStatus}</span>
+                <td className="h-10 px-4 text-center text-sm font-semibold transition duration-300 border-b-2  text-slate-700 border-slate-200">
+                    <span 
+                        style={{
+                        display: 'inline-block', // Needed to apply width to a span
+                        width: '100px', // Set the desired width here
+                        padding: '0.25rem 1rem',
+                        borderRadius: '9999px',
+                        backgroundColor: appointmentStatus === 'Approved' ? '#22f200' : // Green shade
+                                        appointmentStatus === 'Denied' ? '#ff6363' : // Red shade
+                                        appointmentStatus === 'Pending' ? '#ff9f2e' : // Yellow shade
+                                        '#e5e7eb', // Default case, grey shade
+                        color: 'black',
+                        textAlign: 'center', // Centers the text within the fixed width
+                        }}
+                    >
+                        {appointmentStatus}
+                    </span>
+                </td>
+                <td className="h-10 px-2 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
+                    <button onClick={(event) => handleDelete(event, appreqId)} className="text-red-500 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                    </button>
                 </td>
             </tr>
         </>
@@ -427,9 +475,12 @@ function TableHead({
             <th
                 scope="col"
                 onClick={handleStatus}
-                className="h-10 px-4 font-semibold border-t-2 border-b-2 border-r-2 cursor-pointer hover:bg-gray-200"
+                className="h-10 px-4 text-center font-semibold border-t-2 border-b-2  cursor-pointer hover:bg-gray-200"
             >
                 {appointmentStatus}
+            </th>
+            <th scope="col" className="h-10 px-1 font-semibold border-t-2 border-b-2 border-r-2">
+                
             </th>
         </>
     );
