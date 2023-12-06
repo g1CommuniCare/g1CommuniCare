@@ -86,4 +86,26 @@ public class AppointmentRequestController {
         AppointmentRequestEntity appointmentRequest = appointmentRequestServices.getAppointmentRequestById(appreqId);
         return new ResponseEntity<>(appointmentRequest, HttpStatus.OK);
     }
+
+    // Get value of total approved appointments
+    @GetMapping("/total-approved")
+    public ResponseEntity<Integer> getTotalApprovedAppointments() {
+        int totalApprovedAppointments = appointmentRequestServices.getTotalApprovedAppointments();
+        return new ResponseEntity<>(totalApprovedAppointments, HttpStatus.OK);
+    }
+
+    // Get value of total denied appointments
+    @GetMapping("/total-denied")
+    public ResponseEntity<Integer> getTotalDeniedAppointments() {
+        int totalDeniedAppointments = appointmentRequestServices.getTotalDeniedAppointments();
+        return new ResponseEntity<>(totalDeniedAppointments, HttpStatus.OK);
+    }
+
+    // Get value of total pending appointments
+    @GetMapping("/total-pending")
+    public ResponseEntity<Integer> getTotalPendingAppointments() {
+        int totalPendingAppointments = appointmentRequestServices.getTotalPendingAppointments();
+        return new ResponseEntity<>(totalPendingAppointments, HttpStatus.OK);
+    }
+
 }

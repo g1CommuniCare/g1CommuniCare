@@ -153,4 +153,24 @@ public class DocumentRequestController {
 
     }
 
+    // Get value of total Approved Document Requests
+    @GetMapping("/total-approved")
+    public ResponseEntity<Integer> getTotalApprovedDocumentRequests() {
+        int totalApprovedDocumentRequests = documentRequestService.getTotalApprovedDocumentRequests();
+        return new ResponseEntity<>(totalApprovedDocumentRequests, HttpStatus.OK);
+    }
+
+    // Get value of total Pending Document Requests
+    @GetMapping("/total-pending")
+    public ResponseEntity<Integer> getTotalPendingDocumentRequests() {
+        int totalPendingDocumentRequests = documentRequestService.getTotalPendingDocumentRequests();
+        return new ResponseEntity<>(totalPendingDocumentRequests, HttpStatus.OK);
+    }
+
+    // Get value of total Denied Document Requests
+    @GetMapping("/total-denied")
+    public ResponseEntity<Integer> getTotalDeniedDocumentRequests() {
+        int totalDeniedDocumentRequests = documentRequestService.getTotalDeniedDocumentRequests();
+        return new ResponseEntity<>(totalDeniedDocumentRequests, HttpStatus.OK);
+    }
 }

@@ -200,4 +200,44 @@ public class DocumentRequestServices {
             return null;
         }
     }
+
+    // Get value of total Approved Document Requests
+    public int getTotalApprovedDocumentRequests() {
+        List<DocumentRequestEntity> allDocumentRequests = documentRequestRepository.findAll();
+        int approvedCount = 0;
+
+        for (DocumentRequestEntity documentRequest : allDocumentRequests) {
+            if ("Approved".equals(documentRequest.getDocumentStatus())) {
+                approvedCount++;
+            }
+        }
+        return approvedCount;
+    }
+
+    // Get value of total Denied Document Requests
+    public int getTotalDeniedDocumentRequests() {
+        List<DocumentRequestEntity> allDocumentRequests = documentRequestRepository.findAll();
+        int deniedCount = 0;
+
+        for (DocumentRequestEntity documentRequest : allDocumentRequests) {
+            if ("Denied".equals(documentRequest.getDocumentStatus())) {
+                deniedCount++;
+            }
+        }
+        return deniedCount;
+    }
+
+    // Get value of total Pending Document Requests
+    public int getTotalPendingDocumentRequests() {
+        List<DocumentRequestEntity> allDocumentRequests = documentRequestRepository.findAll();
+        int pendingCount = 0;
+
+        for (DocumentRequestEntity documentRequest : allDocumentRequests) {
+            if ("Pending".equals(documentRequest.getDocumentStatus())) {
+                pendingCount++;
+            }
+        }
+        return pendingCount;
+    }
+
 }

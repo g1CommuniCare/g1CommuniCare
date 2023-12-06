@@ -96,4 +96,33 @@ public class ReportsFilingServices {
         }
         return "Report with ID " + repFilId + " not found.";
     }
+
+    // Get value of total reports
+    public int getTotalReports() {
+        return reportsFilingRepository.findAll().size();
+    }
+
+    // Get value of total Resolved reports
+    public int getTotalResolvedReports() {
+        List<ReportsFilingEntity> reports = reportsFilingRepository.findAll();
+        int count = 0;
+        for (ReportsFilingEntity report : reports) {
+            if (report.getReportStatus().contains("Resolved")) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // Get value of total Pending reports
+    public int getTotalPendingReports() {
+        List<ReportsFilingEntity> reports = reportsFilingRepository.findAll();
+        int count = 0;
+        for (ReportsFilingEntity report : reports) {
+            if (report.getReportStatus().equals("Pending")) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

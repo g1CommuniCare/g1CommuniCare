@@ -83,4 +83,25 @@ public class ReportsFilingController {
         String resultMessage = reportsFilingServices.setReportUpdate(repFilId, newUpdate);
         return new ResponseEntity<>(resultMessage, HttpStatus.OK);
     }
+
+    // Method to get value of total reports
+    @GetMapping("/total-reports")
+    public ResponseEntity<Integer> getTotalReports() {
+        int totalReports = reportsFilingServices.getTotalReports();
+        return new ResponseEntity<>(totalReports, HttpStatus.OK);
+    }
+
+    // Method to get value of total Resolved reports
+    @GetMapping("/total-resolved")
+    public ResponseEntity<Integer> getTotalResolvedReports() {
+        int totalResolvedReports = reportsFilingServices.getTotalResolvedReports();
+        return new ResponseEntity<>(totalResolvedReports, HttpStatus.OK);
+    }
+
+    // Method to get value of total Pending reports
+    @GetMapping("/total-pending")
+    public ResponseEntity<Integer> getTotalPendingReports() {
+        int totalPendingReports = reportsFilingServices.getTotalPendingReports();
+        return new ResponseEntity<>(totalPendingReports, HttpStatus.OK);
+    }
 }
