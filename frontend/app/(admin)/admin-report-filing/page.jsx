@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Modal from 'react-modal';
 import PDFGeneratorRep from '@/app/components/PDFGeneratorRep';
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
 // Helper function to format the date as "01/01/2023"
 const formatDate = (dateArray) => {
@@ -233,6 +234,11 @@ function TableReportsFiled({
 }) {
     const router = useRouter();
 
+    // State for confirmation popup
+    const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+    const [selectedRepfilId, setSelectedRepfilId] = useState(null);
+    
+
     function handleClick() {
         router.push(`/admin-report-filing/${repfilId}`);
         console.log(repfilId);
@@ -243,19 +249,20 @@ function TableReportsFiled({
     const formattedDateReported = formatDate(dateReported);
     const formattedReportStatus = reportStatus ? reportStatus.replace(/"/g, '') : '';
 
-    async function handleDelete(event, repfilId) {
+    function handleDelete(event, repfilId) {
         event.stopPropagation();
-    
+        setSelectedRepfilId(repfilId);
+        setShowConfirmationPopup(true);
+    }
+
+    const confirmDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/reports-filing/soft-delete/${repfilId}`, {
-                method: 'PUT',
-            });
-    
-            if (response.ok) {
+            const response = await axios.put(`http://localhost:8080/reports-filing/soft-delete/${selectedRepfilId}`);
+
+            if (response.status === 200) {
                 console.log('Report soft-deleted successfully.');
-                // Remove the deleted item from the state without reloading the page
                 setReportFiled(currentReportsFiled => 
-                    currentReportsFiled.filter(request => request.repfilId !== repfilId)
+                    currentReportsFiled.filter(request => request.repfilId !== selectedRepfilId)
                 );
             } else {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -263,7 +270,14 @@ function TableReportsFiled({
         } catch (error) {
             console.error('Error soft-deleting Report', error);
         }
-    }
+        setSelectedRepfilId(null);
+        setShowConfirmationPopup(false);
+    };
+
+    const cancelDelete = () => {
+        setSelectedRepfilId(null);
+        setShowConfirmationPopup(false);
+    };
 
     return (
         <>
@@ -313,6 +327,15 @@ function TableReportsFiled({
                     </button>
                 </td>
             </tr>
+                {/* existing table row code */}
+    
+                {showConfirmationPopup && (
+                <ConfirmationPopup
+                    message="Are you sure you want to delete this report?"
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
         </>
     );
 }

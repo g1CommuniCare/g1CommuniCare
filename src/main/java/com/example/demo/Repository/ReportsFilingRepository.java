@@ -8,4 +8,6 @@ import com.example.demo.Entity.ReportsFilingEntity;
 public interface ReportsFilingRepository extends JpaRepository<ReportsFilingEntity, Integer> {
 
     List<ReportsFilingEntity> findByIsDeletedFalse();
+
+    List<ReportsFilingEntity> findAllByResident_ResidentId(int residentId);
 }

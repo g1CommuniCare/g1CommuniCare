@@ -1,7 +1,5 @@
 package com.example.demo.Services;
 
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,24 +77,8 @@ public class DocumentRequestServices {
 
     // Method to retrieve all non-deleted Document Requests
     public List<DocumentRequestEntity> getAllNonDeletedDocumentRequests() {
-        return documentRequestRepository.findAll()
-                .stream()
-                .filter(documentRequest -> !Boolean.TRUE.equals(documentRequest.getIsDeleted()))
-                .collect(Collectors.toList());
+        return documentRequestRepository.findAllByIsDeletedFalse();
     }
-
-    // // Method to update the documentStatus of a Document Request
-    // public String updateDocumentStatus(int id, String newDocumentStatus) {
-    // DocumentRequestEntity documentRequest =
-    // documentRequestRepository.findBydocreqId(id);
-    // if (documentRequest != null) {
-    // documentRequest.setDocumentStatus(newDocumentStatus);
-    // documentRequestRepository.save(documentRequest);
-    // return "Document status updated successfully.";
-    // } else {
-    // return "Document Request not found with id: " + id;
-    // }
-    // }
 
     // Method to update the documentStatus of a Document Request
     public String updateDocumentStatus(int id, String newDocumentStatus) {
@@ -113,19 +95,6 @@ public class DocumentRequestServices {
         }
     }
 
-    // // Method to set the claimDate of a Document Request
-    // public String setClaimDate(int id, LocalDate newClaimDate) {
-    // DocumentRequestEntity documentRequest =
-    // documentRequestRepository.findBydocreqId(id);
-    // if (documentRequest != null) {
-    // documentRequest.setClaimDate(newClaimDate);
-    // documentRequestRepository.save(documentRequest);
-    // return "Claim date updated successfully.";
-    // } else {
-    // return "Document Request not found with id: " + id;
-    // }
-    // }
-
     // Method to set the claimDate of a Document Request
     public String setClaimDate(int id, LocalDateTime newClaimDate) {
         List<DocumentRequestEntity> documentRequests = documentRequestRepository.findBydocreqId(id);
@@ -141,19 +110,6 @@ public class DocumentRequestServices {
             return "Document Requests not found with id: " + id;
         }
     }
-
-    // // Method to set the denial reason of a Document Request
-    // public String updateDenialReason(int id, String newDenialReason) {
-    // DocumentRequestEntity documentRequest =
-    // documentRequestRepository.findBydocreqId(id);
-    // if (documentRequest != null) {
-    // documentRequest.setDenialReason(newDenialReason);
-    // documentRequestRepository.save(documentRequest);
-    // return "Denial reason updated successfully.";
-    // } else {
-    // return "Document Request not found with id: " + id;
-    // }
-    // }
 
     // Method to set the denial reason of a Document Request
     public String updateDenialReason(int id, String newDenialReason) {
@@ -173,10 +129,7 @@ public class DocumentRequestServices {
 
     // Method to retrieve all Document Requests of a specific Resident
     public List<DocumentRequestEntity> getAllDocumentRequestsByResidentId(int residentId) {
-        return documentRequestRepository.findAll()
-                .stream()
-                .filter(documentRequest -> documentRequest.getResident().getResidentId() == residentId)
-                .collect(Collectors.toList());
+        return documentRequestRepository.findAllByResident_ResidentId(residentId);
     }
 
     // Upload Valid ID Image

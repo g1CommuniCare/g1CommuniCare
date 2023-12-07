@@ -3,7 +3,6 @@ package com.example.demo.Services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,10 +57,7 @@ public class AppointmentRequestServices {
 
     // Method to retrieve all appointment requests of a specific resident
     public List<AppointmentRequestEntity> getAllAppointmentRequestsByResidentId(int residentId) {
-        return appointmentRequestRepository.findAll()
-                .stream()
-                .filter(appointmentRequest -> appointmentRequest.getResident().getResidentId() == residentId)
-                .collect(Collectors.toList());
+        return appointmentRequestRepository.findAllByResident_ResidentId(residentId);
     }
 
     // Method to retrieve all appointment requests
@@ -71,10 +67,7 @@ public class AppointmentRequestServices {
 
     // Method to retrieve all non-deleted appointment requests
     public List<AppointmentRequestEntity> getAllNonDeletedAppointmentRequests() {
-        return appointmentRequestRepository.findAll()
-                .stream()
-                .filter(appointmentRequest -> !Boolean.TRUE.equals(appointmentRequest.isDeleted()))
-                .collect(Collectors.toList());
+        return appointmentRequestRepository.findAllByIsDeletedFalse();
     }
 
     // Method to update the appointmentStatus of an appointment request

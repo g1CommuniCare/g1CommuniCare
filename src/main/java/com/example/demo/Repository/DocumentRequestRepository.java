@@ -11,4 +11,8 @@ public interface DocumentRequestRepository extends JpaRepository<DocumentRequest
     // @Query("SELECT dr FROM DocumentRequestEntity dr WHERE dr.reqId = ?1")
     List<DocumentRequestEntity> findBydocreqId(int docreqId);
 
+    List<DocumentRequestEntity> findAllByIsDeletedFalse();
+
+    List<DocumentRequestEntity> findAllByResident_ResidentId(int residentId);
+
 }

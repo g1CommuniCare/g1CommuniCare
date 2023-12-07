@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Modal from 'react-modal';
 import PDFGeneratorApp from '@/app/components/PDFGeneratorApp';
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
 // Helper function to format the date as "01/01/2023"
 const formatDate = (dateArray) => {
@@ -242,29 +243,39 @@ function TableAppointmentRequests({
     const residentProfile = `data:image/${imageFormat};base64,${profileImage}`;
     const formattedDateRequested = formatDate(dateRequested);
 
+    // State for confirmation popup
+    const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+    const [selectedAppreqId, setSelectedAppreqId] = useState(null);
+
     function handleDelete(event, appreqId) {
         event.stopPropagation();
+        setSelectedAppreqId(appreqId);
+        setShowConfirmationPopup(true);
+    }
 
+    const confirmDelete = async () => {
         try {
-            axios.put(`http://localhost:8080/appointment-requests/soft-delete/${appreqId}`)
-                .then(response => {
-                    if (response.status === 200) {
-                        console.log('Appointment request soft-deleted successfully.');
-                        // Remove the deleted item from the state without reloading the page
-                        setAppointmentRequest(currentAppointmentRequests => 
-                            currentAppointmentRequests.filter(request => request.appreqId !== appreqId)
-                        );
-                    } else {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error soft-deleting appointment request', error);
-                });
+            const response = await axios.put(`http://localhost:8080/appointment-requests/soft-delete/${selectedAppreqId}`);
+
+            if (response.status === 200) {
+                console.log('Appointment request soft-deleted successfully.');
+                setAppointmentRequest(currentAppointmentRequests => 
+                    currentAppointmentRequests.filter(request => request.appreqId !== selectedAppreqId)
+                );
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
         } catch (error) {
             console.error('Error soft-deleting appointment request', error);
         }
-    }
+        setSelectedAppreqId(null);
+        setShowConfirmationPopup(false);
+    };
+
+    const cancelDelete = () => {
+        setSelectedAppreqId(null);
+        setShowConfirmationPopup(false);
+    };
 
     return (
         <>
@@ -315,6 +326,13 @@ function TableAppointmentRequests({
                     </button>
                 </td>
             </tr>
+            {showConfirmationPopup && (
+                <ConfirmationPopup
+                    message="Are you sure you want to delete this appointment request?"
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
         </>
     );
 }

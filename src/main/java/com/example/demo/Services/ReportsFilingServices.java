@@ -3,7 +3,6 @@ package com.example.demo.Services;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,10 +63,7 @@ public class ReportsFilingServices {
 
     // Method to retrieve all reports of a specific resident
     public List<ReportsFilingEntity> getAllReportsFilingByResidentId(int residentId) {
-        return reportsFilingRepository.findAll()
-                .stream()
-                .filter(report -> report.getResident().getResidentId() == residentId)
-                .collect(Collectors.toList());
+        return reportsFilingRepository.findAllByResident_ResidentId(residentId);
     }
 
     // Method to retrieve a specific report by repFilId
