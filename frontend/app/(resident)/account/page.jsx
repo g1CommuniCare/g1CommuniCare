@@ -18,7 +18,7 @@ export default function Account() {
   const firstName = user.firstName;
   const fullname = firstName + " " + user.middleInitial + " " + user.lastName;
   const email = user.email;
-  const birthDate = user.date.join(" / ");
+  const birthDate = user.date?.join(" / ");
   const address = user.address;
   // // DISPLAYS THE DEFAULT IMAGE
   // // User's fullname: Don Massimo -> DM(defualt profile image)

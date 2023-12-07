@@ -1,7 +1,7 @@
 "use client";
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 import { useAuth } from "@/useContext/UseContext";
 import { useEffect, useState } from "react";
-import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
 const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
   const postDate = new Date(...post.postDate);
@@ -16,6 +16,8 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
 
   const profileImageSrc = `data:image/${post.admin.imageFormat};base64,${post.admin.profileImage}`;
 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   const handleDelete = async () => {
     onDelete(post.postId);
   };
@@ -23,7 +25,6 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
   const [editedTitle, setEditedTitle] = useState(post.postTitle);
   const [editedContent, setEditedContent] = useState(post.postDescription);
   const [isEditing, setIsEditing] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const openEditForm = () => {
@@ -35,7 +36,6 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
   };
 
   const handleEdit = async () => {
-    // Display the confirmation pop-up
     setShowConfirmation(true);
   };
 
@@ -74,6 +74,12 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
     setShowDeleteConfirmation(false);
   };
   const handleCancelDelete = () => setShowDeleteConfirmation(false);
+
+  const ModalOverlay = ({ children }) => (
+    <div className="fixed inset-0 flex items-center justify-center backdrop-filter backdrop-blur-sm bg-gray-200 bg-opacity-40">
+      {children}
+    </div>
+  );
 
   return (
     <div
@@ -179,135 +185,74 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
 
       {/* Edit Form Pop-up */}
       {isEditing && (
-        <div className="fixed inset-0 overflow-y-auto flex items-center justify-center w-full">
-          <div className="flex items-center justify-center w-full pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity backdrop-filter backdrop-blur-sm"
-              aria-hidden="true"
-            >
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+        <ModalOverlay>
+          <div
+            className="w-4/12 rounded-3xl border border-emerald-100 bg-white p-4 shadow-lg sm:p-6 lg:p-8 transform scale-100 transition-transform ease-in-out duration-300"
+            role="alert"
+          >
+            <div className="flex items-center gap-4">
+              <p className="font-bold text-xl sm:text-3xl mb-4">Edit Post</p>
             </div>
 
-            {/* Pop-up */}
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-3xl w-11/12">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 w-full max-w-3xl">
-                <div className="sm:flex sm:justify-center items-center">
-                  <div className="mt-4 text-center sm:mt-0 sm:ml-4 sm:text-left w-10/12">
-                    <img
-                      src="/images/logo.png"
-                      alt="CommuniCare Logo"
-                      className="mx-auto mb-4"
-                    />
-                    <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 mt-2 text-center">
-                      Edit Post
-                    </h3>
-                    <div className="mt-2">
-                      {/* Editable fields */}
-                      <label
-                        htmlFor="editedTitle"
-                        className="block text-sm font-bold text-gray-700"
-                      >
-                        Title:
-                      </label>
-                      <input
-                        type="text"
-                        id="editedTitle"
-                        name="editedTitle"
-                        value={editedTitle}
-                        onChange={(e) => setEditedTitle(e.target.value)}
-                        className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-                      />
-                      <label
-                        htmlFor="editedContent"
-                        className="block text-sm font-bold text-gray-700 mt-4"
-                      >
-                        Content:
-                      </label>
-                      <textarea
-                        id="editedContent"
-                        name="editedContent"
-                        rows="5"
-                        value={editedContent}
-                        onChange={(e) => setEditedContent(e.target.value)}
-                        className="peer w-full h-28 py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-                      ></textarea>
+            <div className="mt-4 w-full">
+              {/* Editable fields */}
+              <label
+                htmlFor="editedTitle"
+                className="block text-sm font-bold text-gray-700"
+              >
+                Title:
+              </label>
+              <input
+                type="text"
+                id="editedTitle"
+                name="editedTitle"
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+              />
+              <label
+                htmlFor="editedContent"
+                className="block text-sm font-bold text-gray-700 mt-4"
+              >
+                Content:
+              </label>
+              <textarea
+                id="editedContent"
+                name="editedContent"
+                rows="5"
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                className="peer w-full h-28 py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+              ></textarea>
 
-                      {/* Save and Cancel buttons */}
-                      <div className="flex justify-end mt-8">
-                        <button
-                          type="button"
-                          onClick={closeEditForm}
-                          className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleEdit}
-                          className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#3F948B] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-800"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {/* Save and Cancel buttons */}
+              <div className="flex justify-end mt-8">
+                <button
+                  type="button"
+                  onClick={closeEditForm}
+                  className="mt-2 inline-block w-full rounded-lg bg-gray-50 px-5 py-3 text-center text-sm font-semibold text-gray-500 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleEdit}
+                  className="inline-block w-full rounded-lg bg-emerald-500 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto"
+                >
+                  Save
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       )}
       {/* Second Confirmation Pop-up */}
       {showConfirmation && (
-        <div className="fixed inset-0 overflow-y-auto flex items-center justify-center w-full ">
-          <div className="flex items-center justify-center w-full pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity backdrop-filter backdrop-blur-sm"
-              aria-hidden="true"
-            >
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-
-            {/* Confirmation Pop-up */}
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-xl w-3/12">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 w-full max-w-3xl">
-                <div className="sm:flex sm:justify-center items-center">
-                  <div className="mt-4 text-center sm:mt-0 sm:ml-4 sm:text-left w-10/12">
-                    <img
-                      src="/images/logo.png"
-                      alt="CommuniCare Logo"
-                      className="mx-auto mb-4"
-                    />
-                    <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 mt-2 text-center">
-                      Confirm Changes
-                    </h3>
-                    <div className="mt-2 text-center">
-                      <p>Do you want to apply the changes?</p>
-
-                      {/* Yes and No buttons */}
-                      <div className="flex justify-center mt-8">
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmation(false)}
-                          className="mr-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200"
-                        >
-                          No
-                        </button>
-                        <button
-                          type="button"
-                          onClick={applyChanges}
-                          className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#3F948B] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-800"
-                        >
-                          Yes
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ConfirmationPopup
+        message= "Are you sure you want to push through this action?"
+          onConfirm={applyChanges}
+          onCancel={() => setShowConfirmation(false)}
+        />
       )}
       {showDeleteConfirmation && (
         <ConfirmationPopup
@@ -373,72 +318,87 @@ const BulletinBoard = () => {
     }
   };
 
-  const handlePost = async () => {
-    const shouldPost = window.confirm("Are you sure you want to post this?");
-    if (shouldPost) {
-      try {
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth()).padStart(2, "0");
-        const day = String(currentDate.getDate()).padStart(2, "0");
-        const hours = String(currentDate.getHours()).padStart(2, "0");
-        const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-        const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
 
-        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-        const response = await fetch(
-          `http://localhost:8080/bulletin/createPost?adminId=${user.adminId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              postTitle: newPostTitle || "Default Title",
-              postDescription: newPostDescription || "Default Description",
-              postDate: formattedDate,
-            }),
-          }
-        );
-
-        if (!response.ok) {
-          console.error(`HTTP error! status: ${response.status}`);
-          const errorResponse = await response.json();
-          console.error("Server response:", errorResponse);
-          throw new Error("Failed to post.");
-        }
-
-        fetchPosts();
-
-        setNewPostTitle("");
-        setNewPostDescription("");
-      } catch (error) {
-        console.error("Failed to post:", error);
-      }
-    }
+  const handleConfirm = () => {
+    // Handle post confirmation logic here
+    handlePost();
+    setShowConfirmationPopup(false);
   };
 
-  const handleDeletePost = async (postId) => {
-    // Directly perform the deletion logic without the confirmation alert
+  const handleCancel = () => {
+    setShowConfirmationPopup(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setShowConfirmationPopup(true);
+  };
+
+  const handlePost = async () => {
     try {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth()).padStart(2, "0");
+      const day = String(currentDate.getDate()).padStart(2, "0");
+      const hours = String(currentDate.getHours()).padStart(2, "0");
+      const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+      const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+
+      const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
       const response = await fetch(
-        `http://localhost:8080/bulletin/${postId}/delete`,
+        `http://localhost:8080/bulletin/createPost?adminId=${user.adminId}`,
         {
-          method: "PUT",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postTitle: newPostTitle || "Default Title",
+            postDescription: newPostDescription || "Default Description",
+            postDate: formattedDate,
+          }),
         }
       );
 
       if (!response.ok) {
         console.error(`HTTP error! status: ${response.status}`);
-        throw new Error("Failed to soft delete post.");
+        const errorResponse = await response.json();
+        console.error("Server response:", errorResponse);
+        throw new Error("Failed to post.");
       }
 
       fetchPosts();
+
+      setNewPostTitle("");
+      setNewPostDescription("");
     } catch (error) {
-      console.error("Failed to soft delete post:", error);
+      console.error("Failed to post:", error);
     }
   };
+
+  const handleDeletePost = async (postId) => {
+    
+      try {
+        const response = await fetch(
+          `http://localhost:8080/bulletin/${postId}/delete`,
+          {
+            method: "PUT",
+          }
+        );
+
+        if (!response.ok) {
+          console.error(`HTTP error! status: ${response.status}`);
+          throw new Error("Failed to soft delete post.");
+        }
+
+        fetchPosts();
+      } catch (error) {
+        console.error("Failed to soft delete post:", error);
+      }
+    };
 
   const handleEditPost = async (postId) => {
     const postToEdit = posts.find((post) => post.postId === postId);
@@ -550,13 +510,20 @@ const BulletinBoard = () => {
             <div className="flex justify-end mt-2">
               <button
                 type="button"
-                onClick={handlePost}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#3F948B] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-800"
+                onClick={handleSubmit}
+                className="inline-block w-full rounded-lg bg-emerald-500 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto"
               >
                 Post
               </button>
             </div>
           </div>
+          {showConfirmationPopup && (
+            <ConfirmationPopup
+              message="Are you sure you want to post this? You may delete or edit this post anytime."
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
+          )}
           {/* Display Posts */}
           <div className="h-full w-full flex justify-center items-center flex-col">
             {searchTerm && (

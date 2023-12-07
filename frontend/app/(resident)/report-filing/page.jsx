@@ -58,7 +58,7 @@ const Report = () => {
     setSelectReport(selectedReportType);
   };
   const reportTypes = [
-    { value: "", label: "-- Select a Report Type --" },
+    { value: "", label: "Select Report Type" },
     { value: "Noise", label: "Noise Complaint" },
     { value: "Road", label: "Road Problems" },
     { value: "Sanitation", label: "Sanitation Problems" },

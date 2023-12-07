@@ -63,7 +63,7 @@ const Appointment = () => {
     );
   };
   const departmentTypes = [
-    { value: "", label: "-- Select a Department --" },
+    { value: "", label: "Select Department" },
     { value: "Barangay Council", label: "Barangay Council" },
     { value: "Health Center", label: "Health Center" },
     { value: "Social Service", label: "Social Services" },
