@@ -76,7 +76,7 @@ public class AppointmentRequestEntity {
 
     public AppointmentRequestEntity(int appreqId, ResidentEntity resident, String firstName, String lastName,
             String middleInitial, String email, String contactNumber, String address, String department, String purpose,
-            String meetingFormat, LocalDateTime meetingDate, String appointmentDetails, String appointmentStatus,
+            String meetingFormat, LocalDateTime meetingDate, String appointmentDetails,
             boolean isDeleted, String denialReason, String approvedDetails, LocalDateTime dateRequested) {
         this.appreqId = appreqId;
         this.resident = resident;
@@ -91,7 +91,6 @@ public class AppointmentRequestEntity {
         this.meetingFormat = meetingFormat;
         this.meetingDate = meetingDate;
         this.appointmentDetails = appointmentDetails;
-        this.appointmentStatus = appointmentStatus;
         this.isDeleted = isDeleted;
         this.denialReason = denialReason;
         this.approvedDetails = approvedDetails;
@@ -100,6 +99,7 @@ public class AppointmentRequestEntity {
 
     public AppointmentRequestEntity() {
         this.isDeleted = false;
+        this.appointmentStatus = "Pending";
     }
 
     public AppointmentRequestDTO toDTO() {

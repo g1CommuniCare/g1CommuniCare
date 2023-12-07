@@ -2,84 +2,31 @@
 
 import useNotifications from "@/app/api/UseNotification";
 import { useAuth } from "@/useContext/UseContext";
-import { useEffect } from "react";
+import axios from "axios";
+import { useState } from "react";
 
 export default function Notification() {
     const { user } = useAuth();
-
-    // async function fetchNotifications() {
-    //     const res = await axios.get(
-    //         `http://localhost:8080/notifications/resident/${user.residentId}`
-    //     );
-    //     const data = res.data;
-    //     setNotifications(data);
-    // }
-
-    // console.log(notifications);
-
-    // const isRead = notifications?.map((isRead) => isRead.isRead);
-    // console.log(isRead);
-    // const notificationId = notifications.map((notificationId) => notificationId.notificationId);
-    // console.log(notificationId);
-
-    // async function handleReadNotification() {
-    //     const res = await axios.post(
-    //         `http://localhost:8080/notifications/mark-as-read/${notificationId}`
-    //     );
-    //     const data = res.data;
-    //     console.log(data);
-    // }
 
     // GET THE NOTIFICATION FOR THE RESIDENT USING CUSTOM FETCH HOOK
     const { notifications, isLoading, error } = useNotifications(
         `http://localhost:8080/notifications/resident/${user.residentId}`
     );
 
-    console.log(notifications);
+    // IS READ PARA SA UI
+    const [isRead, setIsRead] = useState(null);
 
-    const notificationId = notifications?.map((notificationId) => notificationId.notificationId);
+    async function handleReadNotification(notificationId) {
+        console.log(notificationId);
 
-    console.log(notificationId);
-
-    // const [notifications, setNotifications] = useState([]);
-
-    async function handlReadNotification() {
-        // const res = await axios.post(
-        //     `http://localhost:8080/notifications/mark-as-read/${notifications.notificationId}`
-        // );
-        // const data = res.data;
-        // setIsRead(data);
-        // console.log(data);
-
-        const response = await fetch(
+        const response = await axios.post(
             `http://localhost:8080/notifications/mark-as-read/${notificationId}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ isRead: true }),
-            }
+            { method: "POST" }
         );
-
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            console.error("Failed to mark notification as read:", errorMessage);
-        } else {
-            const data = await response.text();
-            console.log("Notification marked as read successfully:", data);
-        }
-
-        console.log(notifications);
+        const data = await response.data;
+        setIsRead(data);
+        console.log(data);
     }
-
-    // useEffect(() => {
-    //     handlReadNotification();
-    //     fetchNotifications();
-    // }, []);
-
-    // const data = notifications?.map((notif) => notif.message);
-    // console.log(data);
 
     const fullName = user.firstName + " " + user.lastName;
     // console.log(fullName);
@@ -96,10 +43,18 @@ export default function Notification() {
                     alt="Notification Image"
                     className="w-10 h-10"
                 />
-                {notifications?.map(({ notificationId, message }) => (
+                {notifications?.map(({ notificationId, isRead, message }) => (
                     <div key={notificationId}>
-                        <p onClick={handlReadNotification} className="bg-gray-200 p-7 rounded-lg">
-                            {message}, <i>{fullName}!</i>
+                        <p
+                            onClick={() => handleReadNotification(notificationId)}
+                            className={`flex items-center gap-1 p-5 rounded-2xl bg-gray-200 ${
+                                isRead === true ? "bg-gray-200" : "border-2 border-rose-500"
+                            }`}
+                        >
+                            {message},{" "}
+                            <i>
+                                <b>{fullName}!</b>
+                            </i>
                         </p>
                     </div>
                 ))}

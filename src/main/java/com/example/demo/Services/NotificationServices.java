@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.DTO.NotificationDTO;
+import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Entity.NotificationEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.NotificationRepository;
@@ -14,9 +15,9 @@ import com.example.demo.Repository.NotificationRepository;
 @Service
 public class NotificationServices {
 
-    @Autowired
-    ResidentServices residentServices;
-    NotificationRepository notificationRepository;
+    private ResidentServices residentServices;
+    private DocumentRequestServices documentRequestServices;
+    private final NotificationRepository notificationRepository;
 
     @Autowired
     public NotificationServices(NotificationRepository notificationRepository) {
@@ -41,8 +42,9 @@ public class NotificationServices {
         notification.setMessage(notificationDTO.getMessage());
         notification.setRecipientResident(notificationDTO.getRecipientResident());
         notification.setRelatedDocumentRequest(notificationDTO.getRelatedDocumentRequest());
+        notification.setRelatedAppointmentRequest(notificationDTO.getRelatedAppointmentRequest());
+        notification.setRelatedReportsFiling(notificationDTO.getRelatedReportsFiling());
         // Set other fields similarly
-
         // Save the notification entity
         return notificationRepository.save(notification);
     }
@@ -61,4 +63,41 @@ public class NotificationServices {
         return notificationRepository.findByRecipientResidentResidentIdOrderByTimestampDesc(residentId);
     }
 
+    // DISPLAY ALL THE RESIDENT OF THE TABLE
+    public List<NotificationEntity> getAllNotifications() {
+        return notificationRepository.findAll();
+    }
+
+    // Retrieve notifications for a specific resident with their document request
+    public List<NotificationEntity> getNotificationsForResidentWithDocumentRequest(int residentId,
+            DocumentRequestServices documentRequestServices) {
+        List<NotificationEntity> notifications = notificationRepository.findByRecipientResidentResidentId(residentId);
+
+        // Fetch document requests for each notification
+        for (NotificationEntity notification : notifications) {
+            List<DocumentRequestEntity> documentRequests = documentRequestServices
+                    .getAllDocumentRequestsByResidentId(residentId);
+            notification.setRelatedDocumentRequest((DocumentRequestEntity) documentRequests);
+        }
+
+        return notifications;
+    }
+
+    // Create a document request and generate a notification
+    public NotificationEntity createDocumentRequestAndNotification(int residentId) {
+        // Call the existing getAllDocumentRequestsByResidentId method to create the
+        // document request
+        DocumentRequestEntity createdDocumentRequest = (DocumentRequestEntity) documentRequestServices
+                .getAllDocumentRequestsByResidentId(residentId);
+
+        // Create a notification for the resident
+        NotificationEntity notification = new NotificationEntity();
+        notification.setTitle("Document Request Created");
+        notification.setMessage("A new document request has been created.");
+        notification.setRecipientResident((ResidentEntity) residentServices.findResidentsById(residentId));
+        notification.setRelatedDocumentRequest(createdDocumentRequest);
+
+        // Save the notification entity
+        return notificationRepository.save(notification);
+    }
 }

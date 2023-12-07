@@ -9,4 +9,7 @@ import com.example.demo.Entity.NotificationEntity;
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Integer> {
 
     List<NotificationEntity> findByRecipientResidentResidentIdOrderByTimestampDesc(int recipientResidentId);
+
+    List<NotificationEntity> findByRecipientResidentResidentId(int residentId);
+
 }

@@ -287,7 +287,7 @@ function ChangeProfile({
               <img
                 src={`data:image/${imageFormat};base64,${profileImage}`}
                 alt={defaultProfileImage}
-                className="h-48 w-48 rounded-full border border-emerald-500 border-4"
+                className="h-48 w-48 rounded-full border-emerald-500 border-4"
               />
             </p>
           ))
