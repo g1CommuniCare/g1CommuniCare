@@ -4,7 +4,7 @@ const ModalOverlay = ({ children }) => (
     </div>
   );
   
-  const SuccessPopup = ({ message, onConfirm}) => {
+  const SuccessPopup = ({ title, message, onConfirm, btnMessage}) => {
     return (
       <ModalOverlay>
         <div
@@ -16,7 +16,7 @@ const ModalOverlay = ({ children }) => (
               <img src="/images/logo.png" alt="CommuniCare Logo" className="w-12 h-12" />
             </span> */}
   
-            <p className="font-bold text-xl sm:text-3xl ">Congratulations!</p>
+            <p className="font-bold text-xl sm:text-3xl ">{title}</p>
           </div>
   
           <p className="mt-4 text-gray-500">{message}</p>
@@ -28,7 +28,7 @@ const ModalOverlay = ({ children }) => (
               className="inline-block w-full rounded-lg bg-emerald-500 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto"
               href=""
             >
-              Back to Login Page
+              {btnMessage}
             </button>
           </div>
         </div>

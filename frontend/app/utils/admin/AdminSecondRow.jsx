@@ -1,5 +1,7 @@
+import React from 'react';
+
 export default function AdminSecondRow({
-    img,
+    pieChartComponent,
     title,
     firstRow,
     firstRowNumber,
@@ -13,11 +15,7 @@ export default function AdminSecondRow({
             <span className="font-bold text-xl">{title}</span>
             <div className="flex justify-center items-center">
                 <div className="w-3/5 flex pl-10">
-                    <img
-                        src={img}
-                        alt="Chart"
-                        className="w-[168.266px] h-[168.266px]"
-                    />
+                    {pieChartComponent} {/* Render the PieChartComponent here */}
                 </div>
                 <div className="w-2/5 h-full flex flex-col gap-4 mb-6">
                     <div>

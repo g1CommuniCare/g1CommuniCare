@@ -129,4 +129,40 @@ public class AppointmentRequestServices {
         return appointmentRequestRepository.findById(appreqId).orElse(null);
     }
 
+    // Get the value of total approved requests
+    public int getTotalApprovedAppointments() {
+        List<AppointmentRequestEntity> appointmentRequestEntities = appointmentRequestRepository.findAll();
+        int totalApprovedRequests = 0;
+        for (AppointmentRequestEntity appointmentRequestEntity : appointmentRequestEntities) {
+            if (appointmentRequestEntity.getAppointmentStatus().equals("Approved")) {
+                totalApprovedRequests++;
+            }
+        }
+        return totalApprovedRequests;
+    }
+
+    // Get the value of total denied requests
+    public int getTotalDeniedAppointments() {
+        List<AppointmentRequestEntity> appointmentRequestEntities = appointmentRequestRepository.findAll();
+        int totalDeniedRequests = 0;
+        for (AppointmentRequestEntity appointmentRequestEntity : appointmentRequestEntities) {
+            if (appointmentRequestEntity.getAppointmentStatus().equals("Denied")) {
+                totalDeniedRequests++;
+            }
+        }
+        return totalDeniedRequests;
+    }
+
+    // Get the value of total pending requests
+    public int getTotalPendingAppointments() {
+        List<AppointmentRequestEntity> appointmentRequestEntities = appointmentRequestRepository.findAll();
+        int totalPendingRequests = 0;
+        for (AppointmentRequestEntity appointmentRequestEntity : appointmentRequestEntities) {
+            if (appointmentRequestEntity.getAppointmentStatus().equals("Pending")) {
+                totalPendingRequests++;
+            }
+        }
+        return totalPendingRequests;
+    }
+
 }

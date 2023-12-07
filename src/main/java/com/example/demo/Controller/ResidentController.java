@@ -41,6 +41,12 @@ public class ResidentController {
         return residentService.getAllResidents();
     }
 
+    // Get Resident by Id
+    @GetMapping("/getResidentById/{id}")
+    public List<ResidentEntity> getResidentById(@PathVariable int id) {
+        return residentService.findResidentsById(id);
+    }
+
     // DELETE RESIDENT
     @DeleteMapping("/deleteResident")
     public String deleteResident(@RequestBody ResidentEntity resident) {

@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import CopySvg from "@/app/utils/CopySvg";
+import SuccessPopup from "@/app/utils/SuccessPopUp";
 
 export default function AppointmentRequestDetails({ data, fullName }) {
 
   const [showApprovePopup, setShowApprovePopup] = useState(false);
   const [approveDetails, setApproveDetails] = useState('');
+  const [isShowing, setIsShowing] = useState(false);
+  const [isSuccessPopupShowing, setIsSuccessPopupShowing] = useState(false);
 
   const [showDenyPopup, setShowDenyPopup] = useState(false);
   const [denyReason, setDenyReason] = useState('');
@@ -23,14 +26,19 @@ export default function AppointmentRequestDetails({ data, fullName }) {
     setShowDenyPopup(true);
   }
 
+  function handleSuccessPopupConfirm() {
+    setIsSuccessPopupShowing(false);
+    setIsShowing(false); // Optionally close the registration modal as well
+}
+
   const handleApproveSubmit = async () => {
     // Send an API fetch request to update approved details
     const response = await fetch(`http://localhost:8080/appointment-requests/update-approved-details/${data.appreqId}?approvedDetails=${approveDetails}`, {
       method: 'PUT',
     });
     const result = await response.text();
-    alert(result); // Or handle the result in a more user-friendly way
     setShowApprovePopup(false); // Close the Approve popup after submission
+    setIsSuccessPopupShowing(true);
   };
 
   const handleDenySubmit = async () => {
@@ -39,8 +47,8 @@ export default function AppointmentRequestDetails({ data, fullName }) {
       method: 'PUT',
     });
     const result = await response.text();
-    alert(result); // Or handle the result in a more user-friendly way
     setShowDenyPopup(false); // Close the Deny popup after submission
+    setIsSuccessPopupShowing(true);
   };
 
   return (
@@ -213,6 +221,15 @@ export default function AppointmentRequestDetails({ data, fullName }) {
           </div>
         </div>
       )}
+      {isSuccessPopupShowing && (
+                <SuccessPopup
+                    title="Request Updated!"
+                    message="Appointment status has been updated successfully!"
+                    onConfirm={handleSuccessPopupConfirm}
+                    onCancel={() => setIsSuccessPopupShowing(false)}
+                    btnMessage="Close"
+                />
+            )}
       </div>
     </div>
   );

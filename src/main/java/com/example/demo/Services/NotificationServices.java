@@ -14,9 +14,9 @@ import com.example.demo.Repository.NotificationRepository;
 @Service
 public class NotificationServices {
 
-    private ResidentServices residentServices;
-
-    private final NotificationRepository notificationRepository;
+    @Autowired
+    ResidentServices residentServices;
+    NotificationRepository notificationRepository;
 
     @Autowired
     public NotificationServices(NotificationRepository notificationRepository) {
@@ -45,7 +45,7 @@ public class NotificationServices {
 
         // Save the notification entity
         return notificationRepository.save(notification);
-    }   
+    }
 
     // Mark a notification as read
     public void markNotificationAsRead(int notificationId) {

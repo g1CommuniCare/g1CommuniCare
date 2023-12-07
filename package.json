@@ -2,6 +2,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.19.2",
     "axios": "^1.6.2",
+    "react-modal": "^3.16.1",
     "tailwind": "^4.0.0"
   }
 }

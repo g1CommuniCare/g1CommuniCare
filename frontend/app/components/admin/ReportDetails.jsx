@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import CopySvg from "@/app/utils/CopySvg";
+import SuccessPopup from "@/app/utils/SuccessPopUp";
 
 export default function ReportDetails({ data, fullName }) {
   const [showUpdateStatusPopup, setShowUpdateStatusPopup] = useState(false);
   const [updateText, setUpdateText] = useState('');
+  const [isShowing, setIsShowing] = useState(false);
+  const [isSuccessPopupShowing, setIsSuccessPopupShowing] = useState(false);
 
   const [showResolvePopup, setShowResolvePopup] = useState(false);
 
@@ -21,6 +24,11 @@ export default function ReportDetails({ data, fullName }) {
     setShowResolvePopup(true);
   }
 
+  function handleSuccessPopupConfirm() {
+    setIsSuccessPopupShowing(false);
+    setIsShowing(false); // Optionally close the registration modal as well
+}
+
   const handleUpdateStatusSubmit = async () => {
     // Send an API fetch request to update report update
     const response = await fetch(`http://localhost:8080/reports-filing/updateReportUpdate/${data.repfilId}`, {
@@ -28,8 +36,8 @@ export default function ReportDetails({ data, fullName }) {
       body: JSON.stringify(updateText),
     });
     const result = await response.text();
-    alert(result); // Or handle the result in a more user-friendly way
     setShowUpdateStatusPopup(false); // Close the Update Status popup after submission
+    setIsSuccessPopupShowing(true);    
   };
 
   const handleResolveSubmit = async () => {
@@ -39,8 +47,8 @@ export default function ReportDetails({ data, fullName }) {
       body: JSON.stringify("Resolved"),
     });
     const result = await response.text();
-    alert(result); // Or handle the result in a more user-friendly way
     setShowResolvePopup(false); // Close the Resolve popup after submission
+    setIsSuccessPopupShowing(true);
   };
   return (
     <div className="flex flex-col w-full p-5">
@@ -197,6 +205,15 @@ export default function ReportDetails({ data, fullName }) {
           </div>
         </div>
       )}
+      {isSuccessPopupShowing && (
+                <SuccessPopup
+                    title="Report Updated!"
+                    message="Report status has been updated successfully!"
+                    onConfirm={handleSuccessPopupConfirm}
+                    onCancel={() => setIsSuccessPopupShowing(false)}
+                    btnMessage="Close"
+                />
+            )}
       </div>
     </div>
   );

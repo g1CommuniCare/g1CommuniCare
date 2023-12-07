@@ -50,7 +50,7 @@ export default function Login() {
             <div className="ml-[4%] w-[794px]">
                 <img src="/images/login.png" alt="CommuniCare Login Image" />
             </div>
-            <form className="absolute top-0 right-0 bottom-0 mr-[120px] min-w-[704px] h-[755px] my-auto shadow-md shadow-black">
+            <form className="absolute top-0 right-0 bottom-0 mr-[120px] min-w-[704px] h-[755px] my-auto ">
                 <div className="flex flex-col px-20 py-28">
                     <div className="flex justify-center">
                         <img src="/images/loginLogo.png" alt="CommuniCare Logo" className="w-[334px]" />
