@@ -140,6 +140,25 @@ export default function DocumentRequest() {
     setShowConfirmationPopup(true);
   };
 
+  const handleInitialRequest = () => {
+    setFirstName("");
+    setLastName("");
+    setMiddleInitial("");
+    setEmail("");
+    setcontactNumber("");
+    setAddress("");
+    setDocumentType("");
+    setSpecifiedDocumentType("");
+    setPurpose("");
+    setValidIdType("");
+    setSpecifiedValidIdType("");
+    setValidId(null);
+    setImageFormat(null);
+    setToPrint(false);
+    setPrintCopies(0);
+    setReferenceNumber("");
+  };
+
   const handleConfirmSubmit = async () => {
     setShowConfirmationPopup(false);
 
@@ -194,6 +213,7 @@ export default function DocumentRequest() {
 
         setIsSubmitted(true);
         const responseData = await response.json();
+        handleInitialRequest();
       } catch (error) {
         console.log("Error submitting document request:", error.message);
       }
@@ -204,12 +224,13 @@ export default function DocumentRequest() {
       return;
     }
   };
+
   const handleCancelSubmit = () => {
     setShowConfirmationPopup(false);
   };
 
   return (
-    <div className=" bg-slate-100 w-full h-full">
+    <div className="w-full h-full">
       <header
         className="h-96 w-full bg-cover text-black"
         style={{ backgroundImage: 'url("images/document-request-header.png")' }}
