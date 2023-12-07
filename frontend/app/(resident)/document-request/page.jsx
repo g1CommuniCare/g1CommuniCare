@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@/useContext/UseContext";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 import FifthRow from "@/app/utils/docreq/FifthRow";
@@ -136,12 +136,31 @@ export default function DocumentRequest() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setShowConfirmationPopup(true);
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setShowConfirmationPopup(true);
+    };
 
-    async function handleConfirmSubmit() {
+    const handleInitialRequest = () => {
+        setFirstName("");
+        setLastName("");
+        setMiddleInitial("");
+        setEmail("");
+        setcontactNumber("");
+        setAddress("");
+        setDocumentType("");
+        setSpecifiedDocumentType("");
+        setPurpose("");
+        setValidIdType("");
+        setSpecifiedValidIdType("");
+        setValidId(null);
+        setImageFormat(null);
+        setToPrint(false);
+        setPrintCopies(0);
+        setReferenceNumber("");
+    };
+
+    const handleConfirmSubmit = async () => {
         setShowConfirmationPopup(false);
 
         let finalDocumentType = documentType;
@@ -192,100 +211,123 @@ export default function DocumentRequest() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-        setIsSubmitted(true);
-        const responseData = await response.json();
-      } catch (error) {
-        console.log("Error submitting document request:", error.message);
-      }
+                setIsSubmitted(true);
 
-      console.log(dataDocumentRequest);
-    } else {
-      alert("Please upload a valid ID.");
-      return;
-    }
-  };
-  const handleCancelSubmit = () => {
-    setShowConfirmationPopup(false);
-  };
+                // CREATE A POST NOTIFICATION FOR THE ADMIN TO BE NOTIFIED
+                await axios.post(`http://localhost:8080/notifications/create`, {
+                    relatedDocumentRequest: {
+                        docreqId: response.data.docreqId,
+                        documentType: response.data.documentType,
+                        denialReason: response.data.denialReason,
+                        documentStatus: response.data.documentStatus,
+                        address: response.data.address,
+                        claimDate: response.data.claimDate,
+                        contactNumber: response.data.contactNumber,
+                        denialReason: response.data.denialReason,
+                        email: response.data.email,
+                        firstName: response.data.firstName,
+                        imageFormat: response.data.imageFormat,
+                        isDeleted: response.data.isDeleted,
+                        lastName: response.data.lastName,
+                        middleInitial: response.data.middleInitial,
+                        printCopies: response.data.printCopies,
+                        purpose: response.data.purpose,
+                        referenceNumber: response.data.referenceNumber,
+                    },
+                });
+            } catch (error) {
+                console.log("Error submitting document request:", error.message);
+            }
 
-  return (
-    <div className=" bg-slate-100 w-full h-full">
-      <header
-        className="h-96 w-full bg-cover text-black"
-        style={{ backgroundImage: 'url("images/document-request-header.png")' }}
-      >
-        <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
-          <h1 className="font-bold text-6xl">Document Request</h1>
-          <span className="flex justify-center font-small text-lg mt-2 mr-96">
-            Effortlessly request essential barangay documents here. Choose your
-            document type, provide necessary details, and enjoy a streamlined,
-            secure process. Opt for document printing and make hassle-free
-            payments. Your essential paperwork, simplified.
-          </span>
-        </div>
-      </header>
-      {isSubmitted ? (
-        <Success />
-      ) : (
-        <div className="px-12 py-8 w-3/4">
-          <form onSubmit={handleSubmit}>
-            {/* FIRST ROW */}
-            <FirstRow
-              firstTitle="First Name"
-              firstName={firstName}
-              handleFirstName={handleFirstName}
-              secondTitle="Last Name"
-              lastName={lastName}
-              handleLastName={handleLastName}
-              thirdTitle="Middle I."
-              middleInitial={middleInitial}
-              handleMiddleInitial={handleMiddleInitial}
-            />
-            {/* SECOND ROW */}
-            <SecondRow
-              firstTitle="Contact Information"
-              contactNumber={contactNumber}
-              handlecontactNumber={handlecontactNumber}
-              secondTitle="Email Address"
-              email={email}
-              handleEmail={handleEmail}
-            />
-            {/* THIRD ROW */}
-            <ThirdRow
-              firstTitle="Address"
-              address={address}
-              handleAddress={handleAddress}
-            />
-            <FourthRow
-              firstTitle="Document Type"
-              documentType={documentType}
-              handleDocumentType={handleDocumentType}
-              documentTypes={documentTypes}
-              secondTitle="Purpose"
-              purpose={purpose}
-              handlePurpose={handlePurpose}
-              specifiedDocumentType={specifiedDocumentType}
-              handleSpecifiedDocumentType={handleSpecifiedDocumentType}
-            />
-            {/* FIFTH ROW */}
-            <FifthRow
-              firstTitle="Valid ID"
-              validIdType={validIdType}
-              handleValidIdType={handleValidIdType}
-              validIdTypes={validIdTypes}
-              storeUploadedPhoto={storeUploadedPhoto}
-              specifiedValidIdType={specifiedValidIdType}
-              handleSpecifiedValidIdType={handleSpecifiedValidIdType}
-            />
-            {/* Choose to print or not to print */}
-            <PrintChoice
-              toPrint={toPrint}
-              handlePrintOptionChange={handlePrintOptionChange}
-              printCopies={printCopies}
-              handlePrintCopiesChange={handlePrintCopiesChange}
-              referenceNumber={referenceNumber}
-              handleReferenceNumber={handleReferenceNumber}
-            />
+            console.log(dataDocumentRequest);
+        } else {
+            alert("Please upload a valid ID.");
+            return;
+        }
+    };
+
+    const handleCancelSubmit = () => {
+        setShowConfirmationPopup(false);
+    };
+
+    return (
+        <div className="w-full h-full">
+            <header
+                className="h-96 w-full bg-cover text-black"
+                style={{ backgroundImage: 'url("images/document-request-header.png")' }}
+            >
+                <div className="flex justify-center flex-col my-auto ml-12 mr-96 h-full">
+                    <h1 className="font-bold text-6xl">Document Request</h1>
+                    <span className="flex justify-center font-small text-lg mt-2 mr-96">
+                        Effortlessly request essential barangay documents here. Choose your document
+                        type, provide necessary details, and enjoy a streamlined, secure process.
+                        Opt for document printing and make hassle-free payments. Your essential
+                        paperwork, simplified.
+                    </span>
+                </div>
+            </header>
+            {isSubmitted ? (
+                <Success />
+            ) : (
+                <div className="px-12 py-8 w-3/4">
+                    <form onSubmit={handleSubmit}>
+                        {/* FIRST ROW */}
+                        <FirstRow
+                            firstTitle="First Name"
+                            firstName={firstName}
+                            handleFirstName={handleFirstName}
+                            secondTitle="Last Name"
+                            lastName={lastName}
+                            handleLastName={handleLastName}
+                            thirdTitle="Middle I."
+                            middleInitial={middleInitial}
+                            handleMiddleInitial={handleMiddleInitial}
+                        />
+                        {/* SECOND ROW */}
+                        <SecondRow
+                            firstTitle="Contact Information"
+                            contactNumber={contactNumber}
+                            handlecontactNumber={handlecontactNumber}
+                            secondTitle="Email Address"
+                            email={email}
+                            handleEmail={handleEmail}
+                        />
+                        {/* THIRD ROW */}
+                        <ThirdRow
+                            firstTitle="Address"
+                            address={address}
+                            handleAddress={handleAddress}
+                        />
+                        <FourthRow
+                            firstTitle="Document Type"
+                            documentType={documentType}
+                            handleDocumentType={handleDocumentType}
+                            documentTypes={documentTypes}
+                            secondTitle="Purpose"
+                            purpose={purpose}
+                            handlePurpose={handlePurpose}
+                            specifiedDocumentType={specifiedDocumentType}
+                            handleSpecifiedDocumentType={handleSpecifiedDocumentType}
+                        />
+                        {/* FIFTH ROW */}
+                        <FifthRow
+                            firstTitle="Valid ID"
+                            validIdType={validIdType}
+                            handleValidIdType={handleValidIdType}
+                            validIdTypes={validIdTypes}
+                            storeUploadedPhoto={storeUploadedPhoto}
+                            specifiedValidIdType={specifiedValidIdType}
+                            handleSpecifiedValidIdType={handleSpecifiedValidIdType}
+                        />
+                        {/* Choose to print or not to print */}
+                        <PrintChoice
+                            toPrint={toPrint}
+                            handlePrintOptionChange={handlePrintOptionChange}
+                            printCopies={printCopies}
+                            handlePrintCopiesChange={handlePrintCopiesChange}
+                            referenceNumber={referenceNumber}
+                            handleReferenceNumber={handleReferenceNumber}
+                        />
 
                         <Submit />
                     </form>
