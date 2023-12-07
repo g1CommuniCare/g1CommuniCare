@@ -60,11 +60,11 @@ export default function DocumentRequest() {
     };
     const documentTypes = [
         { value: "", label: "Select Document" },
-        { value: "barangayclearance", label: "Barangay Clearance" },
-        { value: "barangayid", label: "Barangay ID" },
-        { value: "certificateOfIndigency", label: "Certificate of Indigency" },
-        { value: "businessPermit", label: "Business Permit" },
-        { value: "others", label: "Others (Please Specify)" },
+        { value: "Barangay Clearance", label: "Barangay Clearance" },
+        { value: "Barangay ID", label: "Barangay ID" },
+        { value: "Certificate of Indigency", label: "Certificate of Indigency" },
+        { value: "Business Permit", label: "Business Permit" },
+        { value: "Others", label: "Others (Please Specify)" },
     ];
 
     const [specifiedDocumentType, setSpecifiedDocumentType] = useState("");
@@ -83,11 +83,11 @@ export default function DocumentRequest() {
     };
     const validIdTypes = [
         { value: "", label: "Select Valid ID" },
-        { value: "driverslicense", label: "Driver's License" },
-        { value: "governmentissuedid", label: "Government Issued ID" },
-        { value: "passport", label: "Passport" },
-        { value: "schoolid", label: "School ID" },
-        { value: "others", label: "Others (Please Specify)" },
+        { value: "Driver's License", label: "Driver's License" },
+        { value: "Government Issued ID", label: "Government Issued ID" },
+        { value: "Passport", label: "Passport" },
+        { value: "School ID", label: "School ID" },
+        { value: "Others", label: "Others (Please Specify)" },
     ];
     const [specifiedValidIdType, setSpecifiedValidIdType] = useState("");
     const handleSpecifiedValidIdType = (e) => {

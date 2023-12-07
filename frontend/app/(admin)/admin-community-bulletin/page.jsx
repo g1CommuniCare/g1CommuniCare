@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/useContext/UseContext";
 import { useEffect, useState } from "react";
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
 const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
   const postDate = new Date(...post.postDate);
@@ -23,6 +24,7 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
   const [editedContent, setEditedContent] = useState(post.postDescription);
   const [isEditing, setIsEditing] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const openEditForm = () => {
     setIsEditing(true);
@@ -65,6 +67,13 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
       console.error("Failed to edit post:", error);
     }
   };
+
+  const handleDeleteClick = () => setShowDeleteConfirmation(true);
+  const handleConfirmDelete = () => {
+    onDelete(post.postId);
+    setShowDeleteConfirmation(false);
+  };
+  const handleCancelDelete = () => setShowDeleteConfirmation(false);
 
   return (
     <div
@@ -128,7 +137,7 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
             </div>
             <button
               className="text-gray-500 focus:outline-none focus:text-gray-600"
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -300,6 +309,13 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
           </div>
         </div>
       )}
+      {showDeleteConfirmation && (
+        <ConfirmationPopup
+          message="Are you sure you want to delete this post?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };
@@ -404,27 +420,23 @@ const BulletinBoard = () => {
   };
 
   const handleDeletePost = async (postId) => {
-    const shouldDelete = window.confirm(
-      "Are you sure you want to delete this post?"
-    );
-    if (shouldDelete) {
-      try {
-        const response = await fetch(
-          `http://localhost:8080/bulletin/${postId}/delete`,
-          {
-            method: "PUT",
-          }
-        );
-
-        if (!response.ok) {
-          console.error(`HTTP error! status: ${response.status}`);
-          throw new Error("Failed to soft delete post.");
+    // Directly perform the deletion logic without the confirmation alert
+    try {
+      const response = await fetch(
+        `http://localhost:8080/bulletin/${postId}/delete`,
+        {
+          method: "PUT",
         }
+      );
 
-        fetchPosts();
-      } catch (error) {
-        console.error("Failed to soft delete post:", error);
+      if (!response.ok) {
+        console.error(`HTTP error! status: ${response.status}`);
+        throw new Error("Failed to soft delete post.");
       }
+
+      fetchPosts();
+    } catch (error) {
+      console.error("Failed to soft delete post:", error);
     }
   };
 
