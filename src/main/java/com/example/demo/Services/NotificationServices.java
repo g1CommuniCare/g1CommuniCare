@@ -15,8 +15,6 @@ import com.example.demo.Repository.NotificationRepository;
 @Service
 public class NotificationServices {
 
-    private ResidentServices residentServices;
-    private DocumentRequestServices documentRequestServices;
     private final NotificationRepository notificationRepository;
 
     @Autowired
@@ -81,23 +79,5 @@ public class NotificationServices {
         }
 
         return notifications;
-    }
-
-    // Create a document request and generate a notification
-    public NotificationEntity createDocumentRequestAndNotification(int residentId) {
-        // Call the existing getAllDocumentRequestsByResidentId method to create the
-        // document request
-        DocumentRequestEntity createdDocumentRequest = (DocumentRequestEntity) documentRequestServices
-                .getAllDocumentRequestsByResidentId(residentId);
-
-        // Create a notification for the resident
-        NotificationEntity notification = new NotificationEntity();
-        notification.setTitle("Document Request Created");
-        notification.setMessage("A new document request has been created.");
-        notification.setRecipientResident((ResidentEntity) residentServices.findResidentsById(residentId));
-        notification.setRelatedDocumentRequest(createdDocumentRequest);
-
-        // Save the notification entity
-        return notificationRepository.save(notification);
     }
 }
