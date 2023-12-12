@@ -124,21 +124,16 @@ public class AdminServices {
         return null;
     }
 
-    // DISPLAY ALL THE ACTIVE ADMINS
-    // public List<String> getActiveAdmin() {
-    // List<AdminEntity> activeAdminList = adminRepo.findByIsActive(true);
-    // List<String> activeAdminUsername = new ArrayList<>();
+    // UPDATE ADMIN PASSWORD
+    public String updateAdminPassword(int id, String password) {
+        AdminEntity admin = adminRepo.findById(id).orElse(null);
 
-    // if (activeAdminList != null && !activeAdminList.isEmpty()) {
-    // for (AdminEntity admin : activeAdminList) {
-    // activeAdminUsername.add(admin.activeAdmin());
-    // }
-    // }
-    // return activeAdminUsername;
-    // }
-
-    // PARA NI SA SEARCH ADMIN IF NEEDED
-    // public List<AdminEntity> findByAdminByUsername(String username) {
-    // return adminRepo.findByUsername(username);
-    // }
+        if (admin != null) {
+            admin.setPassword(password);
+            adminRepo.save(admin);
+            return "Admin " + id + " password has been updated.";
+        } else {
+            return "Admin " + id + " does not exist.";
+        }
+    }
 }
