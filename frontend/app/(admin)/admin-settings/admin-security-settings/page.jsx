@@ -6,22 +6,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function SecuritySettings() {
-    const [currentPassword, setCurrentPassword] = useState(null);
+    const [currentPassword, setCurrentPassword] = useState("");
     const [changePassword, setChangePassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [isCurrentPasswordValid, setIsCurrentPasswordValid] = useState(true);
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);
     const [isPasswordSameAsCurrent, setIsPasswordSameAsCurrent] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const { user } = useAuth();
 
-    async function fetchCurrentPassword() {
-        const res = await axios.get(
-            `http://localhost:8080/admin/getAdminById/${user.adminId}`
-        );
-        const data = res.data;
-        const getPassword = data?.map(({ password }) => password);
-        setCurrentPassword(getPassword);
+    function validateCurrentPassword(value) {
+        const isValid = value === user.password;
+        setIsCurrentPasswordValid(isValid);
     }
 
     function validatePassword(value) {
@@ -32,6 +29,11 @@ export default function SecuritySettings() {
     function validateConfirmPassword(value, passwordValue) {
         const isValid = value === passwordValue;
         setIsConfirmPasswordValid(isValid);
+    }
+
+    function handleCurrentPasswordChange(e) {
+        setCurrentPassword(e.target.value);
+        validateCurrentPassword(e.target.value);
     }
 
     function handleChangePassword(e) {
@@ -47,11 +49,11 @@ export default function SecuritySettings() {
     }
 
     useEffect(() => {
+        validateCurrentPassword(currentPassword);
         validatePassword(changePassword);
         validateConfirmPassword(confirmPassword, changePassword);
         checkIfPasswordIsTheSameAsCurrentPassword();
-        fetchCurrentPassword();
-    }, [changePassword, confirmPassword]);
+    }, [currentPassword, changePassword, confirmPassword]);
 
     async function handleSubmitUpdatedPassword() {
         if (!isPasswordSameAsCurrent && isPasswordValid && isConfirmPasswordValid) {
@@ -69,11 +71,18 @@ export default function SecuritySettings() {
                     <p className="w-[200px] font-medium">Current Password</p>
                     {user && (
                         <input
-                            type="text"
-                            placeholder={currentPassword && currentPassword}
-                            className="w-[343px] px-5 py-3 rounded-md border-2 shadow-md"
-                            readOnly
+                            type="password"
+                            value={currentPassword}
+                            onChange={handleCurrentPasswordChange}
+                            className={`w-[343px] px-5 py-3 rounded-md border-2 shadow-md ${
+                                isCurrentPasswordValid
+                                    ? "border-slate-200 focus:border-emerald-500"
+                                    : "border-pink-500 invalid:border-pink-500 focus:border-pink-500"
+                            }`}
                         />
+                    )}
+                    {!isCurrentPasswordValid && (
+                        <small className="text-pink-500 mt-2">Incorrect current password.</small>
                     )}
                 </div>
                 <div className="flex items-center gap-5 my-10">

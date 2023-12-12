@@ -126,7 +126,7 @@ export default function Account() {
 
     return (
         <div
-            className="h-screen w-screen bg-cover"
+            className="w-screen bg-cover"
             style={{ backgroundImage: 'url("images/profileBackgroundImage.png")' }}
         >
             <>
@@ -145,7 +145,7 @@ export default function Account() {
                     </div>
                 </div>
 
-                <div className="flex justify-between gap-8 rounded-[22px] w-11/12 p-7 bg-slate-100/70 ml-16 mt-8">
+                <div className="flex justify-between gap-8 rounded-[22px] w-11/12 p-7 bg-slate-100/70 ml-16 mt-8 mb-10">
                     <div className="relative">
                         <div className="mt-24 py-24 px-10 bg-white w-[511px] rounded-[22px]">
                             <div className="flex flex-col">
