@@ -122,4 +122,12 @@ public class ResidentController {
         return new ResponseEntity<>(result, status);
     }
 
+    // UPDATE RESIDENT PASSWORD
+    @PutMapping("/{id}/updatePassword")
+    public ResponseEntity<String> updateResidentPassword(@PathVariable int id, @RequestParam String password) {
+        String result = residentService.updateResidentPassword(id, password);
+        HttpStatus status = result.startsWith("Resident") ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(result, status);
+    }
+
 }

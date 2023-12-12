@@ -101,7 +101,7 @@ public class AdminController {
         }
     }
 
-    //Get Admin by Id
+    // Get Admin by Id
     @GetMapping("/getAdminById/{id}")
     public List<AdminEntity> getAdminById(@PathVariable int id) {
         return adminService.findByAdminId(id);
@@ -125,5 +125,13 @@ public class AdminController {
         return ResponseEntity.ok()
                 .contentType(mediaType)
                 .body(admin.getProfileImage());
+    }
+
+    // UPDATE ADMIN PASSWORD
+    @PutMapping("/{id}/updatePassword")
+    public ResponseEntity<String> updateAdminPassword(@PathVariable int id, @RequestParam String password) {
+        String result = adminService.updateAdminPassword(id, password);
+        HttpStatus status = result.contains("does not exist") ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+        return new ResponseEntity<>(result, status);
     }
 }

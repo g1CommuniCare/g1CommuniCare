@@ -112,4 +112,17 @@ public class ResidentServices {
             return "Resident " + id + " does not exist.";
         }
     }
+
+    // UPDATE RESIDENT PASSWORD
+    public String updateResidentPassword(int id, String password) {
+        ResidentEntity resident = residentRepo.findById(id).orElse(null);
+
+        if (resident != null) {
+            resident.setPassword(password);
+            residentRepo.save(resident);
+            return "Resident " + id + " password has been updated.";
+        } else {
+            return "Resident " + id + " does not exist.";
+        }
+    }
 }
