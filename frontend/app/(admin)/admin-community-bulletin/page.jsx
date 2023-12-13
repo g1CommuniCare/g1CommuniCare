@@ -1,4 +1,5 @@
 "use client";
+import ModalOverlay from "@/app/utils/admin/ModalOverlay";
 import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 import { useAuth } from "@/useContext/UseContext";
 import { useEffect, useState } from "react";
@@ -17,10 +18,6 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
   const profileImageSrc = `data:image/${post.admin.imageFormat};base64,${post.admin.profileImage}`;
 
   const [showConfirmation, setShowConfirmation] = useState(false);
-
-  const handleDelete = async () => {
-    onDelete(post.postId);
-  };
 
   const [editedTitle, setEditedTitle] = useState(post.postTitle);
   const [editedContent, setEditedContent] = useState(post.postDescription);
@@ -74,12 +71,6 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
     setShowDeleteConfirmation(false);
   };
   const handleCancelDelete = () => setShowDeleteConfirmation(false);
-
-  const ModalOverlay = ({ children }) => (
-    <div className="fixed inset-0 flex items-center justify-center backdrop-filter backdrop-blur-sm bg-gray-200 bg-opacity-40">
-      {children}
-    </div>
-  );
 
   return (
     <div
@@ -185,6 +176,7 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
 
       {/* Edit Form Pop-up */}
       {isEditing && (
+        // <div className="fixed inset-0 flex items-center justify-center backdrop-filter backdrop-blur-sm bg-gray-200 bg-opacity-40">
         <ModalOverlay>
           <div
             className="w-4/12 rounded-3xl border border-emerald-100 bg-white p-4 shadow-lg sm:p-6 lg:p-8 transform scale-100 transition-transform ease-in-out duration-300"
@@ -210,6 +202,7 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
                 onChange={(e) => setEditedTitle(e.target.value)}
                 className="peer relative w-full h-[58px] py-1 mt-2 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
               />
+
               <label
                 htmlFor="editedContent"
                 className="block text-sm font-bold text-gray-700 mt-4"
@@ -244,12 +237,13 @@ const BulletinPost = ({ post, onDelete, onEdit, fetchPosts }) => {
               </div>
             </div>
           </div>
-        </ModalOverlay>
+          </ModalOverlay>
+        // </div>
       )}
       {/* Second Confirmation Pop-up */}
       {showConfirmation && (
         <ConfirmationPopup
-        message= "Are you sure you want to push through this action?"
+          message="Are you sure you want to push through this action?"
           onConfirm={applyChanges}
           onCancel={() => setShowConfirmation(false)}
         />
@@ -356,8 +350,8 @@ const BulletinBoard = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            postTitle: newPostTitle || "Default Title",
-            postDescription: newPostDescription || "Default Description",
+            postTitle: newPostTitle,
+            postDescription: newPostDescription,
             postDate: formattedDate,
           }),
         }
@@ -380,25 +374,24 @@ const BulletinBoard = () => {
   };
 
   const handleDeletePost = async (postId) => {
-    
-      try {
-        const response = await fetch(
-          `http://localhost:8080/bulletin/${postId}/delete`,
-          {
-            method: "PUT",
-          }
-        );
-
-        if (!response.ok) {
-          console.error(`HTTP error! status: ${response.status}`);
-          throw new Error("Failed to soft delete post.");
+    try {
+      const response = await fetch(
+        `http://localhost:8080/bulletin/${postId}/delete`,
+        {
+          method: "PUT",
         }
+      );
 
-        fetchPosts();
-      } catch (error) {
-        console.error("Failed to soft delete post:", error);
+      if (!response.ok) {
+        console.error(`HTTP error! status: ${response.status}`);
+        throw new Error("Failed to soft delete post.");
       }
-    };
+
+      fetchPosts();
+    } catch (error) {
+      console.error("Failed to soft delete post:", error);
+    }
+  };
 
   const handleEditPost = async (postId) => {
     const postToEdit = posts.find((post) => post.postId === postId);

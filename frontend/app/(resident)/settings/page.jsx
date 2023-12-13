@@ -19,7 +19,7 @@ export default function Settings() {
                     lastName="Last Name"
                     middleInitial="Middle Initial"
                     contactNumber="Contact Information"
-                    birthDate="Birth Date"
+                    date="Birthdate"
                     email="Email"
                     address="Address"
                 />
@@ -34,10 +34,21 @@ function AccountSettings({
     lastName,
     middleInitial,
     contactNumber,
-    birthDate,
+    date,
     email,
     address,
 }) {
+
+    const formatDate = (inputDate) => {
+        const dateObject = new Date(inputDate);
+        const year = dateObject.getFullYear();
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        return { year, month, day };
+    };
+
+    const formattedDate = user ? formatDate(user.date) : null;
+    
     return (
         <>
             <div className="flex gap-5 pb-10">
@@ -96,24 +107,24 @@ function AccountSettings({
                     )}
                 </div>
                 <div>
-                    <p className="mb-1">{birthDate}</p>
+                    <p className="mb-1">{date}</p>
                     {user && (
                         <div className="flex gap-5">
                             <input
                                 type="text"
-                                value={user.lastName}
+                                value={formattedDate.month}
                                 readOnly
                                 className="w-[103px] px-5 py-3 rounded-md border-2 shadow-md"
                             />
                             <input
                                 type="text"
-                                value={user.lastName}
+                                value={formattedDate.day}
                                 readOnly
                                 className="w-[103px] px-5 py-3 rounded-md border-2 shadow-md"
                             />
                             <input
                                 type="text"
-                                value={user.lastName}
+                                value={formattedDate.year}
                                 readOnly
                                 className="w-[103px] px-5 py-3 rounded-md border-2 shadow-md"
                             />

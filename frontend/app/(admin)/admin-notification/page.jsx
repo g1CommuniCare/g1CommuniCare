@@ -51,7 +51,7 @@ export default function Notification() {
 
     return (
         <div
-            className="w-full p-8"
+            className="w-screen bg-cover p-8"
             style={{ backgroundImage: 'url("images/profileBackgroundImage.png")' }}
         >
             <h1 className="font-bold text-6xl pb-10">Notification</h1>
