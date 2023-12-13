@@ -31,7 +31,7 @@ public class ResourceDirectoryEntity {
     private String resourceAddress;
 
     @Column(name = "resource_contact", nullable = false)
-    private float resourceContact;
+    private String resourceContact;
 
     @Column(name = "resource_latitude", columnDefinition = "DOUBLE DEFAULT 0.0")
     private Double resourceLatitude;
@@ -46,7 +46,7 @@ public class ResourceDirectoryEntity {
     }
 
     public ResourceDirectoryEntity(int resourceId, AdminEntity admin, String resourceName, String resourceAddress,
-            float resourceContact, Double resourceLatitude, Double resourceLongitude, boolean isDeleted) {
+            String resourceContact, Double resourceLatitude, Double resourceLongitude, boolean isDeleted) {
         this.resourceId = resourceId;
         this.admin = admin;
         this.resourceName = resourceName;
@@ -102,11 +102,11 @@ public class ResourceDirectoryEntity {
         this.resourceAddress = resourceAddress;
     }
 
-    public float getResourceContact() {
+    public String getResourceContact() {
         return resourceContact;
     }
 
-    public void setResourceContact(float resourceContact) {
+    public void setResourceContact(String resourceContact) {
         this.resourceContact = resourceContact;
     }
 

@@ -4,7 +4,7 @@ public class ResourceDirectoryDTO {
     private int resourceId;
     private String resourceName;
     private String resourceAddress;
-    private float resourceContact;
+    private String resourceContact;
     private Double resourceLatitude;
     private Double resourceLongitude;
     private boolean isDeleted;
@@ -13,7 +13,7 @@ public class ResourceDirectoryDTO {
     }
 
     public ResourceDirectoryDTO(int resourceId, String resourceName, String resourceAddress,
-            float resourceContact, Double resourceLatitude, Double resourceLongitude, boolean isDeleted) {
+            String resourceContact, Double resourceLatitude, Double resourceLongitude, boolean isDeleted) {
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceAddress = resourceAddress;
@@ -47,11 +47,11 @@ public class ResourceDirectoryDTO {
         this.resourceAddress = resourceAddress;
     }
 
-    public float getResourceContact() {
+    public String getResourceContact() {
         return resourceContact;
     }
 
-    public void setResourceContact(float resourceContact) {
+    public void setResourceContact(String resourceContact) {
         this.resourceContact = resourceContact;
     }
 

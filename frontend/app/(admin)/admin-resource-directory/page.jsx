@@ -1,80 +1,113 @@
 "use client";
 
 import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
+import UpdateResource from "@/app/utils/UpdateResource";
 import { useAuth } from "@/useContext/UseContext";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ResourceDirectory() {
   const { user, login } = useAuth();
   const id = user.adminId;
 
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [contact, setContact] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-
-  // Handler functions for updating the respective state values
-  const handleNameChange = (event) => {
-    setName(event.target.value);
+  const initialState = {
+    name: "",
+    address: "",
+    contact: "",
+    latitude: "",
+    longitude: "",
   };
 
-  const handleAddressChange = (event) => {
-    setAddress(event.target.value);
+  const [formData, setFormData] = useState(initialState);
+
+  const handleChange = (event) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [event.target.name]: event.target.value,
+    }));
   };
 
-  const handleContactChange = (event) => {
-    setContact(event.target.value);
-  };
+  const [resources, setResources] = useState([]);
 
-  const handleLatitudeChange = (event) => {
-    setLatitude(event.target.value);
-  };
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/resource-directory/get-all-non-deleted-resources"
+        );
 
-  const handleLongitudeChange = (event) => {
-    setLongitude(event.target.value);
-  };
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch resources: ${response.status} - ${response.statusText}`
+          );
+        }
 
-  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
-
-  const handleConfirm = () => {
-    // Handle post confirmation logic here
-    const resourceData = {
-      name: name,
-      // address: formData.address,
-      // contact: formData.contact,
-      // latitude: formData.latitude,
-      // longitude: formData.longitude,
+        const data = await response.json();
+        setResources(data);
+      } catch (error) {
+        console.error("Error fetching resources:", error);
+      }
     };
 
-    // console.log(resourceData);
-    // // Make a POST request to your API endpoint
-    // fetch(
-    //   `http://localhost:8080/resource-directory/create-resource?adminId=${id}`,
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(resourceData),
-    //   }
-    // )
-    //   .then((response) => {
-    //     // console.log("Response:", response);
-    //     return response.text(); // or response.json() depending on the expected response format
-    //   })
-    //   .then((body) => {
-    //     console.log("Response Body:", body);
-    //   })
+    fetchResources();
+  }, []);
 
-    //   .catch((error) => {
-    //     console.log("Error:", error);
-    //   });
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  const [deleteConfirmationPopup, setDeleteConfirmationPopup] = useState(false);
+  const [resourceIdToUse, setResourceIdToUse] = useState(null);
 
-    // setIsSuccessPopupShowing(true);
+  const ModalOverlay = ({ children }) => (
+    <div className="fixed inset-0 flex items-center justify-center backdrop-filter backdrop-blur-sm bg-gray-200 bg-opacity-40">
+      {children}
+    </div>
+  );
 
-    setShowConfirmationPopup(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [confirmUpdate, setConfirmUpdate] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedAddress, setEditedAddress] = useState("");
+  const [editedContact, setEditedContact] = useState("");
+  const [editedLatitude, setEditedLatitude] = useState("");
+  const [editedLongitude, setEditedLongitude] = useState("");
+
+  const handleConfirm = async () => {
+    try {
+      // Handle post confirmation logic here
+      const resourceData = {
+        resourceName: formData.name,
+        resourceAddress: formData.address,
+        resourceContact: formData.contact,
+        resourceLatitude: formData.latitude,
+        resourceLongitude: formData.longitude,
+      };
+
+      console.log(resourceData);
+
+      const response = await fetch(
+        `http://localhost:8080/resource-directory/create-resource?adminId=${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(resourceData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to add resource: ${response.status} - ${response.statusText}`
+        );
+      }
+
+      const responseBody = await response.text(); // or response.json() depending on the expected response format
+      console.log("Response Body:", responseBody);
+
+      // setIsSuccessPopupShowing(true);
+      setShowConfirmationPopup(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const handleCancel = () => {
@@ -86,55 +119,103 @@ export default function ResourceDirectory() {
     setShowConfirmationPopup(true);
   }
 
+  function handleDeleteResource(e, resourceId) {
+    e.preventDefault();
+    setResourceIdToUse(resourceId);
+    setDeleteConfirmationPopup(true);
+  }
+
+  async function handleConfirmDelete() {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/resource-directory/${resourceIdToUse}/delete-resource`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to delete resource: ${response.status} - ${response.statusText}`
+        );
+      }
+
+      // Handle any additional logic after successful deletion
+
+      setDeleteConfirmationPopup(false);
+    } catch (error) {
+      console.error("Error deleting resource:", error);
+    }
+  }
+
+  function handleCancelDelete(e) {
+    setDeleteConfirmationPopup(false);
+  }
+
+  function handleUpdateResource(e, resourceId) {
+    e.preventDefault();
+    setResourceIdToUse(resourceId);
+
+    // Find the resource being edited based on resourceId
+    const resourceBeingEdited = resources.find(
+      (resource) => resource.resourceId === resourceId
+    );
+
+    // Populate the editedName state with the name of the resource being edited
+    setEditedName(resourceBeingEdited.resourceName);
+    setEditedAddress(resourceBeingEdited.resourceAddress);
+    setEditedContact(resourceBeingEdited.resourceContact);
+    setEditedLatitude(resourceBeingEdited.resourceLatitude);
+    setEditedLongitude(resourceBeingEdited.resourceLongitude);
+
+    setIsEditing(true);
+  }
+
+  function handleConfirmEdit(e) {
+    e.preventDefault();
+    setConfirmUpdate(true);
+  }
+
+  async function handleEdit() {
+    try {
+      const editedResourceData = {
+        resourceName: editedName,
+        resourceAddress: editedAddress,
+        resourceContact: editedContact,
+        resourceLatitude: editedLatitude,
+        resourceLongitude: editedLongitude,
+      };
+
+      const response = await fetch(
+        `http://localhost:8080/resource-directory/update-resource/${resourceIdToUse}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedResourceData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to update resource: ${response.status} - ${response.statusText}`
+        );
+      }
+
+      // Handle any additional logic after successful update
+      setIsEditing(false); // Close the modal after successful update
+    } catch (error) {
+      console.error("Error updating resource:", error);
+    }
+  }
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyA - KaskZFonHjwsp3fupe1ziiT3T0ZQhRA",
   });
-
-  const differentPlaces = [
-    {
-      address:
-        "6QH8+7XM, Natalio B. Bacalso S National Hwy, Tuyan, City of Naga, 6032 Cebu",
-      contact: "63+ 9997172796",
-      name: "Tuyan Barangay Hall",
-      lat: "10.228189310619017",
-      lng: "123.7674397299054",
-    },
-    {
-      address: "6QH9+23P, City of Naga, Cebu",
-      contact: "63+ 9085789426",
-      name: "Fruitas Resort",
-      lat: "10.227578680511018",
-      lng: "123.76771853466501",
-    },
-    {
-      address: "6QHC+54F, City of Naga, Cebu",
-      contact: "63+ 9185233976",
-      name: "Ratskii",
-      lat: "10.227944576111287",
-      lng: "123.77031104625871",
-    },
-    {
-      address: "6QH9+X75, Natalio B. Bacalso Ave, City of Naga, 6037 Cebu",
-      contact: "63+ 98715215454",
-      name: "Tuyan Central Elementary School",
-      lat: "10.22991539589692",
-      lng: "123.76818849229869",
-    },
-    {
-      address: "6QG7+PWF, City of Naga, Cebu",
-      contact: "",
-      name: "Our Lady of Lourdes Academy of Tuyan Inc.",
-      lat: "10.226807265419101",
-      lng: "123.76480487578388",
-    },
-    {
-      address: "6QG7+PWF, City of Naga, Cebu",
-      contact: "",
-      name: "Our Lady of Lourdes Academy of Tuyan Inc.",
-      lat: "10.226807265419101",
-      lng: "123.76480487578388",
-    },
-  ];
 
   const createMarker = (lat, lng) => ({
     lat,
@@ -183,8 +264,7 @@ export default function ResourceDirectory() {
                 name="name"
                 placeholder="Name "
                 className="h-full w-10/12 flex resize-none px-1 focus:border-transparent outline-none items-center"
-                // value={formData.name}
-                onChange={handleNameChange}
+                onChange={handleChange}
               ></input>
             </div>
 
@@ -197,8 +277,7 @@ export default function ResourceDirectory() {
                 name="address"
                 placeholder="Address"
                 className="h-full w-10/12 flex resize-none px-1 focus:border-transparent outline-none items-center"
-                // value={formData.address}
-                onChange={handleAddressChange}
+                onChange={handleChange}
               ></input>
             </div>
             <div className="flex flex-row h-4/6 w-full">
@@ -210,8 +289,7 @@ export default function ResourceDirectory() {
                 name="contact"
                 placeholder="Contact"
                 className="h-full w-10/12 flex resize-none px-1 focus:border-transparent outline-none items-center"
-                // value={formData.contact}
-                onChange={handleContactChange}
+                onChange={handleChange}
               ></input>
             </div>
             <div className="flex flex-row h-4/6 w-full">
@@ -224,8 +302,7 @@ export default function ResourceDirectory() {
                 type="number"
                 placeholder="Latitude"
                 className="h-full w-10/12 flex resize-none px-1 focus:border-transparent outline-none items-center"
-                // value={formData.latitude}
-                onChange={handleLatitudeChange}
+                onChange={handleChange}
               ></input>
             </div>
             <div className="flex flex-row h-4/6 w-full">
@@ -238,8 +315,7 @@ export default function ResourceDirectory() {
                 type="number"
                 placeholder="Longitude"
                 className="h-full w-10/12 flex resize-none px-1 focus:border-transparent outline-none items-center"
-                // value={formData.longitude}
-                onChange={handleLongitudeChange}
+                onChange={handleChange}
               ></input>
             </div>
 
@@ -265,39 +341,55 @@ export default function ResourceDirectory() {
 
           {/* Directory */}
           <div className="flex flex-col h-[785px] gap-3 mt-4 overflow-auto">
-            {differentPlaces.map((place, index) => (
-              <div
-                key={index}
-                className="bg-white h-40 w-full border border-gray-300 flex items-center"
-                onClick={() =>
-                  handleMarkerChange(
-                    parseFloat(place.lat),
-                    parseFloat(place.lng)
-                  )
-                }
-              >
-                <div className="flex flex-col w-full pl-5 pr-3 py-3.5 text-black gap-y-1">
-                  <div className="flex flex-row w-full">
-                    <div className="text-slate-600 w-10/12 ">
-                      {place.address}
-                    </div>
-                    <div className="w-2/12 flex flex-row items-start justify-end">
-                      <img
-                        src="admin/edit-icon.png"
-                        className="w-4 h-4 mx-1 "
-                      />
+            {resources.length === 0 ? (
+              <div className="text-center text-gray-500 font-semibold italic">
+                No Resources Found
+              </div>
+            ) : (
+              resources.map((resource) => (
+                <div
+                  key={resource.resourceId}
+                  className="bg-white h-40 w-full border border-gray-300 flex items-center"
+                  onClick={() =>
+                    handleMarkerChange(
+                      parseFloat(resource.resourceLatitude),
+                      parseFloat(resource.resourceLongitude)
+                    )
+                  }
+                >
+                  <div className="flex flex-col w-full pl-5 pr-3 py-3.5 text-black gap-y-1">
+                    <div className="flex flex-row w-full">
+                      <div className="text-slate-600 w-10/12 ">
+                        {resource.resourceAddress}
+                      </div>
+                      <div className="w-2/12 flex flex-row items-start justify-end">
+                        <img
+                          src="admin/edit-icon.png"
+                          className="w-4 h-4 mx-1 opacity-50 hover:opacity-100 transition-opacity duration-300"
+                          onClick={(e) =>
+                            handleUpdateResource(e, resource.resourceId)
+                          }
+                        />
 
-                      <img
-                        src="admin/delete-icon.png"
-                        className="w-4 h-4 mx-1"
-                      />
+                        <img
+                          src="admin/delete-icon.png"
+                          className="w-4 h-4 mx-1 opacity-50 hover:opacity-100 transition-opacity duration-300"
+                          onClick={(e) =>
+                            handleDeleteResource(e, resource.resourceId)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="text-lg font-medium ">
+                      {resource.resourceContact}
+                    </div>
+                    <div className="py-0.5 text-3xl font-bold pr-1">
+                      {resource.resourceName}
                     </div>
                   </div>
-                  <div className="text-lg font-medium ">{place.contact}</div>
-                  <div className="py-0.5 text-3xl font-bold">{place.name}</div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -321,6 +413,141 @@ export default function ResourceDirectory() {
           message="Are you sure you want to add this resource?"
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+        />
+      )}
+
+      {deleteConfirmationPopup && (
+        <ConfirmationPopup
+          message="Are you sure you want to add this resource?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
+
+      {isEditing && (
+        <ModalOverlay>
+          <div
+            className="w-4/12 rounded-3xl border border-emerald-100 bg-white p-4 shadow-lg sm:p-6 lg:p-8 transform scale-100 transition-transform ease-in-out duration-300"
+            role="alert"
+          >
+            <div className="flex items-center gap-4">
+              <p className="font-bold text-xl sm:text-3xl mb-4">
+                Edit Local Resource
+              </p>
+            </div>
+
+            <div className="mt-4 w-full">
+              <div className="flex flex-col gap-y-5 w-full">
+                <div>
+                  <label
+                    htmlFor="editedName"
+                    className="block text-sm font-bold text-gray-700"
+                  >
+                    Name:
+                  </label>
+                  <input
+                    type="text"
+                    id="editedName"
+                    name="editedName"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="peer relative w-full h-[58px] py-1 mt-0.5 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="editedAddress"
+                    className="block text-sm font-bold text-gray-700"
+                  >
+                    Address:
+                  </label>
+                  <input
+                    type="text"
+                    id="editedAddress"
+                    name="editedAddress"
+                    value={editedAddress}
+                    onChange={(e) => setEditedAddress(e.target.value)}
+                    className="peer relative w-full h-[58px] py-1 mt-0.5 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="editedContact"
+                    className="block text-sm font-bold text-gray-700"
+                  >
+                    Contact Information:
+                  </label>
+                  <input
+                    type="text"
+                    id="editedContact"
+                    name="editedContact"
+                    value={editedContact}
+                    onChange={(e) => setEditedContact(e.target.value)}
+                    className="peer relative w-full h-[58px] py-1 mt-0.5 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                  />
+                </div>
+                <div className="flex flex-row gap-x-3 w-full">
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="editedLatitude"
+                      className="block text-sm font-bold text-gray-700"
+                    >
+                      Latitude:
+                    </label>
+                    <input
+                      type="text"
+                      id="editedLatitude"
+                      name="editedLatitude"
+                      value={editedLatitude}
+                      onChange={(e) => setEditedLatitude(e.target.value)}
+                      className="peer relative w-full h-[58px] py-1 mt-0.5 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                    />
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="editedLongitude"
+                      className="block text-sm font-bold text-gray-700"
+                    >
+                      Longitude:
+                    </label>
+                    <input
+                      type="text"
+                      id="editedLongitude"
+                      name="editedLongitude"
+                      value={editedLongitude}
+                      onChange={(e) => setEditedLongitude(e.target.value)}
+                      className="peer relative w-full h-[58px] py-1 mt-0.5 shadow-lg rounded-lg border border-slate-200 px-4 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:text-pink-500 -500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-8">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="mt-2 inline-block w-full rounded-lg bg-gray-50 px-5 py-3 text-center text-sm font-semibold text-gray-500 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmEdit}
+                  className="inline-block w-full rounded-lg bg-emerald-500 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </ModalOverlay>
+      )}
+
+      {confirmUpdate && (
+        <ConfirmationPopup
+          message="Are you sure you want to save resource changes?"
+          onConfirm={handleEdit}
+          onCancel={setConfirmUpdate(false)}
         />
       )}
     </div>
