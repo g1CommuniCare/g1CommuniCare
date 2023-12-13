@@ -1,8 +1,10 @@
 "use client";
+import AlertComponent from "@/app/components/AlertComponent";
 
 export default function page() {
     return (
         <div className="w-full h-full flex-auto">
+            <AlertComponent/>
             {/* FIRST COLUMN */}
             <header
                 className="h-96 w-full bg-cover text-white"
