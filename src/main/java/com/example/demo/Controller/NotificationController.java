@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.DTO.NotificationDTO;
-import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Entity.NotificationEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Services.DocumentRequestServices;
@@ -28,9 +27,6 @@ public class NotificationController {
 
     @Autowired
     private ResidentServices residentServices;
-
-    @Autowired
-    private DocumentRequestServices documentRequestServices;
 
     @Autowired
     public NotificationController(NotificationServices notificationServices) {
@@ -82,19 +78,6 @@ public class NotificationController {
     public List<NotificationEntity> getNotificationsForResidentWithDocumentRequest(@PathVariable int residentId,
             DocumentRequestServices documentRequestServices) {
         return notificationServices.getNotificationsForResidentWithDocumentRequest(residentId, documentRequestServices);
-    }
-
-    @GetMapping("/createDocumentRequestNotification/{residentId}")
-    public NotificationEntity createDocumentRequestNotification(
-            @PathVariable int residentId) {
-
-        List<DocumentRequestEntity> documents = documentRequestServices.getAllDocumentRequestsByResidentId(residentId);
-
-        for (DocumentRequestEntity document : documents) {
-            notificationServices.createDocumentRequestAndNotification(residentId);
-        }
-
-        return notificationServices.createDocumentRequestAndNotification(residentId);
     }
 
     // You can add more endpoints as needed for your specific use case

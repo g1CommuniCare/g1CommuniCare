@@ -1,27 +1,26 @@
 "use client";
 import Search from "@/app/assets/Search";
+import PDFGeneratorApp from '@/app/components/PDFGeneratorApp';
+import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Modal from 'react-modal';
-import PDFGeneratorApp from '@/app/components/PDFGeneratorApp';
-import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 
 // Helper function to format the date as "01/01/2023"
 const formatDate = (dateArray) => {
     if (!dateArray || dateArray.length < 3) {
         return ""; // Return an empty string for invalid date arrays
-      }// Return an empty string for invalid date arrays
+    } // Return an empty string for invalid date arrays
 
     const [year, month, day] = dateArray.slice(0, 3);
 
     // Use String.padStart to add leading zeros where needed
-    const formattedMonth = String(month).padStart(2, '0');
-    const formattedDay = String(day).padStart(2, '0');
+    const formattedMonth = String(month).padStart(2, "0");
+    const formattedDay = String(day).padStart(2, "0");
 
     return `${formattedMonth}/${formattedDay}/${year}`;
 };
-
 
 const rowsPerPage = 10; // Number of rows to display per page
 
@@ -74,13 +73,15 @@ export default function AppointmentRequest() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    
+
     async function fetchAppointmentRequests() {
         setLoading(true);
         try {
             const res = await axios("http://localhost:8080/appointment-requests/non-deleted");
             const data = res.data;
-            setAppointmentRequest(data);
+            const sortedPosts = data.sort((a, b) => b.appreqId - a.appreqId);
+            setAppointmentRequest(sortedPosts);
+            console.log(sortedPosts);
         } catch (error) {
             console.log("Error Fetching Appointment Requests", error);
             setError(error);
@@ -118,14 +119,14 @@ export default function AppointmentRequest() {
     console.log(appointmentRequests);
     const [showPDFModal, setShowPDFModal] = useState(false);
 
-    function handleGeneratePDF() {
+    function handleGeneratePDF(event) {
         event.preventDefault();
         setShowPDFModal(true);
     }
 
     function handleClosePDFModal() {
         setShowPDFModal(false);
-      }
+    }
 
     return (
         <>
@@ -209,11 +210,25 @@ export default function AppointmentRequest() {
                 onRequestClose={handleClosePDFModal} // Close modal when requested
                 contentLabel="PDF Modal"
             >
-                 <button onClick={handleClosePDFModal} className="absolute top-4 right-2 p-2 bg-white rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                 </button>
+                <button
+                    onClick={handleClosePDFModal}
+                    className="absolute top-4 right-2 p-2 bg-white rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
                 <PDFGeneratorApp data={appointmentRequests} />
             </Modal>
         </>
@@ -266,7 +281,7 @@ function TableAppointmentRequests({
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         } catch (error) {
-            console.error('Error soft-deleting appointment request', error);
+            console.error("Error soft-deleting appointment request", error);
         }
         setSelectedAppreqId(null);
         setShowConfirmationPopup(false);
@@ -301,28 +316,46 @@ function TableAppointmentRequests({
                     <span>{formattedDateRequested}</span>
                 </td>
                 <td className="h-10 px-4 text-center text-sm font-semibold transition duration-300 border-b-2  text-slate-700 border-slate-200">
-                    <span 
+                    <span
                         style={{
-                        display: 'inline-block', // Needed to apply width to a span
-                        width: '100px', // Set the desired width here
-                        padding: '0.25rem 1rem',
-                        borderRadius: '9999px',
-                        backgroundColor: appointmentStatus === 'Approved' ? '#22f200' : // Green shade
-                                        appointmentStatus === 'Denied' ? '#ff6363' : // Red shade
-                                        appointmentStatus === 'Pending' ? '#ff9f2e' : // Yellow shade
-                                        '#e5e7eb', // Default case, grey shade
-                        color: 'black',
-                        textAlign: 'center', // Centers the text within the fixed width
+                            display: "inline-block", // Needed to apply width to a span
+                            width: "100px", // Set the desired width here
+                            padding: "0.25rem 1rem",
+                            borderRadius: "9999px",
+                            backgroundColor:
+                                appointmentStatus === "Approved"
+                                    ? "#22f200" // Green shade
+                                    : appointmentStatus === "Denied"
+                                    ? "#ff6363" // Red shade
+                                    : appointmentStatus === "Pending"
+                                    ? "#ff9f2e" // Yellow shade
+                                    : "#e5e7eb", // Default case, grey shade
+                            color: "black",
+                            textAlign: "center", // Centers the text within the fixed width
                         }}
                     >
                         {appointmentStatus}
                     </span>
                 </td>
                 <td className="h-10 px-2 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
-                    <button onClick={(event) => handleDelete(event, appreqId)} className="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                    </svg>
+                    <button
+                        onClick={(event) => handleDelete(event, appreqId)}
+                        className="text-red-500 hover:text-red-700"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
+                            />
+                        </svg>
                     </button>
                 </td>
             </tr>
@@ -497,9 +530,10 @@ function TableHead({
             >
                 {appointmentStatus}
             </th>
-            <th scope="col" className="h-10 px-1 font-semibold border-t-2 border-b-2 border-r-2">
-                
-            </th>
+            <th
+                scope="col"
+                className="h-10 px-1 font-semibold border-t-2 border-b-2 border-r-2"
+            ></th>
         </>
     );
 }

@@ -11,14 +11,13 @@ import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 const formatDate = (dateArray) => {
     if (!dateArray || dateArray.length < 3) {
         return ""; // Return an empty string for invalid date arrays
-      }// Return an empty string for invalid date arrays
-    
+    } // Return an empty string for invalid date arrays
 
     const [year, month, day] = dateArray.slice(0, 3);
 
     // Use String.padStart to add leading zeros where needed
-    const formattedMonth = String(month).padStart(2, '0');
-    const formattedDay = String(day).padStart(2, '0');
+    const formattedMonth = String(month).padStart(2, "0");
+    const formattedDay = String(day).padStart(2, "0");
 
     return `${formattedMonth}/${formattedDay}/${year}`;
 };
@@ -80,7 +79,9 @@ export default function ReportFiling() {
         try {
             const res = await axios("http://localhost:8080/reports-filing/getAllNonDeletedReports");
             const data = res.data;
-            setReportFiled(data);
+            const sortedPosts = data.sort((a, b) => b.repfilId - a.repfilId);
+            setReportFiled(sortedPosts);
+            console.log(sortedPosts);
         } catch (error) {
             console.log("Error Fetching Document Requests", error);
             setError(error);
@@ -129,7 +130,7 @@ export default function ReportFiling() {
 
     return (
         <>
-           <form className="px-5 pt-5">
+            <form className="px-5 pt-5">
                 <div className="flex justify-center items-center px-5 pt-5">
                     <div className="relative w-full flex justify-start">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -209,10 +210,24 @@ export default function ReportFiling() {
                 onRequestClose={handleClosePDFModal} // Close modal when requested
                 contentLabel="PDF Modal"
             >
-                <button onClick={handleClosePDFModal} className="absolute top-4 right-2 p-2 bg-white rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <button
+                    onClick={handleClosePDFModal}
+                    className="absolute top-4 right-2 p-2 bg-white rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
                 </button>
                 <PDFGeneratorRep data={reportFiled} />
             </Modal>
@@ -230,7 +245,7 @@ function TableReportsFiled({
     reportType,
     dateReported,
     reportStatus,
-    setReportFiled
+    setReportFiled,
 }) {
     const router = useRouter();
 
@@ -247,7 +262,7 @@ function TableReportsFiled({
     const fullName = firstName + " " + lastName;
     const residentProfile = `data:image/${imageFormat};base64,${profileImage}`;
     const formattedDateReported = formatDate(dateReported);
-    const formattedReportStatus = reportStatus ? reportStatus.replace(/"/g, '') : '';
+    const formattedReportStatus = reportStatus ? reportStatus.replace(/"/g, "") : "";
 
     function handleDelete(event, repfilId) {
         event.stopPropagation();
@@ -268,7 +283,7 @@ function TableReportsFiled({
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         } catch (error) {
-            console.error('Error soft-deleting Report', error);
+            console.error("Error soft-deleting Report", error);
         }
         setSelectedRepfilId(null);
         setShowConfirmationPopup(false);
@@ -303,27 +318,44 @@ function TableReportsFiled({
                     <span>{formattedDateReported}</span>
                 </td>
                 <td className="h-10 px-4 text-center text-sm font-semibold transition duration-300 border-b-2 text-slate-700 border-slate-200">
-                    <span 
+                    <span
                         style={{
-                        display: 'inline-block', // Needed to apply width to a span
-                        width: '100px', // Set the desired width here
-                        padding: '0.25rem 1rem',
-                        borderRadius: '9999px',
-                        backgroundColor: formattedReportStatus === 'Resolved' ? '#22f200' : // Green shade
-                                        formattedReportStatus === 'Pending' ? '#ff9f2e' : // Yellow shade
-                                        '#e5e7eb', // Default case, grey shade
-                        color: 'black',
-                        textAlign: 'center', // Centers the text within the fixed width
+                            display: "inline-block", // Needed to apply width to a span
+                            width: "100px", // Set the desired width here
+                            padding: "0.25rem 1rem",
+                            borderRadius: "9999px",
+                            backgroundColor:
+                                formattedReportStatus === "Resolved"
+                                    ? "#22f200" // Green shade
+                                    : formattedReportStatus === "Pending"
+                                    ? "#ff9f2e" // Yellow shade
+                                    : "#e5e7eb", // Default case, grey shade
+                            color: "black",
+                            textAlign: "center", // Centers the text within the fixed width
                         }}
                     >
                         {formattedReportStatus}
                     </span>
                 </td>
                 <td className="h-10 px-2 text-sm font-semibold transition duration-300 border-b-2 border-r-2 text-slate-700 border-slate-200">
-                    <button onClick={(event) => handleDelete(event, repfilId)} className="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                    </svg>
+                    <button
+                        onClick={(event) => handleDelete(event, repfilId)}
+                        className="text-red-500 hover:text-red-700"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
+                            />
+                        </svg>
                     </button>
                 </td>
             </tr>
@@ -500,9 +532,10 @@ function TableHead({
             >
                 {reportStatus}
             </th>
-            <th scope="col" className="h-10 px-1 font-semibold border-t-2 border-b-2 border-r-2">
-                
-                </th>
+            <th
+                scope="col"
+                className="h-10 px-1 font-semibold border-t-2 border-b-2 border-r-2"
+            ></th>
         </>
     );
 }

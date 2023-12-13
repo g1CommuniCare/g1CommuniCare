@@ -2,15 +2,15 @@
 
 export default function page() {
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full flex-auto">
             {/* FIRST COLUMN */}
             <header
                 className="h-96 w-full bg-cover text-white"
                 style={{ backgroundImage: 'url("images/landingpage.png")' }}
             >
-                <div className="flex justify-center items-center flex-col my-auto h-full">
-                    <h1 className="font-bold text-6xl">
-                        Welcome to<span className="text-[#2E64B0]">Communi</span>
+                <div className="flex justify-center items-center flex-col text-center my-auto h-full">
+                    <h1 className="font-bold text-6xl max-lg:text-5xl">
+                        Welcome to<span className="text-[#2E64B0]"> Communi</span>
                         <span className="text-[#D2E900]">Care</span>!
                     </h1>
                     <span className="font-serif font-medium text-xl">
@@ -62,12 +62,12 @@ export default function page() {
             </div>
 
             {/* THIRD COLUMN */}
-            <div className="flex flex-row items-center justify-center md:ml-auto ml-auto w-[90%] mx-auto pt-10 mb-24">
-                <div className="bg-[#1f394a] h-[3px] sm:mt-0 mt-8 w-[35%] mr-8" />
+            <div className="flex flex-row justify-center items-center md:ml-auto ml-auto max-w-[1100px] max-lg:w-[600px] mx-auto pt-10 mb-24">
+                <div className="bg-[#1f394a] h-[3px] my-auto w-[35%] mr-8" />
                 <h1 className="text-[#1f394a] text-5xl font-librefranklin font-extrabold">
                     ABOUT US
                 </h1>
-                <div className="bg-[#1f394a] h-[3px] sm:mt-0 mt-8 w-[35%] ml-8" />
+                <div className="bg-[#1f394a] h-[3px] my-auto w-[35%] ml-8" />
             </div>
 
             {/* FOURTH COLUMN */}
@@ -85,19 +85,19 @@ export default function page() {
             </div>
 
             {/* FIFTH COLUMN */}
-            <div className="flex flex-col font-sans gap-20 items-center justify-start w-full">
+            <div className="flex flex-col font-sans gap-20 items-center justify-start">
                 <div className="w-full flex flex-col items-center justify-center gap-16 mt-20">
                     <div className="flex justify-center items-center w-[1100px] gap-10">
-                        <div className="bg-[#1f394a] h-[3px] mb-[27px] mt-[34px] w-8/12 ml-10" />
-                        <div className="text-5xl text-[#1f394a] font-extrabold mr-10">Our Team</div>
+                        <div className="bg-[#1f394a] h-[3px] mb-[27px] mt-[34px] w-8/12" />
+                        <div className="text-5xl text-[#1f394a] font-extrabold">Our Team</div>
                     </div>
-                    <div className="w-[1250px] flex justify-center items-center gap-10">
+                    <div className="w-[1100px] flex justify-center items-center gap-10">
                         <div className="font-bold">
                             <div className="md:text-8xl text-8x1 text-[111px] text-[#1F394A] tracking-[-2.22px] font-librefranklin font-bold">
                                 WE
                             </div>
                         </div>
-                        <p className="text-[#1F394A] text-xl w-[65%] text-justify font-medium">
+                        <p className="text-[#1F394A] text-xl w-9/12 text-justify font-medium">
                             <span className="font-serif font-medium">
                                 are a passionate team of{" "}
                             </span>
@@ -112,24 +112,28 @@ export default function page() {
                         </p>
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-start w-[93%] md:w-full">
-                    <div className="flex flex-col gap-0 items-center justify-start w-full">
-                        <div className="flex flex-row md:gap-5 items-center justify-between w-[1000px]">
+                <div className="flex flex-col items-center justify-start w-full">
+                    <div className="flex flex-col gap-0 items-center justify-start">
+                        <div className="flex flex-row md:gap-5 items-center w-[1000px] h-full">
                             <ReusableAboutUs
                                 img={"/images/dashboard/carabio.png"}
                                 author="Bianca Jessa Carabio"
+                                description="It does not matter how slowly you go, as long as you do not stop."
                             />
                             <ReusableAboutUs
                                 img={"/images/dashboard/borres.png"}
                                 author="Joshua Jhonn Borres"
+                                description="𝔩𝔬𝔳𝔢 𝔦𝔰 𝔩𝔦𝔨𝔢 𝔞 𝔯𝔬𝔰𝔞𝔯𝔶, 𝔣𝔲𝔩𝔩 𝔬𝔣 𝔪𝔶𝔰𝔱𝔢𝔯𝔶"
                             />
                             <ReusableAboutUs
                                 img={"/images/dashboard/mier.png"}
                                 author="France Gieb Mier"
+                                description="Rose-colored glasses, all throughout"
                             />
                             <ReusableAboutUs
                                 img={"/images/dashboard/villarazo.png"}
                                 author="Bermar Villarazo Jr."
+                                description="Embrace coding's essence: value updates, tackle bugs, and cherish well-structured algorithms."
                             />
                         </div>
                     </div>
@@ -204,8 +208,8 @@ export default function page() {
             </div>
 
             {/* FOOTER */}
-            <div className="w-full h-11/12 flex items-center justify-center bg-[#1F394A] mt-24">
-                <div className="md:w-2/3 w-full px-4 text-white">
+            <footer className="w-full h-11/12 flex items-center justify-center bg-[#1F394A] mt-24">
+                <div className="w-[1000px] text-white">
                     <div className="w-full text-7xl font-bold">
                         <h1 className="w-full md:w-2/3 mt-12">Get in touch!</h1>
                     </div>
@@ -280,7 +284,7 @@ export default function page() {
                         </p>
                     </div>
                 </div>
-            </div>
+            </footer>
         </div>
     );
 }
@@ -304,11 +308,14 @@ function ReusableArticle({ firstWord, secondWord, thirdWord, image }) {
 }
 
 // GI CALL NI SA FIFTH COLUMN
-function ReusableAboutUs({ img, author }) {
+function ReusableAboutUs({ img, author, description }) {
     return (
-        <div className="flex flex-col justify-center items-center gap-5">
-            <img className="h-[185px] md:h-auto rounded-[50%] w-[185px]" src={img} />
-            <p className="text-base text-[#1f394a] font-sans font-bold">{author}</p>
+        <div className="flex flex-col justify-start items-center gap-5 w-[300px] h-[320px]">
+            <img className="w-[185px] h-[185px] md:h-auto rounded-[50%]" src={img} />
+            <div>
+                <p className="text-base text-[#1f394a] font-sans font-bold mb-3">{author}</p>
+                <p className="text-sm my-auto">{description}</p>
+            </div>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@/useContext/UseContext";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
 import FifthRow from "@/app/utils/docreq/FifthRow";
@@ -14,7 +14,7 @@ import ThirdRow from "@/app/utils/docreq/ThirdRow";
 import axios from "axios";
 
 export default function DocumentRequest() {
-    const { user, login } = useAuth();
+    const { user } = useAuth();
     const id = user.residentId;
 
     const [firstName, setFirstName] = useState("");
@@ -62,7 +62,7 @@ export default function DocumentRequest() {
         { value: "", label: "Select Document" },
         { value: "Barangay Clearance", label: "Barangay Clearance" },
         { value: "Barangay ID", label: "Barangay ID" },
-        { value: "Certificate of Indigency", label: "Certificate of Indigency" },
+        { value: "Certificate Of Indigency", label: "Certificate of Indigency" },
         { value: "Business Permit", label: "Business Permit" },
         { value: "Others", label: "Others (Please Specify)" },
     ];
@@ -212,25 +212,20 @@ export default function DocumentRequest() {
                 }
 
                 setIsSubmitted(true);
+                handleInitialRequest();
 
                 // CREATE A POST NOTIFICATION FOR THE ADMIN TO BE NOTIFIED
                 await axios.post(`http://localhost:8080/notifications/create`, {
                     relatedDocumentRequest: {
                         docreqId: response.data.docreqId,
                         documentType: response.data.documentType,
-                        denialReason: response.data.denialReason,
-                        documentStatus: response.data.documentStatus,
                         address: response.data.address,
-                        claimDate: response.data.claimDate,
                         contactNumber: response.data.contactNumber,
-                        denialReason: response.data.denialReason,
                         email: response.data.email,
                         firstName: response.data.firstName,
                         imageFormat: response.data.imageFormat,
-                        isDeleted: response.data.isDeleted,
                         lastName: response.data.lastName,
                         middleInitial: response.data.middleInitial,
-                        printCopies: response.data.printCopies,
                         purpose: response.data.purpose,
                         referenceNumber: response.data.referenceNumber,
                     },

@@ -3,6 +3,7 @@
 import { useAuth } from "@/useContext/UseContext";
 import Link from "next/link";
 import Account from "../assets/Account";
+import Alert from "../assets/Alert";
 import Appointments from "../assets/Appointments";
 import Bulletin from "../assets/Bulletin";
 import Documents from "../assets/Documents";
@@ -15,6 +16,9 @@ import Settings from "../assets/Settings";
 export default function Navbar() {
     const { user } = useAuth();
 
+    // THE USESTATE BELOW IS FOR THE RESPONSIVE
+    // const [isToggleOpen, setIsToggleOpen] = useState(false);
+
     function NavbarLinkFirstRow({ href, icon }) {
         return (
             <Link href={href} className="flex items-center justify-center">
@@ -26,8 +30,16 @@ export default function Navbar() {
     function NavbarLinkSecondRow({ href, icon, label }) {
         return (
             <Link href={href}>
-                <p className="flex gap-2 items-center">
+                <p
+                    // THE CLASSNAME BELOW IS FOR THE RESPONSIVE
+                    // className={`flex gap-2 ${
+                    //     isToggleOpen ? "items-center" : "max-lg:justify-center"
+                    // }`}
+                    className="flex gap-2"
+                >
                     {icon}
+                    {/* THE SPAN TAG BELOW IS FOR THE RESPONSIVE */}
+                    {/* <span className={`${isToggleOpen ? "" : "max-lg:hidden"}`}>{label}</span> */}
                     {label}
                 </p>
             </Link>
@@ -35,8 +47,20 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="flex flex-row items-start justify-start w-[310px]">
-            <div className="fixed w-[256px] h-screen justify-start overflow-auto top-[0] left-0 bg-white shadow-[4.0px_4.0px_4.0px_rgba(0,0,0,0.30)]">
+        <nav
+            // THE CLASSNAME BELOW IS FOR THE RESPONSIVE
+            // className={`flex flex-row items-start justify-start flex-none lg:w-[256px] ${
+            //     isToggleOpen ? "w-[256px]" : "w-24"
+            // }`}
+            className="flex flex-row items-start justify-start flex-none w-[256px]"
+        >
+            <div
+                // THE CLASSNAME BELOW IS FOR THE RESPONSIVE
+                // className={`fixed h-screen justify-start lg:w-[256px] overflow-auto top-[0] left-0 bg-white shadow-[4.0px_4.0px_4.0px_rgba(0,0,0,0.30)] transition-all ease-out duration-500 ${
+                //     isToggleOpen ? "w-[256px]" : "w-24"
+                // }`}
+                className="fixed h-screen justify-start w-[256px] overflow-auto top-[0] left-0 bg-white shadow-[4.0px_4.0px_4.0px_rgba(0,0,0,0.30)]"
+            >
                 {user.role === "admin" && (
                     <Link
                         key="admin-dashboard"
@@ -50,13 +74,28 @@ export default function Navbar() {
                     <Link
                         key="resident-dashboard"
                         href="/dashboard"
-                        className="flex justify-center mt-6 mx-auto w-[167px] h-[58px]"
+                        // THE CLASSNAME BELOW IS FOR THE RESPONSIVE
+                        // className={`flex justify-center mt-6 mx-auto h-[58px] ${
+                        //     isToggleOpen ? "w-[167px]" : "w-full"
+                        // }`}
+                        className="flex justify-center h-[58px] mt-6 mx-auto"
                     >
+                        {/* THE IMG TAG BELOW IS FOR THE RESPONSIVE */}
+                        {/* <img
+                            src={`${isToggleOpen ? "/images/navbarLogo.png" : "/images/logo.png"}`}
+                            alt=""
+                        /> */}
                         <img src="/images/navbarLogo.png" alt="" />
                     </Link>
                 )}
 
-                <div className="flex items-center justify-center gap-4 px-10 my-8">
+                <div
+                    // THE CLASSNAME BELOW IS FOR THE RESPONSIVE
+                    // className={`flex lg:flex-row justify-center items-center gap-4  my-8 ${
+                    //     isToggleOpen ? "px-10" : "px-5 flex-col"
+                    // }`}
+                    className="flex lg:flex-row justify-center items-center gap-4  my-8"
+                >
                     {user.role === "admin" && (
                         <NavbarLinkFirstRow
                             key="admin-account"
@@ -99,9 +138,35 @@ export default function Navbar() {
                             icon={<Notification />}
                         />
                     )}
+                    {/* THE BUTTON BELOW IS FOR THE RESPONSIVE */}
+                    {/* <button
+                        className={`relative order-10 block h-10 w-10 self-center mx-auto lg:hidden ${
+                            isToggleOpen
+                                ? "visible opacity-100 [&_span:nth-child(1)]:w-6 [&_span:nth-child(1)]:translate-y-0 [&_span:nth-child(1)]:rotate-45 [&_span:nth-child(3)]:w-0 [&_span:nth-child(2)]:-rotate-45 "
+                                : ""
+                        } `}
+                        onClick={() => setIsToggleOpen(!isToggleOpen)}
+                        aria-expanded={isToggleOpen ? "true" : "false"}
+                        aria-label="Toggle navigation"
+                    >
+                        <div className="absolute top-1/2 left-1/2 w-6 -translate-x-1/2 -translate-y-1/2 transform">
+                            <span
+                                aria-hidden="true"
+                                className="absolute block h-0.5 w-9/12 -translate-y-2 transform rounded-full bg-blue-900 transition-all duration-300"
+                            ></span>
+                            <span
+                                aria-hidden="true"
+                                className="absolute block h-0.5 w-6 transform rounded-full bg-blue-900 transition duration-300"
+                            ></span>
+                            <span
+                                aria-hidden="true"
+                                className="absolute block h-0.5 w-1/2 origin-top-left translate-y-2 transform rounded-full bg-blue-900 transition-all duration-300"
+                            ></span>
+                        </div>
+                    </button> */}
                 </div>
 
-                <div className="m-5">
+                <div className="mx-5 mb-6">
                     <div className="font-medium border-t-2 border-x-2 p-3 hover:bg-[#f3f3f3]">
                         {user.role === "admin" && (
                             <NavbarLinkSecondRow
@@ -192,7 +257,7 @@ export default function Navbar() {
                             />
                         )}
                     </div>
-                    <div className="font-medium border-2 p-3 hover:bg-[#f3f3f3]">
+                    <div className={`font-medium border-x-2 p-3 hover:bg-[#f3f3f3] ${user.role === "admin" ? "border-t-2" : "border-2"}`}>
                         {user.role === "admin" && (
                             <NavbarLinkSecondRow
                                 key="admin-report-filing"
@@ -205,11 +270,23 @@ export default function Navbar() {
                             <NavbarLinkSecondRow
                                 key="resident-report-filing"
                                 href="/report-filing"
-                                icon={<Resource />}
+                                icon={<Report />}
                                 label="Report Filing"
                             />
                         )}
                     </div>
+                    {user.role === "admin" && (
+                        <div className="font-medium border-2 p-3 hover:bg-[#f3f3f3]">
+                            {user.role === "admin" && (
+                                <NavbarLinkSecondRow
+                                    key="admin-alert"
+                                    href="/admin-alert"
+                                    icon={<Alert />}
+                                    label="Alert"
+                                />
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </nav>
