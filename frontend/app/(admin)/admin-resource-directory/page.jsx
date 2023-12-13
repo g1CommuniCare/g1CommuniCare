@@ -1,7 +1,6 @@
 "use client";
 
 import ConfirmationPopup from "@/app/utils/ConfirmationPupUp";
-import UpdateResource from "@/app/utils/UpdateResource";
 import { useAuth } from "@/useContext/UseContext";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
