@@ -69,9 +69,19 @@ public class AdminController {
     }
 
     // LOGIN
+    // @PostMapping("/login")
+    // public AdminEntity login(@RequestBody AdminEntity admin) {
+    // return adminService.login(admin.getUsername(), admin.getPassword());
+    // }
+
     @PostMapping("/login")
-    public AdminEntity login(@RequestBody AdminEntity admin) {
-        return adminService.login(admin.getUsername(), admin.getPassword());
+    public ResponseEntity<?> adminLogin(@RequestBody AdminEntity admin) {
+        AdminEntity authenticatedAdmin = adminService.login(admin.getUsername(), admin.getPassword());
+        if (authenticatedAdmin != null) {
+            return ResponseEntity.ok(authenticatedAdmin);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
+        }
     }
 
     // SEARCH ADMIN

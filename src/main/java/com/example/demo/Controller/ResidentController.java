@@ -62,9 +62,19 @@ public class ResidentController {
     }
 
     // LOGIN
+    // @PostMapping("/login")
+    // public ResidentEntity login(@RequestBody ResidentEntity resident) {
+    // return residentService.login(resident.getUsername(), resident.getPassword());
+    // }
+
     @PostMapping("/login")
-    public ResidentEntity login(@RequestBody ResidentEntity resident) {
-        return residentService.login(resident.getUsername(), resident.getPassword());
+    public ResponseEntity<?> residentLogin(@RequestBody ResidentEntity resident) {
+        ResidentEntity authenticatedResident = residentService.login(resident.getUsername(), resident.getPassword());
+        if (authenticatedResident != null) {
+            return ResponseEntity.ok(authenticatedResident);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid resident credentials");
+        }
     }
 
     // SEARCH RESIDENT

@@ -28,18 +28,22 @@ export default function Login() {
 
     async function submitLogin(e) {
         e.preventDefault();
-        setLoginError(false); // Reset login error before attempting login
+        setLoginError(false);
 
         try {
-            const residentLogin = login(username, password, "resident");
-            const adminLogin = login(username, password, "admin");
+            // Determine the role based on the username prefix
+            const role = username.startsWith("admin_") ? "admin" : "resident";
 
-            await Promise.all([residentLogin, adminLogin]);
+            const user = await login(username, password, role);
 
-            setData({ residentLogin, adminLogin });
+            // Set data with the returned user information and role
+            setData({ user, role });
+
+            // If login is successful, you might want to navigate to a dashboard or home page
+            // router.push('/dashboard'); // Uncomment and modify based on your routing logic
         } catch (error) {
             console.error("An error occurred during login:", error.message);
-            setLoginError(true); // Set login error if login fails
+            setLoginError(true);
         }
     }
 

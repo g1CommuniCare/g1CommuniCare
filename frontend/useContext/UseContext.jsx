@@ -1,5 +1,6 @@
 "use client";
 
+import SuccessPopup from "@/app/utils/SuccessPopUp";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState } from "react";
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useLocalStorage("user", null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const [showUnverifiedPopup, setShowUnverifiedPopup] = useState(false);
 
     async function login(username, password, role) {
         try {
@@ -18,7 +20,7 @@ export const AuthProvider = ({ children }) => {
                 username,
                 password,
             });
-
+            console.log(response);
             if (response.status === 200) {
                 const {
                     firstName,
@@ -53,6 +55,7 @@ export const AuthProvider = ({ children }) => {
                         router.push("/dashboard");
                     } else {
                         console.log("Resident is not verified");
+                        setShowUnverifiedPopup(true);
                         // Handle the unverified resident case, perhaps show a message or redirect to a different page
                     }
                 } else {
@@ -77,6 +80,14 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, loading, login, logout }}>
+            {showUnverifiedPopup && (
+                <SuccessPopup
+                    title="Account Not Verified"
+                    message="Sorry! Your account has not been verified yet. Please wait for an admin to verify your account."
+                    onConfirm={() => setShowUnverifiedPopup(false)}
+                    btnMessage="Understood"
+                />
+            )}
             {children}
         </AuthContext.Provider>
     );

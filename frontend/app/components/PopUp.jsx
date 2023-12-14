@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function PopUp({ approvedData, handleYes, handleNo, showModal }) {
     const userId = approvedData.userId;
     const firstName = approvedData.firstName;
@@ -20,7 +18,7 @@ export default function PopUp({ approvedData, handleYes, handleNo, showModal }) 
                 </h2>
 
                 <p className="mt-5 text-sm text-gray-500">
-                    Doing that could have caused some issues elsewhere, are you 100% sure it's OK?
+                    By Approving this user, you are allowing them to access to the website.
                 </p>
 
                 <div className="mt-5 flex gap-4">
