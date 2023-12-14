@@ -7,7 +7,7 @@ import TableForUsers from "@/app/components/admin/TableForUsers";
 export default function TotatUsers() {
     const { data, isLoading, error } = useFetch(
         "http://localhost:8080/resident/getAllResident",
-        2000
+        1000
     );
 
     return (

@@ -20,7 +20,7 @@ export default function SubNavbar() {
         if (residentData) {
             setTotalUsers(residentData?.length);
             setVerifiedUsers(residentData?.filter((users) => users.isVerified).length);
-            setPendingUsers(residentData?.filter((users) => !users.isVerified).length);
+            setPendingUsers(residentData?.filter((users) => !users.isVerified && users.deleted === false).length);
         }
     }, [residentData]);
 

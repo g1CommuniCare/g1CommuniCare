@@ -5,7 +5,7 @@ import SkeletonTable from "@/app/components/SkeletonTable";
 import TableForUsers from "@/app/components/admin/TableForUsers";
 
 export default function Admins() {
-    const { data, isLoading, error } = useFetch("http://localhost:8080/admin/getAllAdmins", 2000);
+    const { data, isLoading, error } = useFetch("http://localhost:8080/admin/getAllAdmins", 1000);
 
     return (
         <>

@@ -1,6 +1,8 @@
-export default function PopUp({ approvedData, handleYes, handleNo, showModal }) {
-    const userId = approvedData.userId;
-    const firstName = approvedData.firstName;
+import React from "react";
+
+export default function PopUp({ approvedData, denyData, title, handleYes, handleNo, showModal }) {
+    const firstName = approvedData?.firstName;
+    const firstName2 = denyData?.firstName;
 
     const modalStyle = showModal ? "block" : "hidden";
     const blurBackground = showModal ? "blur-xl" : "";
@@ -13,8 +15,8 @@ export default function PopUp({ approvedData, handleYes, handleNo, showModal }) 
             >
                 <img src="/images/logo.png" alt="CommuniCare Logo" />
                 <h2 className="mt-2 text-lg font-bold">
-                    Are you sure you want to Approve{" "}
-                    <span className="text-green-600 underline">{firstName}</span>?
+                    {title}{" "}
+                    <span className="text-green-600 underline">{firstName || firstName2}</span>?
                 </h2>
 
                 <p className="mt-5 text-sm text-gray-500">

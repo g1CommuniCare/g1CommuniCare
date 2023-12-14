@@ -10,11 +10,13 @@ import { useState } from "react";
 export default function PendingUsers() {
     const { data, isLoading, error } = useFetch(
         "http://localhost:8080/resident/getAllResident",
-        2000
+        1000
     );
 
+    console.log(data)
+
     // GET THE ISVERIFIED FALSE
-    const verifiedData = data?.filter((user) => user.isVerified === false);
+    const verifiedData = data?.filter((user) => user.isVerified === false && user.deleted === false);
 
     // Define state to manage modal visibility
     const [showModal, setShowModal] = useState(false);
@@ -22,48 +24,60 @@ export default function PendingUsers() {
     // Define state to store approved data
     const [approvedData, setApprovedData] = useState(null);
 
+    const [denyData, setDenyData] = useState(null);
+
     function handleApprove(firstName, userId) {
         // Pass the data to the PopUp component
         setApprovedData({ firstName, userId });
+        console.log(userId);
         // Show the modal
         setShowModal(true);
     }
 
-    function handleDeny() {
-        alert("Are you sure to deny?");
+    function handleDeny(firstName, userId) {
+        // Pass the data to the PopUp component
+        setDenyData({ firstName, userId });
+        console.log(userId);
+        // Show the modal
+        setShowModal(true);
     }
 
-    async function handleYes() {
-        const userId = approvedData.userId;
-        const verified = approvedData.isVerified;
-        console.log(userId);
-        await axios.post(`http://localhost:8080/resident/verify/${userId}`, {
-            isVerified: true,
-        });
+    async function handleYes(action) {
+        if (action === "approve") {
+            const userId = approvedData.userId;
+            console.log(userId);
+            await axios.post(`http://localhost:8080/resident/verify/${userId}`, {
+                isVerified: true,
+            });
 
-        // GET THE VERIFIEDDATA === TRUE
-        const verifiedData = data?.filter((user) => user.isVerified === true);
-        console.log(verifiedData);
+            // AFTER GETTING THE VERIFIED DATA FROM THE FILTER ABOVE THAT I HAVE STORED IN THE VERIFIEDDATA
+            // IT WILL POST THE NOTIFICATION TO THE USER
+            if (verifiedData) {
+                await axios.post(`http://localhost:8080/notifications/${userId}`);
+            }
 
-        if (verifiedData) {
-            await axios.post(`http://localhost:8080/notifications/${userId}`);
+            // Reset the approvedData state
+            setApprovedData(null);
+        } else if (action === "deny") {
+            const userId = denyData.userId;
+            console.log(userId);
+            await axios.put(`http://localhost:8080/resident/${userId}/delete`, {
+                deleted: true,
+            });
+            setDenyData(null);
         }
 
-        console.log("user has been approved");
         // Hide the modal
         setShowModal(false);
-        // Reset the approvedData state
-        setApprovedData(null);
     }
-
-    // const verified = data?.map(user => user.isVerified)
-    // console.log(verified);
 
     function handleNo() {
         // Hide the modal
         setShowModal(false);
         // Reset the approvedData state
         setApprovedData(null);
+        // Reset the denyData state
+        setDenyData(null);
     }
 
     return (
@@ -101,7 +115,17 @@ export default function PendingUsers() {
                     {approvedData && (
                         <PopUp
                             approvedData={approvedData}
-                            handleYes={handleYes}
+                            title="Are you sure you want to Approve"
+                            handleYes={() => handleYes("approve")}
+                            handleNo={handleNo}
+                            showModal={showModal}
+                        />
+                    )}
+                    {denyData && (
+                        <PopUp
+                            denyData={denyData}
+                            title="Are you sure you want to Delete"
+                            handleYes={() => handleYes("deny")}
                             handleNo={handleNo}
                             showModal={showModal}
                         />

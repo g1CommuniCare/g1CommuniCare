@@ -107,7 +107,9 @@ export default function TableForUsers({
                                         )}
                                         {showXButton && (
                                             <button
-                                                onClick={handleDeny}
+                                                onClick={() =>
+                                                    handleDeny(user.firstName, user.residentId)
+                                                }
                                                 className="hover:bg-red-300 hover:animate-pulse ml-3 p-2 rounded-lg"
                                             >
                                                 <svg

@@ -30,7 +30,7 @@ export default function Navbar() {
     function NavbarLinkSecondRow({ href, icon, label }) {
         return (
             <Link href={href}>
-                <p
+                <div
                     // THE CLASSNAME BELOW IS FOR THE RESPONSIVE
                     // className={`flex gap-2 ${
                     //     isToggleOpen ? "items-center" : "max-lg:justify-center"
@@ -41,7 +41,7 @@ export default function Navbar() {
                     {/* THE SPAN TAG BELOW IS FOR THE RESPONSIVE */}
                     {/* <span className={`${isToggleOpen ? "" : "max-lg:hidden"}`}>{label}</span> */}
                     {label}
-                </p>
+                </div>
             </Link>
         );
     }
