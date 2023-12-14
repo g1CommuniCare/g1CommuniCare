@@ -167,12 +167,12 @@ export default function DocumentRequest() {
 		setShowConfirmationPopup(false);
 
 		let finalDocumentType = documentType;
-		if (documentType === "others") {
+		if (documentType === "Others") {
 			finalDocumentType = specifiedDocumentType;
 		}
 
 		let finalValidIdType = validIdType;
-		if (validIdType === "others") {
+		if (validIdType === "Others") {
 			finalValidIdType = specifiedValidIdType;
 		}
 
