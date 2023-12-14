@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "alerts")
 public class AlertsEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int alertId;
@@ -19,7 +19,7 @@ public class AlertsEntity {
     @Column(name = "alert_title")
     private String alertTitle;
 
-    @Column(name = "alert_description")
+    @Column(name = "alert_description", length = 1250)
     private String alertDescription;
 
     @Column(name = "alert_date")
@@ -84,7 +84,7 @@ public class AlertsEntity {
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
-    
+
     public Long getAlertTimestamp() {
         return alertTimestamp;
     }
