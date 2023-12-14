@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function LoginInput({
     username,
     handleUsername,
@@ -78,11 +76,6 @@ export default function LoginInput({
                         />
                     </svg>
                 )}
-                <small className="absolute flex w-full justify-between text-xs pt-1 text-slate-400 transition peer-invalid:text-pink-500">
-                    <span>
-                        It must be a combination of minimum 8 letters, numbers, and symbols.
-                    </span>
-                </small>
             </div>
         </>
     );
