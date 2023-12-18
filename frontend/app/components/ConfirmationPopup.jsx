@@ -1,6 +1,6 @@
 const ConfirmationPopup = ({ message, onCancel, onConfirm }) => {
     return (
-        <div className="fixed inset-0 overflow-y-auto flex items-center justify-center w-full">
+        <div className="fixed inset-0 overflow-y-auto flex items-center justify-center w-full z-50">
             <div className="flex items-center justify-center w-full pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div
                     className="fixed inset-0 transition-opacity backdrop-filter backdrop-blur-sm"
@@ -12,7 +12,7 @@ const ConfirmationPopup = ({ message, onCancel, onConfirm }) => {
                 <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-xl w-3/12">
                     <div className="bg-white p-8  w-full max-w-3xl">
                         <div className="sm:flex sm:justify-center items-center">
-                            <div className="mt-4 text-center sm:mt-0 sm:text-left w-10/12">
+                            <div className="mt-4 mx-auto text-center sm:mt-0 sm:text-left w-10/12">
                                 <img className="mx-auto mb-5" src="/images/logo.png" alt="logo" />
                                 <h3 className="text-3xl leading-6 font-bold text-gray-900 mb-8 text-center">
                                     Confirm Action

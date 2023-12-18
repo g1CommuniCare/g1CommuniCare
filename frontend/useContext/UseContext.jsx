@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
                 username,
                 password,
             });
-            console.log(response);
             if (response.status === 200) {
                 const {
                     firstName,
@@ -29,6 +28,7 @@ export const AuthProvider = ({ children }) => {
                     adminId,
                     residentId,
                     isVerified,
+                    deleted,
                     ...userDetails
                 } = response.data;
 
@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
                 if (role === "admin") {
                     user = { firstName, lastName, role, adminId, ...userDetails };
                     setUser(user);
+                    console.log(user);
                     localStorage.setItem("user", JSON.stringify(user));
                     router.push("/admin-dashboard");
                 } else if (role === "resident") {
@@ -46,11 +47,13 @@ export const AuthProvider = ({ children }) => {
                         role,
                         residentId,
                         isVerified,
+                        deleted,
                         ...userDetails,
                     };
 
-                    if (isVerified) {
+                    if (isVerified && !deleted) {
                         setUser(user);
+                        console.log(user);
                         localStorage.setItem("user", JSON.stringify(user));
                         router.push("/dashboard");
                     } else {
