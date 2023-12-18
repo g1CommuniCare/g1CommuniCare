@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Entity.ReportsFilingEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.ReportsFilingRepository;
@@ -64,6 +66,15 @@ public class ReportsFilingServices {
     // Method to retrieve all reports of a specific resident
     public List<ReportsFilingEntity> getAllReportsFilingByResidentId(int residentId) {
         return reportsFilingRepository.findAllByResident_ResidentId(residentId);
+    }
+
+    // DELETEING REPORT FILING REQUESTS
+    public void softDeleteAllReportFilingByResidentId(int residentId) {
+        List<ReportsFilingEntity> reportFiling = getAllReportsFilingByResidentId(residentId);
+        for (ReportsFilingEntity reportFilingRequest : reportFiling) {
+            reportFilingRequest.setDeleted(true);
+            reportsFilingRepository.save(reportFilingRequest);
+        }
     }
 
     // Method to retrieve a specific report by repFilId

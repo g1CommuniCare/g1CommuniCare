@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.AppointmentRequestEntity;
+import com.example.demo.Entity.ReportsFilingEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.AppointmentRequestRepository;
 import com.example.demo.Repository.ResidentRepository;
@@ -82,6 +83,14 @@ public class AppointmentRequestServices {
             return "Appointment request updated successfully.";
         } else {
             return "Appointment request with ID " + appreqId + " not found.";
+        }
+    }
+
+    public void softDeleteAllAppointmentsByResidentId(int residentId) {
+        List<AppointmentRequestEntity> appointment = getAllAppointmentRequestsByResidentId(residentId);
+        for (AppointmentRequestEntity appointmentRequest : appointment) {
+            appointmentRequest.setDeleted(true);
+            appointmentRequestRepository.save(appointmentRequest);
         }
     }
 

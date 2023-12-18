@@ -56,6 +56,12 @@ public class AppointmentRequestController {
         return new ResponseEntity<>(appointmentRequests, HttpStatus.OK);
     }
 
+    @PutMapping("/resident/{residentId}/soft-delete-all")
+    public ResponseEntity<String> softDeleteAllAppointmentRequestByResidentId(@PathVariable int residentId) {
+        appointmentRequestServices.softDeleteAllAppointmentsByResidentId(residentId);
+        return ResponseEntity.ok("All appointment requests for resident id " + residentId + " have been soft deleted");
+    }
+
     @PutMapping("/update-appointment-status/{appreqId}")
     public ResponseEntity<String> updateAppointmentStatus(
             @PathVariable int appreqId,

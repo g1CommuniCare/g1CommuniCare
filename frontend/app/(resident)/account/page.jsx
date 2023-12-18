@@ -91,10 +91,23 @@ export default function Account() {
 
     async function handleConfirmDelete() {
         try {
-            const res = await axios.put(`http://localhost:8080/resident/${residentId}/delete`);
-            const data = res.data;
-
-            console.log("Resident deleted successfully:", data);
+            await Promise.all([
+                await axios.put(`http://localhost:8080/resident/${residentId}/delete`),
+                await axios.put(
+                    `http://localhost:8080/document-requests/resident/${residentId}/soft-delete-all`,
+                    {
+                        isDeleted: true,
+                    }
+                ),
+                await axios.put(
+                    `http://localhost:8080/reports-filing/resident/${residentId}/soft-delete-all`,
+                    { deleted: true }
+                ),
+                await axios.put(
+                    `http://localhost:8080/appointment-requests/resident/19/soft-delete-all`,
+                    { deleted: true }
+                ),
+            ]);
 
             // Now, if you want to logout the user, you can call the logout function
             logout();
@@ -135,6 +148,7 @@ export default function Account() {
             );
             const data = res.data;
             setMyRequest(data);
+            console.log(data);
         } catch (error) {
             console.log("Error Fetching My Report");
         } finally {

@@ -48,6 +48,12 @@ public class DocumentRequestController {
         return new ResponseEntity<>(nonDeletedDocumentRequests, HttpStatus.OK);
     }
 
+    @PutMapping("/resident/{residentId}/soft-delete-all")
+    public ResponseEntity<String> softDeleteAllDocumentRequestsByResidentId(@PathVariable int residentId) {
+        documentRequestService.softDeleteAllDocumentRequestsByResidentId(residentId);
+        return ResponseEntity.ok("All document requests for resident id " + residentId + " have been soft deleted");
+    }
+
     // // Endpoint to update the documentStatus of a Document Request
     // @PutMapping("/{id}/update-status")
     // public ResponseEntity<DocumentRequestDTO> updateDocumentStatus(@PathVariable

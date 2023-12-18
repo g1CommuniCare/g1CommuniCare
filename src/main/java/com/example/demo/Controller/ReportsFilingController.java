@@ -70,6 +70,12 @@ public class ReportsFilingController {
         return new ResponseEntity<>(reportsFilingEntity, HttpStatus.OK);
     }
 
+    @PutMapping("/resident/{residentId}/soft-delete-all")
+    public ResponseEntity<String> softDeleteAllReportFilingByResidentId(@PathVariable int residentId) {
+        reportsFilingServices.softDeleteAllReportFilingByResidentId(residentId);
+        return ResponseEntity.ok("All report filing requests for resident id " + residentId + " have been soft deleted");
+    }
+
     // Method to update a report status
     @PutMapping("/updateReportStatus/{repFilId}")
     public ResponseEntity<String> updateReportStatus(@PathVariable int repFilId, @RequestBody String newStatus) {

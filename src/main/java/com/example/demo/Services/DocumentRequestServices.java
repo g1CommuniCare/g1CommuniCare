@@ -1,5 +1,11 @@
 package com.example.demo.Services;
 
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,12 +13,6 @@ import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.DocumentRequestRepository;
 import com.example.demo.Repository.ResidentRepository;
-
-import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class DocumentRequestServices {
@@ -142,6 +142,15 @@ public class DocumentRequestServices {
     // Find Document Request by ID
     public List<DocumentRequestEntity> findByDocreqId(int docreqId) {
         return documentRequestRepository.findBydocreqId(docreqId);
+    }
+
+    // DELETEING DOCUMENT REQUESTS
+    public void softDeleteAllDocumentRequestsByResidentId(int residentId) {
+        List<DocumentRequestEntity> documentRequests = getAllDocumentRequestsByResidentId(residentId);
+        for (DocumentRequestEntity documentRequest : documentRequests) {
+            documentRequest.setIsDeleted(true);
+            documentRequestRepository.save(documentRequest);
+        }
     }
 
     // Get Valid ID Image by Document Request ID
