@@ -15,9 +15,9 @@ import com.example.demo.Repository.NotificationRepository;
 @Service
 public class NotificationServices {
 
-    private final NotificationRepository notificationRepository;
-
     @Autowired
+    NotificationRepository notificationRepository;
+
     public NotificationServices(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
     }

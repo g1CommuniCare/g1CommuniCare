@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.AppointmentRequestEntity;
-import com.example.demo.Entity.ReportsFilingEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.AppointmentRequestRepository;
 import com.example.demo.Repository.ResidentRepository;

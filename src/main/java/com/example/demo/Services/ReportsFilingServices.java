@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Entity.DocumentRequestEntity;
 import com.example.demo.Entity.ReportsFilingEntity;
 import com.example.demo.Entity.ResidentEntity;
 import com.example.demo.Repository.ReportsFilingRepository;

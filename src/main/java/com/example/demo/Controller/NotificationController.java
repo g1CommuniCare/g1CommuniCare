@@ -22,13 +22,11 @@ import com.example.demo.Services.ResidentServices;
 @RestController
 @RequestMapping("/notifications")
 public class NotificationController {
+
     @Autowired
     NotificationServices notificationServices;
+    ResidentServices residentServices;
 
-    @Autowired
-    private ResidentServices residentServices;
-
-    @Autowired
     public NotificationController(NotificationServices notificationServices) {
         this.notificationServices = notificationServices;
     }

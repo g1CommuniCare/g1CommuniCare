@@ -269,7 +269,7 @@ export default function ResourceDirectory() {
             {/* Header */}
             <div className="h-20 w-full mt-5">
                 <div className="flex justify-center flex-col my-auto h-full">
-                    <h1 className="font-bold text-6xl">Alerts</h1>
+                    <h1 className="font-bold text-6xl">Resource Directory</h1>
                 </div>
             </div>
 
