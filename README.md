@@ -2,6 +2,9 @@
 
 **CommuniCare** is a platform designed to streamline and simplify the processes within your local barangay, making essential services more efficient, accessible, and user-friendly. Whether it's requesting documents, filing reports, scheduling appointments, or accessing vital community resources, **CommuniCare** brings the barangay's services to your fingertips, empowering citizens and strengthening community engagement.
 
+![CommuniCare Photo Carousel](frontend/public/images/showcase.gif)
+
+
 ---
 
 ## Features
